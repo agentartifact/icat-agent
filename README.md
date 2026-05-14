@@ -1,13 +1,11 @@
-# iCAT-Agent: Multi-Agent System for Automated Software Engineering
-
-iCAT-Agent is a multi-agent system for resolving GitHub issues. 
+# iCAT-Agent
 
 ## Roles
 
 - **Issue quality checker**: LLM call to analyze the issue, identify buggy files/functions, and determine if the localizer should run.
 - **Explorer Agent**: Explores the codebase to find buggy files, classes, and functions. Skipped when the issue quality confidence is HIGH.
 - **Patch Editor Agent**: Reads source code, traces call chains, and generates code fixes. Communicates with the reproducer via MessageBus.
-- **Reproducer Agent**: Writes reproduction/regression tests and runs validation, and sends `validation_passed`/`validation_failed` feedback to drive iterative refinement.
+- **Reproducer Agent**: Writes reproduction/regression tests and runs validation, and sends `validation_passed`/`validation_failed` feedback.
 
 ## Setup
 
