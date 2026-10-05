@@ -1,4 +1,4 @@
-# iCAT-Agent: Multi-Agent System for Automated Software Engineering
+# iCAT-Agent
 
 iCAT-Agent is a multi-agent system for resolving GitHub issues. 
 
@@ -62,3 +62,19 @@ python main.py --swe-bench pro --split test --instance <instance_id> \
 --max-cost FLOAT                  # Cost budget per instance (USD)
 --logdir DIR                      # Output directory
 ```
+
+
+| Flag | Default | Meaning |
+|---|---|---|
+| `--swe-bench` | `pro` | Benchmark subset |
+| `--instance ID` | *required* | Instance to run |
+| `--split {dev,test}` | `test` | Dataset split |
+| `--model` | `openai:gpt-5-mini` | LLM for all agents: `openrouter/...`, `openai:...` or `anthropic:...` |
+| `--max-cost USD` | `3.0` | Budget per instance |
+| `--logdir DIR` | `logs` | Output directory |
+| `--triage-sequential` / `--no-triage-sequential` | on | Issue Quality Checker first; run the Explorer only if the bug location is unclear |
+| `--triage-sequential-always` | off | Always run the Explorer before the Editor and Validator |
+| `--triage` | off | A single triage LLM call, no Explorer |
+| `--no-plan` | off | No planning step; agents explore on their own |
+| `--shared-plan` | off | One shared exploration pass that produces all three plans |
+| `--truncate-view` / `--no-truncate-view` | on | Truncate `view_file` output to the first and last 5K characters |
