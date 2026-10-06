@@ -78,3 +78,11 @@ python main.py --swe-bench pro --split test --instance <instance_id> \
 | `--no-plan` | off | No planning step; agents explore on their own |
 | `--shared-plan` | off | One shared exploration pass that produces all three plans |
 | `--truncate-view` / `--no-truncate-view` | on | Truncate `view_file` output to the first and last 5K characters |
+
+
+## Additional Analysis
+
+Sub-agent Hk(t): 
+
+<img width="1124" height="353" alt="image" src="https://github.com/user-attachments/assets/877ec805-3b0f-4d4a-b29d-58eb0bae286b" />
+
