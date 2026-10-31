@@ -1,0 +1,5 @@
+benchmark,model,baseline,icat_only,baseline_only,mcnemar_exact_p,diff_pp,ci95_low_pp,ci95_high_pp
+SWE-bench Verified,MiniMax M2.5,mini-SWE-agent,37,19,2.22e-02,3.6,0.68,6.52
+SWE-bench Verified,GPT-5-mini,mini-SWE-agent,65,23,8.50e-06,8.4,4.8,12.0
+SWE-bench Pro,Claude Sonnet 4.5,SWE-agent,145,10,7.70e-32,18.47,15.41,21.53
+SWE-bench Pro,GPT-5.4-xhigh,Claude Code,82,36,2.76e-05,6.29,3.42,9.17

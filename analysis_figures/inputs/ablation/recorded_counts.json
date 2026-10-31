@@ -1,0 +1,12 @@
+{
+ "always_explore": {
+  "n": 50,
+  "resolved": 21,
+  "regressions": 4
+ },
+ "never_explore": {
+  "n": 50,
+  "resolved": 24,
+  "regressions": 2
+ }
+}

@@ -1,0 +1,26 @@
+diff --git a/lib/matplotlib/dates.py b/lib/matplotlib/dates.py
+index 4d8ddf3ee5..8031ba2c1d 100644
+--- a/lib/matplotlib/dates.py
++++ b/lib/matplotlib/dates.py
+@@ -797,8 +797,20 @@ class ConciseDateFormatter(ticker.Formatter):
+         # 3: hours, 4: minutes, 5: seconds, 6: microseconds
+         for level in range(5, -1, -1):
+             if len(np.unique(tickdate[:, level])) > 1:
+-                if level < 2:
++                if level == 0:
++                    # if the level is years, do not show the offset
+                     show_offset = False
++                elif level == 1:
++                    # for months-level labeling, show the year in the offset
++                    # only if all ticks are within the same year and January
++                    # is not among the tick months (fixes the case where the
++                    # plotted span is < 1 year but no tick falls on January).
++                    years = np.unique(tickdate[:, 0])
++                    months = np.unique(tickdate[:, 1])
++                    if len(years) == 1 and 1 not in months:
++                        show_offset = True
++                    else:
++                        show_offset = False
+                 break
+             elif level == 0:
+                 # all tickdate are the same, so only micros might be different

@@ -1,0 +1,501 @@
+instance_id,difficulty
+astropy__astropy-12907,15 min - 1 hour
+astropy__astropy-13033,15 min - 1 hour
+astropy__astropy-13236,15 min - 1 hour
+astropy__astropy-13398,1-4 hours
+astropy__astropy-13453,15 min - 1 hour
+astropy__astropy-13579,1-4 hours
+astropy__astropy-13977,15 min - 1 hour
+astropy__astropy-14096,15 min - 1 hour
+astropy__astropy-14182,15 min - 1 hour
+astropy__astropy-14309,<15 min fix
+astropy__astropy-14365,15 min - 1 hour
+astropy__astropy-14369,1-4 hours
+astropy__astropy-14508,15 min - 1 hour
+astropy__astropy-14539,15 min - 1 hour
+astropy__astropy-14598,15 min - 1 hour
+astropy__astropy-14995,<15 min fix
+astropy__astropy-7166,<15 min fix
+astropy__astropy-7336,<15 min fix
+astropy__astropy-7606,15 min - 1 hour
+astropy__astropy-7671,15 min - 1 hour
+astropy__astropy-8707,15 min - 1 hour
+astropy__astropy-8872,15 min - 1 hour
+django__django-10097,<15 min fix
+django__django-10554,1-4 hours
+django__django-10880,<15 min fix
+django__django-10914,<15 min fix
+django__django-10973,15 min - 1 hour
+django__django-10999,<15 min fix
+django__django-11066,<15 min fix
+django__django-11087,15 min - 1 hour
+django__django-11095,15 min - 1 hour
+django__django-11099,<15 min fix
+django__django-11119,<15 min fix
+django__django-11133,<15 min fix
+django__django-11138,1-4 hours
+django__django-11141,15 min - 1 hour
+django__django-11149,15 min - 1 hour
+django__django-11163,<15 min fix
+django__django-11179,<15 min fix
+django__django-11206,15 min - 1 hour
+django__django-11211,15 min - 1 hour
+django__django-11239,<15 min fix
+django__django-11265,15 min - 1 hour
+django__django-11276,15 min - 1 hour
+django__django-11292,15 min - 1 hour
+django__django-11299,<15 min fix
+django__django-11333,15 min - 1 hour
+django__django-11400,1-4 hours
+django__django-11433,<15 min fix
+django__django-11451,<15 min fix
+django__django-11477,15 min - 1 hour
+django__django-11490,<15 min fix
+django__django-11532,15 min - 1 hour
+django__django-11551,15 min - 1 hour
+django__django-11555,<15 min fix
+django__django-11603,<15 min fix
+django__django-11728,15 min - 1 hour
+django__django-11734,15 min - 1 hour
+django__django-11740,15 min - 1 hour
+django__django-11749,15 min - 1 hour
+django__django-11790,15 min - 1 hour
+django__django-11815,15 min - 1 hour
+django__django-11820,<15 min fix
+django__django-11848,15 min - 1 hour
+django__django-11880,<15 min fix
+django__django-11885,1-4 hours
+django__django-11951,<15 min fix
+django__django-11964,<15 min fix
+django__django-11999,15 min - 1 hour
+django__django-12039,15 min - 1 hour
+django__django-12050,15 min - 1 hour
+django__django-12125,<15 min fix
+django__django-12143,15 min - 1 hour
+django__django-12155,15 min - 1 hour
+django__django-12193,<15 min fix
+django__django-12209,<15 min fix
+django__django-12262,15 min - 1 hour
+django__django-12273,15 min - 1 hour
+django__django-12276,<15 min fix
+django__django-12304,<15 min fix
+django__django-12308,<15 min fix
+django__django-12325,1-4 hours
+django__django-12406,15 min - 1 hour
+django__django-12419,<15 min fix
+django__django-12663,15 min - 1 hour
+django__django-12708,1-4 hours
+django__django-12713,15 min - 1 hour
+django__django-12741,<15 min fix
+django__django-12754,15 min - 1 hour
+django__django-12774,15 min - 1 hour
+django__django-12858,15 min - 1 hour
+django__django-12965,15 min - 1 hour
+django__django-13012,15 min - 1 hour
+django__django-13023,<15 min fix
+django__django-13028,15 min - 1 hour
+django__django-13033,15 min - 1 hour
+django__django-13089,<15 min fix
+django__django-13109,<15 min fix
+django__django-13112,<15 min fix
+django__django-13121,15 min - 1 hour
+django__django-13128,1-4 hours
+django__django-13158,15 min - 1 hour
+django__django-13195,15 min - 1 hour
+django__django-13212,1-4 hours
+django__django-13279,15 min - 1 hour
+django__django-13297,<15 min fix
+django__django-13315,15 min - 1 hour
+django__django-13343,15 min - 1 hour
+django__django-13344,1-4 hours
+django__django-13346,15 min - 1 hour
+django__django-13363,<15 min fix
+django__django-13401,15 min - 1 hour
+django__django-13406,<15 min fix
+django__django-13410,<15 min fix
+django__django-13417,<15 min fix
+django__django-13449,1-4 hours
+django__django-13512,<15 min fix
+django__django-13513,15 min - 1 hour
+django__django-13516,15 min - 1 hour
+django__django-13551,<15 min fix
+django__django-13568,15 min - 1 hour
+django__django-13569,15 min - 1 hour
+django__django-13590,15 min - 1 hour
+django__django-13658,15 min - 1 hour
+django__django-13670,15 min - 1 hour
+django__django-13741,<15 min fix
+django__django-13786,15 min - 1 hour
+django__django-13794,<15 min fix
+django__django-13807,<15 min fix
+django__django-13809,15 min - 1 hour
+django__django-13810,15 min - 1 hour
+django__django-13820,15 min - 1 hour
+django__django-13821,<15 min fix
+django__django-13837,1-4 hours
+django__django-13925,15 min - 1 hour
+django__django-13933,<15 min fix
+django__django-13964,15 min - 1 hour
+django__django-14007,1-4 hours
+django__django-14011,1-4 hours
+django__django-14017,15 min - 1 hour
+django__django-14034,15 min - 1 hour
+django__django-14053,15 min - 1 hour
+django__django-14089,<15 min fix
+django__django-14122,15 min - 1 hour
+django__django-14140,15 min - 1 hour
+django__django-14155,15 min - 1 hour
+django__django-14170,15 min - 1 hour
+django__django-14238,15 min - 1 hour
+django__django-14311,15 min - 1 hour
+django__django-14315,<15 min fix
+django__django-14349,15 min - 1 hour
+django__django-14351,15 min - 1 hour
+django__django-14373,<15 min fix
+django__django-14376,<15 min fix
+django__django-14404,<15 min fix
+django__django-14434,15 min - 1 hour
+django__django-14493,<15 min fix
+django__django-14500,15 min - 1 hour
+django__django-14534,<15 min fix
+django__django-14539,<15 min fix
+django__django-14559,15 min - 1 hour
+django__django-14580,<15 min fix
+django__django-14608,<15 min fix
+django__django-14631,1-4 hours
+django__django-14672,15 min - 1 hour
+django__django-14725,15 min - 1 hour
+django__django-14752,<15 min fix
+django__django-14765,<15 min fix
+django__django-14771,15 min - 1 hour
+django__django-14787,<15 min fix
+django__django-14792,<15 min fix
+django__django-14855,<15 min fix
+django__django-14915,<15 min fix
+django__django-14999,<15 min fix
+django__django-15022,15 min - 1 hour
+django__django-15037,15 min - 1 hour
+django__django-15098,15 min - 1 hour
+django__django-15103,15 min - 1 hour
+django__django-15104,<15 min fix
+django__django-15127,<15 min fix
+django__django-15128,1-4 hours
+django__django-15161,15 min - 1 hour
+django__django-15252,15 min - 1 hour
+django__django-15268,1-4 hours
+django__django-15277,<15 min fix
+django__django-15278,15 min - 1 hour
+django__django-15280,15 min - 1 hour
+django__django-15315,<15 min fix
+django__django-15368,<15 min fix
+django__django-15375,15 min - 1 hour
+django__django-15380,<15 min fix
+django__django-15382,15 min - 1 hour
+django__django-15467,<15 min fix
+django__django-15499,<15 min fix
+django__django-15503,1-4 hours
+django__django-15525,15 min - 1 hour
+django__django-15554,15 min - 1 hour
+django__django-15561,15 min - 1 hour
+django__django-15563,15 min - 1 hour
+django__django-15569,<15 min fix
+django__django-15572,<15 min fix
+django__django-15629,1-4 hours
+django__django-15695,15 min - 1 hour
+django__django-15731,15 min - 1 hour
+django__django-15732,15 min - 1 hour
+django__django-15741,<15 min fix
+django__django-15814,15 min - 1 hour
+django__django-15851,<15 min fix
+django__django-15863,<15 min fix
+django__django-15916,15 min - 1 hour
+django__django-15930,<15 min fix
+django__django-15957,1-4 hours
+django__django-15973,15 min - 1 hour
+django__django-15987,<15 min fix
+django__django-16032,15 min - 1 hour
+django__django-16082,15 min - 1 hour
+django__django-16100,<15 min fix
+django__django-16116,<15 min fix
+django__django-16136,15 min - 1 hour
+django__django-16139,<15 min fix
+django__django-16145,<15 min fix
+django__django-16255,<15 min fix
+django__django-16256,15 min - 1 hour
+django__django-16263,1-4 hours
+django__django-16315,15 min - 1 hour
+django__django-16333,<15 min fix
+django__django-16429,<15 min fix
+django__django-16454,15 min - 1 hour
+django__django-16485,15 min - 1 hour
+django__django-16493,15 min - 1 hour
+django__django-16502,15 min - 1 hour
+django__django-16527,15 min - 1 hour
+django__django-16560,1-4 hours
+django__django-16569,<15 min fix
+django__django-16595,<15 min fix
+django__django-16612,15 min - 1 hour
+django__django-16631,1-4 hours
+django__django-16642,<15 min fix
+django__django-16661,15 min - 1 hour
+django__django-16662,15 min - 1 hour
+django__django-16667,15 min - 1 hour
+django__django-16801,<15 min fix
+django__django-16819,15 min - 1 hour
+django__django-16877,15 min - 1 hour
+django__django-16899,<15 min fix
+django__django-16901,15 min - 1 hour
+django__django-16938,15 min - 1 hour
+django__django-16950,15 min - 1 hour
+django__django-17029,<15 min fix
+django__django-17084,15 min - 1 hour
+django__django-17087,<15 min fix
+django__django-7530,15 min - 1 hour
+django__django-9296,<15 min fix
+matplotlib__matplotlib-13989,<15 min fix
+matplotlib__matplotlib-14623,15 min - 1 hour
+matplotlib__matplotlib-20488,15 min - 1 hour
+matplotlib__matplotlib-20676,<15 min fix
+matplotlib__matplotlib-20826,15 min - 1 hour
+matplotlib__matplotlib-20859,<15 min fix
+matplotlib__matplotlib-21568,15 min - 1 hour
+matplotlib__matplotlib-22719,<15 min fix
+matplotlib__matplotlib-22865,15 min - 1 hour
+matplotlib__matplotlib-22871,15 min - 1 hour
+matplotlib__matplotlib-23299,15 min - 1 hour
+matplotlib__matplotlib-23314,15 min - 1 hour
+matplotlib__matplotlib-23412,15 min - 1 hour
+matplotlib__matplotlib-23476,<15 min fix
+matplotlib__matplotlib-24026,15 min - 1 hour
+matplotlib__matplotlib-24149,<15 min fix
+matplotlib__matplotlib-24177,<15 min fix
+matplotlib__matplotlib-24570,<15 min fix
+matplotlib__matplotlib-24627,15 min - 1 hour
+matplotlib__matplotlib-24637,15 min - 1 hour
+matplotlib__matplotlib-24870,15 min - 1 hour
+matplotlib__matplotlib-24970,15 min - 1 hour
+matplotlib__matplotlib-25122,<15 min fix
+matplotlib__matplotlib-25287,<15 min fix
+matplotlib__matplotlib-25311,<15 min fix
+matplotlib__matplotlib-25332,<15 min fix
+matplotlib__matplotlib-25479,<15 min fix
+matplotlib__matplotlib-25775,15 min - 1 hour
+matplotlib__matplotlib-25960,15 min - 1 hour
+matplotlib__matplotlib-26113,<15 min fix
+matplotlib__matplotlib-26208,<15 min fix
+matplotlib__matplotlib-26291,15 min - 1 hour
+matplotlib__matplotlib-26342,15 min - 1 hour
+matplotlib__matplotlib-26466,15 min - 1 hour
+mwaskom__seaborn-3069,15 min - 1 hour
+mwaskom__seaborn-3187,15 min - 1 hour
+pallets__flask-5014,<15 min fix
+psf__requests-1142,<15 min fix
+psf__requests-1724,<15 min fix
+psf__requests-1766,<15 min fix
+psf__requests-1921,<15 min fix
+psf__requests-2317,<15 min fix
+psf__requests-2931,15 min - 1 hour
+psf__requests-5414,<15 min fix
+psf__requests-6028,15 min - 1 hour
+pydata__xarray-2905,15 min - 1 hour
+pydata__xarray-3095,15 min - 1 hour
+pydata__xarray-3151,15 min - 1 hour
+pydata__xarray-3305,15 min - 1 hour
+pydata__xarray-3677,15 min - 1 hour
+pydata__xarray-3993,1-4 hours
+pydata__xarray-4075,<15 min fix
+pydata__xarray-4094,<15 min fix
+pydata__xarray-4356,<15 min fix
+pydata__xarray-4629,<15 min fix
+pydata__xarray-4687,15 min - 1 hour
+pydata__xarray-4695,15 min - 1 hour
+pydata__xarray-4966,15 min - 1 hour
+pydata__xarray-6461,<15 min fix
+pydata__xarray-6599,15 min - 1 hour
+pydata__xarray-6721,15 min - 1 hour
+pydata__xarray-6744,15 min - 1 hour
+pydata__xarray-6938,15 min - 1 hour
+pydata__xarray-6992,>4 hours
+pydata__xarray-7229,15 min - 1 hour
+pydata__xarray-7233,15 min - 1 hour
+pydata__xarray-7393,15 min - 1 hour
+pylint-dev__pylint-4551,1-4 hours
+pylint-dev__pylint-4604,15 min - 1 hour
+pylint-dev__pylint-4661,15 min - 1 hour
+pylint-dev__pylint-4970,<15 min fix
+pylint-dev__pylint-6386,15 min - 1 hour
+pylint-dev__pylint-6528,15 min - 1 hour
+pylint-dev__pylint-6903,<15 min fix
+pylint-dev__pylint-7080,15 min - 1 hour
+pylint-dev__pylint-7277,<15 min fix
+pylint-dev__pylint-8898,1-4 hours
+pytest-dev__pytest-10051,15 min - 1 hour
+pytest-dev__pytest-10081,<15 min fix
+pytest-dev__pytest-10356,1-4 hours
+pytest-dev__pytest-5262,<15 min fix
+pytest-dev__pytest-5631,15 min - 1 hour
+pytest-dev__pytest-5787,1-4 hours
+pytest-dev__pytest-5809,<15 min fix
+pytest-dev__pytest-5840,15 min - 1 hour
+pytest-dev__pytest-6197,1-4 hours
+pytest-dev__pytest-6202,<15 min fix
+pytest-dev__pytest-7205,<15 min fix
+pytest-dev__pytest-7236,15 min - 1 hour
+pytest-dev__pytest-7324,15 min - 1 hour
+pytest-dev__pytest-7432,<15 min fix
+pytest-dev__pytest-7490,15 min - 1 hour
+pytest-dev__pytest-7521,<15 min fix
+pytest-dev__pytest-7571,15 min - 1 hour
+pytest-dev__pytest-7982,<15 min fix
+pytest-dev__pytest-8399,15 min - 1 hour
+scikit-learn__scikit-learn-10297,15 min - 1 hour
+scikit-learn__scikit-learn-10844,15 min - 1 hour
+scikit-learn__scikit-learn-10908,15 min - 1 hour
+scikit-learn__scikit-learn-11310,<15 min fix
+scikit-learn__scikit-learn-11578,15 min - 1 hour
+scikit-learn__scikit-learn-12585,<15 min fix
+scikit-learn__scikit-learn-12682,15 min - 1 hour
+scikit-learn__scikit-learn-12973,15 min - 1 hour
+scikit-learn__scikit-learn-13124,15 min - 1 hour
+scikit-learn__scikit-learn-13135,<15 min fix
+scikit-learn__scikit-learn-13142,<15 min fix
+scikit-learn__scikit-learn-13328,<15 min fix
+scikit-learn__scikit-learn-13439,<15 min fix
+scikit-learn__scikit-learn-13496,<15 min fix
+scikit-learn__scikit-learn-13779,<15 min fix
+scikit-learn__scikit-learn-14053,15 min - 1 hour
+scikit-learn__scikit-learn-14087,15 min - 1 hour
+scikit-learn__scikit-learn-14141,<15 min fix
+scikit-learn__scikit-learn-14496,<15 min fix
+scikit-learn__scikit-learn-14629,15 min - 1 hour
+scikit-learn__scikit-learn-14710,15 min - 1 hour
+scikit-learn__scikit-learn-14894,15 min - 1 hour
+scikit-learn__scikit-learn-14983,<15 min fix
+scikit-learn__scikit-learn-15100,15 min - 1 hour
+scikit-learn__scikit-learn-25102,1-4 hours
+scikit-learn__scikit-learn-25232,<15 min fix
+scikit-learn__scikit-learn-25747,15 min - 1 hour
+scikit-learn__scikit-learn-25931,15 min - 1 hour
+scikit-learn__scikit-learn-25973,<15 min fix
+scikit-learn__scikit-learn-26194,15 min - 1 hour
+scikit-learn__scikit-learn-26323,15 min - 1 hour
+scikit-learn__scikit-learn-9288,15 min - 1 hour
+sphinx-doc__sphinx-10323,<15 min fix
+sphinx-doc__sphinx-10435,<15 min fix
+sphinx-doc__sphinx-10449,<15 min fix
+sphinx-doc__sphinx-10466,15 min - 1 hour
+sphinx-doc__sphinx-10614,15 min - 1 hour
+sphinx-doc__sphinx-10673,15 min - 1 hour
+sphinx-doc__sphinx-11445,15 min - 1 hour
+sphinx-doc__sphinx-11510,1-4 hours
+sphinx-doc__sphinx-7440,<15 min fix
+sphinx-doc__sphinx-7454,<15 min fix
+sphinx-doc__sphinx-7462,<15 min fix
+sphinx-doc__sphinx-7590,>4 hours
+sphinx-doc__sphinx-7748,15 min - 1 hour
+sphinx-doc__sphinx-7757,15 min - 1 hour
+sphinx-doc__sphinx-7889,<15 min fix
+sphinx-doc__sphinx-7910,<15 min fix
+sphinx-doc__sphinx-7985,15 min - 1 hour
+sphinx-doc__sphinx-8035,15 min - 1 hour
+sphinx-doc__sphinx-8056,15 min - 1 hour
+sphinx-doc__sphinx-8120,15 min - 1 hour
+sphinx-doc__sphinx-8265,15 min - 1 hour
+sphinx-doc__sphinx-8269,<15 min fix
+sphinx-doc__sphinx-8459,<15 min fix
+sphinx-doc__sphinx-8475,<15 min fix
+sphinx-doc__sphinx-8548,1-4 hours
+sphinx-doc__sphinx-8551,15 min - 1 hour
+sphinx-doc__sphinx-8593,15 min - 1 hour
+sphinx-doc__sphinx-8595,<15 min fix
+sphinx-doc__sphinx-8621,<15 min fix
+sphinx-doc__sphinx-8638,15 min - 1 hour
+sphinx-doc__sphinx-8721,<15 min fix
+sphinx-doc__sphinx-9229,1-4 hours
+sphinx-doc__sphinx-9230,<15 min fix
+sphinx-doc__sphinx-9258,<15 min fix
+sphinx-doc__sphinx-9281,<15 min fix
+sphinx-doc__sphinx-9320,<15 min fix
+sphinx-doc__sphinx-9367,<15 min fix
+sphinx-doc__sphinx-9461,1-4 hours
+sphinx-doc__sphinx-9591,<15 min fix
+sphinx-doc__sphinx-9602,15 min - 1 hour
+sphinx-doc__sphinx-9658,15 min - 1 hour
+sphinx-doc__sphinx-9673,15 min - 1 hour
+sphinx-doc__sphinx-9698,<15 min fix
+sphinx-doc__sphinx-9711,<15 min fix
+sympy__sympy-11618,15 min - 1 hour
+sympy__sympy-12096,<15 min fix
+sympy__sympy-12419,15 min - 1 hour
+sympy__sympy-12481,<15 min fix
+sympy__sympy-12489,1-4 hours
+sympy__sympy-13031,15 min - 1 hour
+sympy__sympy-13091,15 min - 1 hour
+sympy__sympy-13372,<15 min fix
+sympy__sympy-13480,<15 min fix
+sympy__sympy-13551,15 min - 1 hour
+sympy__sympy-13615,15 min - 1 hour
+sympy__sympy-13647,15 min - 1 hour
+sympy__sympy-13757,15 min - 1 hour
+sympy__sympy-13798,15 min - 1 hour
+sympy__sympy-13852,1-4 hours
+sympy__sympy-13877,15 min - 1 hour
+sympy__sympy-13878,>4 hours
+sympy__sympy-13974,15 min - 1 hour
+sympy__sympy-14248,1-4 hours
+sympy__sympy-14531,15 min - 1 hour
+sympy__sympy-14711,<15 min fix
+sympy__sympy-14976,15 min - 1 hour
+sympy__sympy-15017,<15 min fix
+sympy__sympy-15345,<15 min fix
+sympy__sympy-15349,15 min - 1 hour
+sympy__sympy-15599,15 min - 1 hour
+sympy__sympy-15809,<15 min fix
+sympy__sympy-15875,<15 min fix
+sympy__sympy-15976,15 min - 1 hour
+sympy__sympy-16450,<15 min fix
+sympy__sympy-16597,1-4 hours
+sympy__sympy-16766,<15 min fix
+sympy__sympy-16792,15 min - 1 hour
+sympy__sympy-16886,<15 min fix
+sympy__sympy-17139,<15 min fix
+sympy__sympy-17318,15 min - 1 hour
+sympy__sympy-17630,1-4 hours
+sympy__sympy-17655,<15 min fix
+sympy__sympy-18189,<15 min fix
+sympy__sympy-18199,1-4 hours
+sympy__sympy-18211,15 min - 1 hour
+sympy__sympy-18698,15 min - 1 hour
+sympy__sympy-18763,<15 min fix
+sympy__sympy-19040,15 min - 1 hour
+sympy__sympy-19346,15 min - 1 hour
+sympy__sympy-19495,<15 min fix
+sympy__sympy-19637,<15 min fix
+sympy__sympy-19783,15 min - 1 hour
+sympy__sympy-19954,<15 min fix
+sympy__sympy-20154,15 min - 1 hour
+sympy__sympy-20428,15 min - 1 hour
+sympy__sympy-20438,15 min - 1 hour
+sympy__sympy-20590,15 min - 1 hour
+sympy__sympy-20801,15 min - 1 hour
+sympy__sympy-20916,<15 min fix
+sympy__sympy-21379,15 min - 1 hour
+sympy__sympy-21596,15 min - 1 hour
+sympy__sympy-21612,15 min - 1 hour
+sympy__sympy-21847,<15 min fix
+sympy__sympy-21930,15 min - 1 hour
+sympy__sympy-22080,15 min - 1 hour
+sympy__sympy-22456,15 min - 1 hour
+sympy__sympy-22714,<15 min fix
+sympy__sympy-22914,15 min - 1 hour
+sympy__sympy-23262,15 min - 1 hour
+sympy__sympy-23413,15 min - 1 hour
+sympy__sympy-23534,<15 min fix
+sympy__sympy-23824,15 min - 1 hour
+sympy__sympy-23950,15 min - 1 hour
+sympy__sympy-24066,15 min - 1 hour
+sympy__sympy-24213,15 min - 1 hour
+sympy__sympy-24443,15 min - 1 hour
+sympy__sympy-24539,<15 min fix
+sympy__sympy-24562,<15 min fix
+sympy__sympy-24661,15 min - 1 hour

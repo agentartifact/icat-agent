@@ -1,0 +1,21 @@
+diff --git a/lib/matplotlib/dates.py b/lib/matplotlib/dates.py
+index 4d8ddf3ee5..4272b9d2b4 100644
+--- a/lib/matplotlib/dates.py
++++ b/lib/matplotlib/dates.py
+@@ -797,7 +797,15 @@ class ConciseDateFormatter(ticker.Formatter):
+         # 3: hours, 4: minutes, 5: seconds, 6: microseconds
+         for level in range(5, -1, -1):
+             if len(np.unique(tickdate[:, level])) > 1:
+-                if level < 2:
++                # If the ticks vary at the year level, we don't need an
++                # offset (the labels themselves will contain the year).  But
++                # if they vary at the month level (level == 1) we should
++                # still show the offset so that the year is visible when the
++                # tick labels only show abbreviated months (e.g., 'Feb').
++                # Previously this suppressed the offset for level < 2 which
++                # hid the year for ranges spanning fewer than 12 months but
++                # not including January.
++                if level == 0:
+                     show_offset = False
+                 break
+             elif level == 0:

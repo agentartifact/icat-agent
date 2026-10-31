@@ -1,0 +1,13 @@
+panel,bucket,n,baseline,baseline_pct,icat_pct,delta
+(a) MiniMax M2.5 (Verified),Easy,194,mini-SWE-agent,86.6,89.7,3.1
+(a) MiniMax M2.5 (Verified),Medium,261,mini-SWE-agent,74.3,77.0,2.7
+(a) MiniMax M2.5 (Verified),Hard,45,mini-SWE-agent,37.8,48.9,11.1
+(b) GPT-5 mini (Verified),Easy,194,mini-SWE-agent,76.3,80.9,4.6
+(b) GPT-5 mini (Verified),Medium,261,mini-SWE-agent,48.3,60.5,12.3
+(b) GPT-5 mini (Verified),Hard,45,mini-SWE-agent,15.6,17.8,2.2
+(c) Claude Sonnet 4.5 (Pro),1 file,110,SWE-agent,48.2,71.8,23.6
+(c) Claude Sonnet 4.5 (Pro),2-3 files,247,SWE-agent,49.8,69.2,19.4
+(c) Claude Sonnet 4.5 (Pro),4+ files,373,SWE-agent,38.3,54.4,16.1
+(d) GPT-5.4 xhigh (Pro),1 file,110,Claude Code,67.3,74.5,7.3
+(d) GPT-5.4 xhigh (Pro),2-3 files,247,Claude Code,70.0,75.3,5.3
+(d) GPT-5.4 xhigh (Pro),4+ files,373,Claude Code,53.6,60.1,6.4

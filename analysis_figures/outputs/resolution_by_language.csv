@@ -1,0 +1,9 @@
+panel,language,n,baseline,baseline_pct,icat_pct,delta
+(a) Claude Sonnet 4.5,Go,280,SWE-agent,35.7,51.8,16.1
+(a) Claude Sonnet 4.5,JavaScript,44,SWE-agent,25.0,75.0,50.0
+(a) Claude Sonnet 4.5,TypeScript,141,SWE-agent,37.6,61.0,23.4
+(a) Claude Sonnet 4.5,Python,266,SWE-agent,58.3,71.4,13.2
+(b) GPT-5.4 xhigh,Go,280,Claude Code,50.4,58.6,8.2
+(b) GPT-5.4 xhigh,JavaScript,44,Claude Code,79.5,81.8,2.3
+(b) GPT-5.4 xhigh,TypeScript,141,Claude Code,58.9,67.4,8.5
+(b) GPT-5.4 xhigh,Python,266,Claude Code,70.7,74.4,3.8

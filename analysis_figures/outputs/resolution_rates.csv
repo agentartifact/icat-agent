@@ -1,0 +1,11 @@
+benchmark,scaffold,model,resolved,pct,delta,delta_cc
+SWE-bench Pro,iCAT-Agent,Claude Sonnet 4.5,454,62.10670314637483,18.46785225718194,15.321477428180572
+SWE-bench Pro,SWE-agent,Claude Sonnet 4.5,319,43.63885088919289,,
+SWE-bench Pro,Claude Code,Claude Sonnet 4.5,342,46.785225718194255,,
+SWE-bench Pro,iCAT-Agent,GPT-5.4-xhigh,493,67.44186046511628,8.341860465116277,6.292749658002734
+SWE-bench Pro,mini-SWE-agent,GPT-5.4-xhigh,431,59.1,,
+SWE-bench Pro,Claude Code,GPT-5.4-xhigh,447,61.149110807113544,,
+SWE-bench Verified,iCAT-Agent,MiniMax M2.5,397,79.4,3.6000000000000085,
+SWE-bench Verified,mini-SWE-agent,MiniMax M2.5,379,75.8,,
+SWE-bench Verified,iCAT-Agent,GPT-5-mini,323,64.6,8.399999999999991,
+SWE-bench Verified,mini-SWE-agent,GPT-5-mini,281,56.2,,

