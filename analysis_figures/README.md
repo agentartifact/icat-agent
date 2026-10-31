@@ -1,6 +1,4 @@
-# Evaluation analysis (iCAT-Agent)
-
-Self-contained: everything the analysis needs is in `inputs/`, so this directory alone reproduces the results.
+# To reproduce analysis
 
 ```bash
 pip install -r requirements.txt
@@ -17,22 +15,19 @@ python3 ablation_results.py          # component ablations on 100 SWE-bench Pro 
 
 ## Inputs (`inputs/`)
 
-| file | content | source in the icat-agent repo |
-|---|---|---|
-| `resolution/icat_pro_sonnet45.csv`, `icat_pro_gpt54.csv` | iCAT-Agent, SWE-bench Pro | `traj_results_merged/pro/summary/results_{sonnet45,gpt54}.csv` |
-| `resolution/icat_verified_minimax.csv`, `icat_verified_gpt5mini.csv` | iCAT-Agent, SWE-bench Verified | `traj_results_merged/verified/{minimax,gpt-5-mini}/summary.csv` |
-| `resolution/sweagent_pro_sonnet45.csv` | SWE-agent + Claude Sonnet 4.5, Pro | `scripts/data/sweagent_claudesonnet45.csv` |
-| `resolution/claudecode_pro_gpt54.csv` | Claude Code + GPT-5.4, Pro | `scripts/data/cc_gpt54.csv` |
-| `resolution/claudecode_pro_sonnet45.csv` | Claude Code + Claude Sonnet 4.5, Pro (single run) | `logs_cc_sonnet/results.csv` |
-| `resolution/minisweagent_verified_{minimax,gpt5mini}.csv` | mini-SWE-agent, Verified | `resolved=` header of the Docent exports in `analysis/baselines/minisweagent_*_verified/*.md` |
-| `labels/swebench_verified_difficulty.csv` | Verified difficulty: Easy (<15 min), Medium (15 min–1 h), Hard (1–4 h and >4 h) | HF `princeton-nlp/SWE-bench_Verified` |
-| `labels/swebench_pro_language.csv` | language of the code files changed by the gold patch (`corrected_language`) | `scripts/language_consistency.csv` |
-| `labels/swebench_pro_file_count.csv` | number of code files changed by the gold patch (1, 2–3, 4+) | `analysis/file_count_corrected.csv` |
-| `ablation/<variant>.jsonl`, `ablation/instances.txt` | per-instance outcome of each ablation variant; the 100-instance subset | `logs_ablation/<variant>/results.jsonl` |
-| `ablation/recorded_counts.json` | resolved / regression counts for variant runs without per-instance logs | `logs_ablation/summary_100.json` |
-
-Every `resolution/*.csv` is `instance_id, resolved` (1/0).
-`collect_inputs.py` re-creates `inputs/` from the full icat-agent repo; it is not needed to reproduce the results.
+| file | content |
+|---|---|
+| `resolution/icat_pro_sonnet45.csv`, `icat_pro_gpt54.csv` | iCAT-Agent, SWE-bench Pro |
+| `resolution/icat_verified_minimax.csv`, `icat_verified_gpt5mini.csv` | iCAT-Agent, SWE-bench Verified |
+| `resolution/sweagent_pro_sonnet45.csv` | SWE-agent + Claude Sonnet 4.5, Pro |
+| `resolution/claudecode_pro_gpt54.csv` | Claude Code + GPT-5.4, Pro |
+| `resolution/claudecode_pro_sonnet45.csv` | Claude Code + Claude Sonnet 4.5, Pro (single run) |
+| `resolution/minisweagent_verified_{minimax,gpt5mini}.csv` | mini-SWE-agent, Verified |
+| `labels/swebench_verified_difficulty.csv` | Verified difficulty: Easy (<15 min), Medium (15 min–1 h), Hard (1–4 h and >4 h) |
+| `labels/swebench_pro_language.csv` | language of the code files changed by the gold patch (`corrected_language`) |
+| `labels/swebench_pro_file_count.csv` | number of code files changed by the gold patch (1, 2–3, 4+) |
+| `ablation/<variant>.jsonl`, `ablation/instances.txt` | per-instance outcome of each ablation variant; the 100-instance subset |
+| `ablation/recorded_counts.json` | resolved / regression counts for variant runs without per-instance logs |
 
 ## Ablation variants (`ablation_results.py`)
 
@@ -51,4 +46,4 @@ Regressions = instances resolved by the default but not by the variant. The `n` 
 
 ## Case studies (`case_studies/`)
 
-Per case, `case_studies/<case>/` holds the iCAT run as archived (`icat_<model>/raw`) and the baseline trajectories.
+Each case study is in `case_studies/<case>/` with the iCAT run and the baseline trajectories.
