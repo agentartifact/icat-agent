@@ -35,7 +35,9 @@ agent/
     config/
       prompts.yaml                  # Agent system prompts (some embedding prompts are in graph nodes and added during execution dynamically)
     graph/
-      graph_builder.py              
+      graph_builder.py      
+analysis_figures/   # data and scripts to reproduce our anlaysis
+result_trajs      # result summaries and all trajectories        
 ```
 
 ## Trajectory Files
